@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>自由研究帳 - icpcの罪状</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">自由研究帳</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>icpcの罪状</h1>
+
+            <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+<div class="info">
+    Posted on July 14, 2014
+    
+</div>
+
+<p>今年もicpcに参加しました。 去年よりも解いた問題数は増えたものの、僕が書いたBがバグってて同期にデバッグの手間を取らせたり、Eの解法が思いついたもののコードをバグらせて時間内にACできなかったりと今回も罪人となってしまいました。</p>
+<p>Eはバグらせたくなかったので実装が楽なワーシャルフロイドをつかってグラフの直径を求めたのですがしょうもないミスをしてしまいました。</p>
+<h2 id="eのコード">Eのコード</h2>
+<pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
+<span class="ot">#include&lt;climits&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+<span class="dt">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
+<span class="dt">int</span> p[maxv];
+<span class="dt">int</span> d[maxv];
+<span class="dt">int</span> deg[maxv];
+<span class="dt">int</span> g[maxv][maxv];
+
+<span class="dt">int</span> n;
+<span class="dt">const</span> <span class="dt">int</span> INF = INT_MAX/<span class="dv">2</span>;
+<span class="dt">void</span> mkGraph(){
+  fill(*g,g[maxv],INF);
+  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++)g[i][i] = <span class="dv">0</span>; <span class="co">// &lt;- ここを本番で書き忘れてた</span>
+  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+    <span class="co">//cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; p[i] &lt;&lt; endl;</span>
+    <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
+    <span class="dt">int</span> from = i,to = p[i];
+
+    g[from][to] = g[to][from] = d[i];
+  }
+}
+
+<span class="dt">void</span> outgraph(){
+  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
+      cout &lt;&lt; g[i][j] &lt;&lt; <span class="st">' '</span>;
+    }
+    cout &lt;&lt; endl;
+  }
+}
+
+<span class="dt">int</span> radius(){
+  mkGraph();
+  <span class="co">//outgraph();</span>
+  <span class="kw">for</span>(<span class="dt">int</span> k = <span class="dv">1</span>;k &lt;= n;k++){
+    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+      <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
+	g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
+      }
+    }
+  }
+  
+  <span class="dt">int</span> ret = <span class="dv">-1</span>;
+  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
+      <span class="kw">if</span> (g[i][j] == INF)<span class="kw">continue</span>;
+      ret = max(g[i][j],ret);
+    }
+  }
+  <span class="co">//cout &lt;&lt; &quot;rad:&quot; &lt;&lt; ret &lt;&lt; endl;</span>
+  <span class="kw">return</span> ret;
+}
+
+<span class="dt">int</span> weight(){
+  <span class="dt">int</span> ret = <span class="dv">0</span>;
+  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+    ret += d[i];
+  }
+  <span class="co">//cout &lt;&lt; &quot;weight:&quot;&lt;&lt;ret &lt;&lt; endl;</span>
+  <span class="kw">return</span> ret;
+}
+
+<span class="dt">int</span> main(){
+  <span class="kw">while</span>(<span class="kw">true</span>){
+    cin &gt;&gt; n;
+    <span class="kw">if</span>(n == <span class="dv">0</span>)<span class="kw">break</span>;
+    
+    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+      cin &gt;&gt; p[i];
+    }
+    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+      cin &gt;&gt; d[i];
+    }
+    fill(deg,deg+maxv,<span class="dv">0</span>);
+  
+    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+      deg[ p[i] ] += <span class="dv">1</span>;
+      deg[ i    ] += <span class="dv">1</span>;
+    }
+  
+    <span class="dt">int</span> result = <span class="dv">0</span>;
+    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+      <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
+      result += d[i] * <span class="dv">2</span>;
+    }
+    <span class="co">//cout &lt;&lt; &quot;junkai:&quot; &lt;&lt; result &lt;&lt; endl;</span>
+    result -= radius();
+    <span class="co">//outgraph();</span>
+    result += weight();
+    cout &lt;&lt; result &lt;&lt; endl;
+  }
+  <span class="kw">return</span> <span class="dv">0</span>;
+}</code></pre>
+<p>Eはワーシャルフロイドのグラフの対角成分の初期化を忘れていたために起こっていたバグです。本当にしょうもないバグでした。</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>

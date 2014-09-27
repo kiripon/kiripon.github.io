@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>自由研究帳 - Data types a la carteのメモ2</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">自由研究帳</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Data types a la carteのメモ2</h1>
+
+            <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+<div class="info">
+    Posted on June 24, 2014
+    
+</div>
+
+<p>データ型の定義はできるようになったので、このデータ型を<em>評価</em>していく。 数式の評価とはなにか。各項についての<em>畳込み</em>のことである。</p>
+<p>畳み込みというとリストに限定して考えてしまいがちだけど、ここで云う畳み込みは一般のデータ構造に対して言うことのできる畳み込みである。</p>
+<p>どのように畳み込みを定義するか。コンストラクタごとにどのようにして値に落としこむかを記述すればいい。 以下のような2つのコンストラクタがあったとする。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e
+           <span class="kw">deriving</span> <span class="dt">Functor</span>
+<span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>
+           <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre>
+<p>このAddとValからなる木を評価する場合、 以下のような関数があれば各コンストラクタについての評価はできる。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
+<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre>
+<p><code>Add</code> と <code>Val</code>　をこのクラスのインスタンスにすると、木の子供が評価されてた時に自身をどう評価すればいいかがわかる。 例えば, <code>evalAlgebra (Add 100 200) === 300</code> , <code>Val 12 === 12</code> と評価することができる。</p>
+<p><code>Fix (Add :+: Val)</code>のo評価の時はこれを再帰的に行わなければならない。 以下の関数を使って再帰的に評価をする。データ型の定義はできるようになったので、このデータ型を<em>評価</em>していく。 数式の評価とはなにか。各項についての<em>畳込み</em>のことである。</p>
+<p>畳み込みというとリストに限定して考えてしまいがちだけど、ここで云う畳み込みは一般のデータ構造に対して言うことのできる畳み込みである。</p>
+<p>どのように畳み込みを定義するか。コンストラクタごとにどのようにして値に落としこむかを記述すればいい。 以下のような2つのコンストラクタがあったとする。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e   <span class="kw">deriving</span> <span class="dt">Functor</span>
+<span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>   <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre>
+<p>このAddとValからなる木を評価する場合、 以下のような関数があれば各コンストラクタについての評価はできる。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
+<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre>
+<p><code>Add</code> と <code>Val</code>　をこのクラスのインスタンスにすると、木の子供が評価されてた時に自身をどう評価すればいいかがわかる。 例えば, <code>evalAlgebra (Add 100 200) === 300</code> , <code>Val 12 === 12</code> と評価することができる。</p>
+<p><code>Fix (Add :+: Val)</code>のo評価の時はこれを再帰的に行わなければならない。 以下の関数を使って再帰的に評価をする。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
+foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre>
+<p>ここでの<code>g::(f a -&gt; a)</code>は<em>Algebra</em>と呼ばれる。</p>
+<p>定義を見ればわかる通り、数式の木<code>t</code>の子孫について畳み込みをして、その結果についてgを適用している。 これで<code>Fix f</code>の<code>f</code>さえfunctorになっていれば再帰的に畳み込みができる。</p>
+<p><code>Fix (Add :+: Val)</code>について畳み込みをするには,<code>Add :+: Val</code>がFunctorでなければならない。 なので <code>f :+: g</code> をFunctorにする。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
+  fmap f (<span class="dt">Inl</span> l) <span class="fu">=</span> <span class="dt">Inl</span> <span class="fu">$</span> fmap f l
+  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre>
+<p>これで準備は整った。実際に評価部分を定義する。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
+  evalAlgebra (<span class="dt">Add</span> v1 v2) <span class="fu">=</span> v1 <span class="fu">+</span> v2
+<span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Val</span> <span class="kw">where</span>
+  evalAlgebra (<span class="dt">Val</span> v) <span class="fu">=</span> v
+
+<span class="ot">eval ::</span> <span class="dt">Eval</span> f <span class="ot">=&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> <span class="dt">Int</span>
+eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
+<p>これで畳込みが記述できた！</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
+foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre>
+<p>ここでの<code>g::(f a -&gt; a)</code>は<em>Algebra</em>と呼ばれる。</p>
+<p>定義を見ればわかる通り、数式の木<code>t</code>の子孫について畳み込みをして、その結果についてgを適用している。 これで<code>Fix f</code>の<code>f</code>さえfunctorになっていれば再帰的に畳み込みができる。</p>
+<p><code>Fix (Add :+: Val)</code>について畳み込みをするには,<code>Add :+: Val</code>がFunctorでなければならない。 なので <code>f :+: g</code> をFunctorにする。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
+  fmap f (<span class="dt">Inl</span> l) <span class="fu">=</span> <span class="dt">Inl</span> <span class="fu">$</span> fmap f l
+  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre>
+<p>これで準備は整った。実際に評価部分を定義する。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
+  evalAlgebra (<span class="dt">Add</span> v1 v2) <span class="fu">=</span> v1 <span class="fu">+</span> v2
+<span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Val</span> <span class="kw">where</span>
+  evalAlgebra (<span class="dt">Val</span> v) <span class="fu">=</span> v
+
+<span class="ot">eval ::</span> <span class="dt">Eval</span> f <span class="ot">=&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> <span class="dt">Int</span>
+eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
+<p>これで畳込みが記述できた！</p>
+<p>Free Monadとの関連はまた次回</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>自由研究帳 - Haskellで最短経路</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">自由研究帳</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Haskellで最短経路</h1>
+
+            <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+<div class="info">
+    Posted on July  2, 2014
+    
+</div>
+
+<h1 id="haskellでダイクストラ法を書く">Haskellでダイクストラ法を書く</h1>
+<p>最近Dijkstra法を教える機会があったので、せっかくなのでHaskellでも書きました。 containersにPriority-queueが見つからなかったのでSetで代用してます。 ガリガリ副作用を使ってるので関数型っぽくはないです。</p>
+<p>標準ライブラリだけを使ってるからcodeforcesでも使えるはず。 <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A">AOJ:GRL_1_A</a>にあわせて書いてあります。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
+<span class="kw">import </span><span class="dt">Control.Monad.State</span>
+<span class="kw">import </span><span class="dt">Control.Applicative</span>
+<span class="kw">import </span><span class="dt">Data.Array</span>
+<span class="kw">import </span><span class="dt">Data.Array.ST</span>
+<span class="kw">import </span><span class="dt">Data.Array.IO</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Set</span> <span class="kw">as</span> <span class="dt">S</span>
+<span class="kw">import </span><span class="dt">Data.Traversable</span>
+<span class="kw">type</span> <span class="dt">Dist</span> <span class="fu">=</span> <span class="dt">Int</span>
+<span class="kw">type</span> <span class="dt">Node</span> <span class="fu">=</span> <span class="dt">Int</span>
+<span class="kw">type</span> <span class="dt">Graph</span> <span class="fu">=</span> <span class="dt">Array</span> <span class="dt">Node</span> [(<span class="dt">Node</span>,<span class="dt">Dist</span>)]
+
+<span class="ot">getInput ::</span> <span class="dt">IO</span> (<span class="dt">Graph</span>,<span class="dt">Node</span>)
+getInput <span class="fu">=</span> <span class="kw">do</span>
+  v<span class="fu">:</span>e<span class="fu">:</span>r<span class="fu">:</span>_ <span class="ot">&lt;-</span> map read <span class="fu">.</span> words <span class="fu">&lt;$&gt;</span><span class="ot"> getLine ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
+  a <span class="ot">&lt;-</span> newArray (<span class="dv">0</span>,v<span class="fu">-</span><span class="dv">1</span>) []<span class="ot"> ::</span> <span class="dt">IO</span> (<span class="dt">IOArray</span> <span class="dt">Node</span> [(<span class="dt">Node</span>,<span class="dt">Dist</span>)])
+  replicateM_ e <span class="fu">$</span> <span class="kw">do</span>
+    s<span class="fu">:</span>t<span class="fu">:</span>d<span class="fu">:</span>_ <span class="ot">&lt;-</span> map read <span class="fu">.</span> words <span class="fu">&lt;$&gt;</span><span class="ot"> getLine ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
+    es <span class="ot">&lt;-</span> readArray a s
+    writeArray a s ((t,d)<span class="fu">:</span>es)
+  a' <span class="ot">&lt;-</span> freeze a
+  return (a',r)
+
+<span class="ot">dijkstra ::</span> <span class="dt">Graph</span> <span class="ot">-&gt;</span> <span class="dt">Node</span> <span class="ot">-&gt;</span> <span class="dt">Array</span> <span class="dt">Node</span> <span class="dt">Dist</span>
+dijkstra g s <span class="fu">=</span> runSTArray <span class="fu">$</span> <span class="kw">do</span>
+  a <span class="ot">&lt;-</span> newArray bound maxBound
+  evalStateT (loop a) (S.singleton (<span class="dv">0</span>,s))
+  return a
+  <span class="kw">where</span>
+    bound <span class="fu">=</span> bounds g
+    loop a <span class="fu">=</span> <span class="kw">do</span>
+      isEmpty <span class="ot">&lt;-</span> S.null <span class="fu">&lt;$&gt;</span> get
+      unless isEmpty <span class="fu">$</span> <span class="kw">do</span>
+      (d,n) <span class="ot">&lt;-</span> state S.deleteFindMin
+      d' <span class="ot">&lt;-</span> lift <span class="fu">$</span> readArray a n
+      when (d <span class="fu">&lt;</span> d') <span class="fu">$</span> <span class="kw">do</span>
+        lift <span class="fu">$</span> writeArray a n d
+        <span class="kw">let</span> nexts <span class="fu">=</span> g <span class="fu">!</span> n
+        void <span class="fu">$</span> for nexts <span class="fu">$</span> \(ix,w) <span class="ot">-&gt;</span> <span class="kw">do</span>
+          d'' <span class="ot">&lt;-</span> lift <span class="fu">$</span> readArray a ix
+          when (d <span class="fu">+</span> w <span class="fu">&lt;</span> d'')
+            <span class="fu">$</span> modify <span class="fu">$</span> S.insert (d<span class="fu">+</span>w,ix)
+      loop a
+
+    
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  (g,r) <span class="ot">&lt;-</span> getInput
+  print g
+  print <span class="fu">$</span> dijkstra g r</code></pre>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
