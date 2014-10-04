@@ -31,10 +31,6 @@
   
   Tags: <a href="../tags/Haskell.html">Haskell</a>
   
-  <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
-  <script type="text/javascript">
-    Hatena.Star.Token = '23fedfee88aa970d2f7f6f9b33d8f62c46c1b5a7';
-  </script>
 </div>
 
 <p>C++のdequeに対応するモジュールとして、haskellでは純粋な関数の中で使えるData.Sequenceというモジュールがあります。 内部でFinger Treeというデータ構造を使うことで、左右への要素の追加を償却定数時間で行うことができるようです。 要素の追加には (|&gt;) や (&lt;|) といった演算子を使うことになるのですが、この演算子はコンストラクタではないため、これを用いてパターンマッチをすることができません。 しかしghcにはview patternをいう文法拡張があり、これをつかってパターンマッチをさせることができることを知りました。 <a href="http://www.kotha.net/ghcguide_ja/7.6.2/syntax-extns.html" class="uri">http://www.kotha.net/ghcguide_ja/7.6.2/syntax-extns.html</a></p>
