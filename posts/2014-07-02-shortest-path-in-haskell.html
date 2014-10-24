@@ -6,6 +6,7 @@
         <title>自由研究帳 - Haskellで最短経路</title>
         <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
+	
     </head>
     <body>
         <div id="header">
@@ -33,7 +34,7 @@
   
 </div>
 
-<h1 id="haskellでダイクストラ法を書く">Haskellでダイクストラ法を書く</h1>
+<h2 id="haskellでダイクストラ法を書く">Haskellでダイクストラ法を書く</h2>
 <p>最近Dijkstra法を教える機会があったので、せっかくなのでHaskellでも書きました。 containersにPriority-queueが見つからなかったのでSetで代用してます。 ガリガリ副作用を使ってるので関数型っぽくはないです。</p>
 <p>標準ライブラリだけを使ってるからcodeforcesでも使えるはず。 <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A">AOJ:GRL_1_A</a>にあわせて書いてあります。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>

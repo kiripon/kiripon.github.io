@@ -1,0 +1,6 @@
+<pre class="sourceCode haskell"><code class="sourceCode haskell">forM [<span class="dv">1</span><span class="fu">..</span>n] <span class="fu">$</span> \i <span class="ot">-&gt;</span> <span class="kw">do</span>
+  <span class="fu">...</span></code></pre>
+<p>と書く際,iが必要ない時がある。そういう時は</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">forM [<span class="dv">1</span><span class="fu">..</span>n] <span class="fu">$</span> const <span class="fu">$</span> <span class="kw">do</span>
+  <span class="fu">...</span></code></pre>
+<p>と書くこともできる。</p>

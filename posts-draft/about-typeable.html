@@ -1,0 +1,12 @@
+<p>Typeable型クラス</p>
+<ul>
+<li>-XDeriveDataTypeableで導出できる</li>
+<li>型の実装を定義することで</li>
+<li>型安全なキャストを可能にする</li>
+</ul>
+<p>Coercible</p>
+<ul>
+<li><code>Coercible a b</code>は、<code>a</code>から<code>b</code>へのキャストが可能であることを表す</li>
+<li>ユーザーはこの型クラスの実装を書くことができない</li>
+<li><code>a</code>と<code>b</code>が同じ実行時表現を持ってる時に<code>coerce</code>が可能になる</li>
+</ul>

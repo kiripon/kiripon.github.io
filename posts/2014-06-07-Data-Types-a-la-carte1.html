@@ -6,6 +6,7 @@
         <title>自由研究帳 - Data types a la carte のメモ</title>
         <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
+	
     </head>
     <body>
         <div id="header">
@@ -37,7 +38,7 @@
 <ul>
 <li><a href="http://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf">Data Types a la carte</a></li>
 </ul>
-<h2 id="目標数式の木をつくる">目標：数式の木をつくる。</h2>
+<h3 id="目標数式の木をつくる">目標：数式の木をつくる。</h3>
 <p>数式の木をつくる。この時に木を直接書くのではなく、中置記法のコンストラクタをサポートしたり、さらに以下で述べるような３つの目標を満たすようなコンストラクタを作る。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- &lt;*&gt;　はapplicative functor の ap ではない</span>
 <span class="co">--program1.hs--------</span>
@@ -53,7 +54,7 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 <li>計算があとから追加できるようにする あとから log,rootなどの四則演算以外の項を追加できるようにする</li>
 <li>あとから計算を追加したとしても、evalの(Add,Mod,Mul)の評価部分は変更する必要のないようにする</li>
 <li><p>program1は掛け算、足し算だけだったものに、sqrtを使えるようにしたprogram2をつくった。 このときprogram1が動かなくなることのないようにする</p></li>
-<li><h2>計算をあとから追加できるようにするには</h2></li>
+<li><h3>計算をあとから追加できるようにするには</h3></li>
 </ol>
 <p>組み立て可能なデータコンストラクタを定義する</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">BasicExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Val</span>)
@@ -63,7 +64,7 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 <li>データコンストラクタを組み合わせられるようにする (<code>a :+: b</code>みたいに書けるようにする)</li>
 </ul>
 <p>DSLに新たにsqrtを追加すると、sqrtを表すデータコンストラクタが必要になる。 計算木に含まれるデータコンストラクタを組み込めるようにする。</p>
-<h2 id="型コンストラクタの組み合わせ">1.1 型コンストラクタの組み合わせ</h2>
+<h3 id="型コンストラクタの組み合わせ">1.1 型コンストラクタの組み合わせ</h3>
 <p>型コンストラクタの直和を作る演算子<code>:+:</code>を用意する。 型パラメータeは後で説明するから今は気にしないでほしい</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">A</span> e e
 <span class="kw">data</span> <span class="dt">Mul</span> e <span class="fu">=</span> <span class="dt">M</span> e e
@@ -71,7 +72,7 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 
 <span class="kw">infixl</span> <span class="fu">:&lt;:</span> <span class="dv">7</span>
 <span class="kw">data</span> (f <span class="fu">:+:</span> g) e <span class="fu">=</span> <span class="dt">Inl</span> (f e) <span class="fu">|</span> <span class="dt">Inr</span> (g e)</code></pre>
-<h2 id="再帰型をつくるには">1.2 再帰型をつくるには？</h2>
+<h3 id="再帰型をつくるには">1.2 再帰型をつくるには？</h3>
 <p><code>MyExpr = Add MyExpr MyExpr | Val Int</code> と同様の構造を作るとき、Addの子供にはMyExprが来てほしい。</p>
 <p>再帰型を作るために型上の不動点演算子<code>Fix</code>を導入する。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Fix</span> f <span class="fu">=</span> <span class="dt">Fix</span> (f (<span class="dt">Fix</span> f))</code></pre>
@@ -81,14 +82,14 @@ eight <span class="fu">=</span> <span class="dt">Fix</span> (<span class="dt">In
 <p>Fix,Inl,Inrを(心の中で)消して構造を見てみると、型の上で再帰構造になっているのがわかる。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Mul</span> (<span class="dt">Val</span> <span class="dv">4</span>) (<span class="dt">Val</span> <span class="dv">2</span>)</code></pre>
 <p>これで木構造が作れるようになった。</p>
-<h2 id="スマートコンストラクタ1">スマートコンストラクタ(1)</h2>
+<h3 id="スマートコンストラクタ1">スマートコンストラクタ(1)</h3>
 <p>Inr とか Inl とか長ったらしくて書いてられない(あとFixも) 型から勝手に構造が決定されるコンストラクタをつくる。 こんな型をもったコンストラクタがあると嬉しい。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">val ::</span> (<span class="dt">Val</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Expr</span> f
 <span class="ot">(&lt;+&gt;) ::</span> (<span class="dt">Add</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f</code></pre>
 <p>(ここで<code>Val :&lt;: f</code>は、[fにはValが含まれる]と読む)</p>
 <p>つまり、完成した式の型に応じて自動的に適切な変換をするようなコンストラクタを作りたい。</p>
 <p>型クラスをうまくつかってこれを実現する。</p>
-<h2 id="スマートコンストラクタ2">スマートコンストラクタ(2)</h2>
+<h3 id="スマートコンストラクタ2">スマートコンストラクタ(2)</h3>
 <p>制約<code>sub :&lt;: sup</code>が与えられた時,<code>sub a</code>を<code>sup a</code>にキャストすることが可能になる。 キャスト可能なことを型クラスとインスタンスで表現すると以下のようになる</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> (sub <span class="fu">:&lt;:</span> sup) <span class="kw">where</span>
 <span class="ot">  inj ::</span> sub a <span class="ot">-&gt;</span> sup a

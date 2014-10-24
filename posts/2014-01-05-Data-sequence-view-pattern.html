@@ -6,6 +6,7 @@
         <title>自由研究帳 - Data.Sequence と View Pattern</title>
         <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
+	
     </head>
     <body>
         <div id="header">
@@ -58,7 +59,7 @@ left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)
 
 <span class="ot">right ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
 right (Sq.viewr <span class="ot">-&gt;</span> (_ <span class="fu">:&gt;</span> r)) <span class="fu">=</span> r</code></pre>
-<h2 id="実行結果">実行結果</h2>
+<h3 id="実行結果">実行結果</h3>
 <pre class="shell"><code>% runhaskell seq.hs
 fromList []
 fromList [1]
@@ -66,7 +67,7 @@ fromList [1,1,2,3,4,5,6,7,8,9,10]
 10
 1</code></pre>
 <p>今年はせめて人並みにhaskellが使えるようになりたいです。精進します。</p>
-<h2 id="追記">追記</h2>
+<h3 id="追記">追記</h3>
 <p>パターンガードを使えばガード分の中でパターンマッチが行えます。例えば、</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
 left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)) <span class="fu">=</span> l</code></pre>

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>自由研究帳 - Github pages に移動しました</title>
+        <title>自由研究帳 - 圏論のノート10/24</title>
         <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -21,26 +21,51 @@
             </div>
         </div>
         <div id="content">
-            <h1>Github pages に移動しました</h1>
+            <h1>圏論のノート10/24</h1>
 
             <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
 <div class="info">
-    Posted on September 27, 2014
+    Posted on October 19, 2014
     
 </div>
 <div class="info">
   
-  Tags: <a href="../tags/GithubPages.html">GithubPages</a>
+  Tags: <a href="../tags/Category.html">Category</a>
   
 </div>
 
-<p>試験的にブログをGithub pagesで管理することにしました。 試行錯誤中です。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- test input</span>
-main <span class="fu">=</span> <span class="kw">do</span>
-  x <span class="ot">&lt;-</span> getLine
-  putStrLn <span class="fu">$</span> x <span class="fu">++</span> <span class="st">&quot;hogehoge&quot;</span>
-
-piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="dv">1</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">20</span>]</code></pre>
+<h2 id="定義-圏c-は以下の要素からなる">定義: <span class="math">\(圏C\)</span> は以下の要素からなる</h2>
+<ol type="1">
+<li>object(対象) の集まり</li>
+<li>arrow(射) の集まり(morphismとも呼ばれる)</li>
+<li>arrow f にdomainとcodomainを割り当てる操作.
+<ul>
+<li><span class="math">\(dom\ f = A\)</span>かつ<span class="math">\(cod\ f = B\)</span>のとき、<span class="math">\(f : A \rightarrow B\)</span>と書く。</li>
+<li><span class="math">\(dom\ f = A\)</span>かつ<span class="math">\(cod\ f = B\)</span>なるarrow <span class="math">\(f\)</span> の集まりを <span class="math">\(C(A,B)\)</span>と書く。</li>
+</ul></li>
+<li>合成演算<span class="math">\((\circ)\)</span>
+<ul>
+<li><span class="math">\(dom\ f = cod\ g\)</span>なるf,gについて、合成射(composite arrow) <span class="math">\(f \circ g\)</span>を作る.</li>
+<li>以下の関係則(associative raw)を満たさなければならない
+<ul>
+<li><span class="math">\((f \circ g) \circ h = f \circ (g \circ h)\)</span></li>
+</ul></li>
+</ul></li>
+<li>すべてのobject Aについて<span class="math">\(id_A : A \rightarrow A\)</span>は以下を満たす
+<ul>
+<li><span class="math">\(id_B \circ f = f \circ id_B = f \ (where\ f : A \rightarrow B)\)</span></li>
+</ul></li>
+</ol>
+<h3 id="例-集合">例: 集合</h3>
+<p>集合をObject,集合間の全域関数をarrowとみなせば圏になる.<br />ただし、 <span class="math">\(f : x \mapsto x^2\)</span> のような関数を考えると、fは<br /><span class="math">\(f : \mathbb{R} \rightarrow \mathbb{R}\)</span> とも <span class="math">\(f : \mathbb{R} \rightarrow \mathbb{R}^2\)</span> とも解釈できてしまう</p>
+<p>これを避けるために 射<span class="math">\(f : \mathbb{A} \rightarrow \mathbb{B}\)</span> を<span class="math">\((f,\mathbb{B})\)</span>と書くこともある。</p>
+<h3 id="例-poset">例: Poset</h3>
+<ul>
+<li>Object… <span class="math">\((P,\le_P)\)</span>の組(集合P:半順序<span class="math">\(\le_P\)</span>を持つ)</li>
+<li>Arrow … <span class="math">\(f:(P,\le_P) \rightarrow (Q,\le_Q)\)</span>. ただし <span class="math">\(p \le_P p'\)</span> のとき<span class="math">\(f(p) \le_P f(p')\)</span></li>
+</ul>
+<h2 id="定義-diagram">定義: Diagram</h2>
+<p>圏CのDiagramは、CのObjectとArrowで正しくラベル付けされた辺と頂点の集まりの事を言う。<br />ここでいう“正しく”とは、<span class="math">\(f : A \rightarrow B\)</span>をラベルとして持つ辺があった時、その始点はAであり終点はBである事を言う。</p>
 
 <br>
 
