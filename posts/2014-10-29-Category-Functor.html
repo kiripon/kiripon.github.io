@@ -8,6 +8,15 @@
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      
+      ga('create', 'UA-56315243-1', 'auto');
+      ga('send', 'pageview');
+    </script>
     <body>
         <div id="header">
             <div id="logo">
@@ -61,7 +70,7 @@
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span></code></pre>
 <p>型<code>a</code>から型<code>f a</code>を構成するので,<code>f</code>がobjectの対応をとるものである。また、</p>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre>
-<p>は、型<code>(a -&gt; b)</code>から型<code>(f a -&gt; b)</code>を構築する。これがarrowの対応になっている。 結合則は表現できないので、プログラマが保証しなければならない。</p>
+<p>は、型<code>(a -&gt; b)</code>から型<code>(f a -&gt; f b)</code>を構築する。これがarrowの対応になっている。 結合則は表現できないので、プログラマが保証しなければならない。</p>
 <h3 id="例忘却関手forgetful-functor">例:忘却関手(forgetful functor)</h3>
 <p>モノイド<span class="math">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />モノイド<span class="math">\((M,\bullet ,e)\)</span>に集合<span class="math">\(M\)</span>を対応させ、 モノイド準同型 <span class="math">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
 <p><strong>疑問</strong><br />Functor型クラスだけではHask上のすべてのFunctorを表現できていないように見えた<br />たとえば,関手Fについて、型の対応を<code>F(a) = a</code>,関数の対応を<code>F(f) -&gt; f</code>とすればこれも関手になる。<br />Functor型クラスは特定の種類の関手についてだけについて言及しているのかもしれない。 誰か詳しい人に教えてもらいたいです。</p>
@@ -89,7 +98,7 @@
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
+
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
