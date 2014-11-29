@@ -74,6 +74,7 @@
 <h3 id="例忘却関手forgetful-functor">例:忘却関手(forgetful functor)</h3>
 <p>モノイド<span class="math">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />モノイド<span class="math">\((M,\bullet ,e)\)</span>に集合<span class="math">\(M\)</span>を対応させ、 モノイド準同型 <span class="math">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
 <p><strong>疑問</strong><br />Functor型クラスだけではHask上のすべてのFunctorを表現できていないように見えた<br />たとえば,関手Fについて、型の対応を<code>F(a) = a</code>,関数の対応を<code>F(f) -&gt; f</code>とすればこれも関手になる。<br />Functor型クラスは特定の種類の関手についてだけについて言及しているのかもしれない。 誰か詳しい人に教えてもらいたいです。</p>
+<p>11/29追記 isomorphismを介して一意に定まるから、<code>F = Identity</code>としていい(?)</p>
 <h3 id="参考文献">参考文献</h3>
 <ul>
 <li><a href="http://www.math.nagoya-u.ac.jp/~hasimoto/paper/class/cat10.pdf">圏と関手入門</a></li>

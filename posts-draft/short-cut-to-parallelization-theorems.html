@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>自由研究帳 - F-Algebra</title>
+        <title>自由研究帳 - short-cut-to-parallelization-theorems</title>
         <link rel="stylesheet" type="text/css" href="/css/default.css" />
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div id="content">
-            <h1>F-Algebra</h1>
+            <h1>short-cut-to-parallelization-theorems</h1>
 
             <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
@@ -40,17 +40,20 @@
 </div>
 <div class="info">
   
-  Tags: Category
+  Tags: Category,Haskell
   
 </div>
 
-<h2 id="f-algebra">F-Algebra</h2>
-<p>(A, φ :: F A -&gt; A)</p>
-<p><span class="math">\[
-\require{AMScd}
-\begin{CD}
-F A      @&gt;&gt;&gt;     B\\
-\]</span></p>
+<h2 id="第三リスト準同型定理">第三リスト準同型定理</h2>
+<p><code>h :: [A] -&gt; B</code> という型の関数について、</p>
+<ul>
+<li><code>f_\triangleleft  :: A -&gt; B -&gt; B</code></li>
+<li><code>f_\triangleright :: B -&gt; A -&gt; B</code></li>
+<li><code>e :: B</code></li>
+</ul>
+<p>が存在して、 <code>h = foldr\ \ f_\triangleleft e = foldl\ \ f_\triangleright e</code> と書くことができるなら、ある演算子 <code>⊙ :: B \rightarrow B \rightarrow B</code> が存在して任意のx,yについて <code>h ( x ++ y) = h x \odot h y</code> が成り立つ。</p>
+<hr />
+<p>関数がfoldlとfoldrで書き直せるならば、分割統治ができるということを表している。</p>
 
 <br>
 

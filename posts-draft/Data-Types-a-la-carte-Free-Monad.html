@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>自由研究帳 - Data-Types-a-la-carte-Free-Monad</title>
+        <title>自由研究帳 - Extensible Effects と Data Types a la carte の関係</title>
         <link rel="stylesheet" type="text/css" href="/css/default.css" />
 	<script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
 	
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div id="content">
-            <h1>Data-Types-a-la-carte-Free-Monad</h1>
+            <h1>Extensible Effects と Data Types a la carte の関係</h1>
 
             <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
@@ -40,8 +40,11 @@
 </div>
 <div class="info">
   
+  Tags: Haskell
+  
 </div>
 
+<p><a href="http://okmij.org/ftp/Haskell/extensible/" class="uri">http://okmij.org/ftp/Haskell/extensible/</a>で触れられているように,Extensible Effects と Data Types a la carte の手法は</p>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="ot">{-# LANGUAGE DeriveFunctor ,UnicodeSyntax,GADTs,RankNTypes#-}</span>
 <span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">DataTypesALaCarte</span> <span class="kw">where</span>
 <span class="ot">&gt;</span> <span class="kw">import </span><span class="dt">Control.Applicative</span>
