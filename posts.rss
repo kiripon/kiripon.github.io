@@ -6,8 +6,250 @@
         <description><![CDATA[Haskellや読んだ論文のまとめ、数学など]]></description>
         <atom:link href="http://kiripon.github.io/posts.rss" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Wed, 29 Oct 2014 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Thu, 04 Dec 2014 00:00:00 UT</lastBuildDate>
         <item>
+    <title>OpenGL in Haskell</title>
+    <link>http://kiripon.github.io/posts/2014-12-04-opengl-in-haskell.html</link>
+    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+<div class="info">
+    Posted on December  4, 2014
+    
+</div>
+<div class="info">
+  
+  Tags: <a href="/tags/OpenGL.html">OpenGL</a>, <a href="/tags/Haskell.html">Haskell</a>, <a href="/tags/GLFW.html">GLFW</a>
+  
+</div>
+
+<p>haskellでOpenGLを使って何かしたい、と思って <a href="http://www.opengl-tutorial.org/">opengl-tutorial.org</a>を参考にhaddockを眺めながら書きました。haskellのOpenGLは、生のOpenGLと微妙に違うAPIを持っているので調べるのはかなりかったるかった。</p>
+<p>ともあれ、赤い三角形はようやく表示できたので記念にソースコードを貼り付けておきます。</p>
+<p>使用しているパッケージはGLFW-bではなくGLFWです。GLFW-bのほうはglfw3に対応しているようなので気が向いたら書きなおすことにしよう</p>
+<p><em>Main.hs</em></p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoMonomorphismRestriction #-}</span>
+<span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+
+<span class="kw">import           </span><span class="dt">Control.Monad</span>
+<span class="kw">import           </span><span class="dt">Data.Array.Storable</span>       (newListArray, withStorableArray)
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString</span>           <span class="kw">as</span> <span class="dt">S8</span>
+<span class="kw">import           </span><span class="dt">Foreign.Ptr</span>               (nullPtr)
+<span class="kw">import           </span><span class="dt">Foreign.Storable</span>          (sizeOf)
+<span class="kw">import           </span><span class="dt">Graphics.Rendering.OpenGL</span> (<span class="dt">BufferObject</span>, <span class="dt">Color4</span> (..), <span class="dt">GLfloat</span>,
+                                            <span class="dt">VertexArrayObject</span>, get, (<span class="fu">$=</span>))
+<span class="kw">import qualified</span> <span class="dt">Graphics.Rendering.OpenGL</span> <span class="kw">as</span> <span class="dt">GL</span>
+<span class="kw">import qualified</span> <span class="dt">Graphics.UI.GLFW</span>          <span class="kw">as</span> <span class="dt">GLFW</span>
+<span class="kw">import           </span><span class="dt">System.Exit</span>               (exitSuccess)
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  putStrLn <span class="st">&quot;initialize..&quot;</span>
+  initialize
+  putStrLn <span class="st">&quot; done&quot;</span>
+  print <span class="st">&quot;begin loop&quot;</span>
+  mainLoop
+  print <span class="st">&quot;end loop&quot;</span>
+  GLFW.closeWindow
+  GLFW.terminate
+  <span class="kw">where</span>
+    initialize <span class="fu">=</span> <span class="kw">do</span>
+      GLFW.initialize <span class="fu">&gt;&gt;=</span> unless <span class="ot">`flip`</span> GLFW.terminate
+
+
+      GLFW.openWindowHint <span class="dt">GLFW.FSAASamples</span> <span class="dv">4</span>
+      GLFW.openWindowHint <span class="dt">GLFW.OpenGLVersionMajor</span> <span class="dv">3</span>
+      GLFW.openWindowHint <span class="dt">GLFW.OpenGLVersionMinor</span> <span class="dv">2</span> <span class="co">-- 3はだめ？</span>
+      GLFW.openWindowHint <span class="dt">GLFW.OpenGLForwardCompat</span> <span class="dt">True</span>
+
+      GLFW.openWindowHint <span class="dt">GLFW.OpenGLProfile</span> <span class="dt">GLFW.OpenGLCoreProfile</span>
+
+      GLFW.windowTitle <span class="fu">$=</span> <span class="st">&quot;GLFW Demo&quot;</span>
+      wRes <span class="ot">&lt;-</span> GLFW.openWindow (<span class="dt">GL.Size</span> <span class="dv">400</span> <span class="dv">400</span>)
+              []
+              <span class="dt">GLFW.Window</span>
+      unless wRes <span class="fu">$</span> <span class="kw">do</span>{
+        putStrLn <span class="st">&quot;failed to open window&quot;</span>;
+        GLFW.terminate;
+        System.Exit.exitSuccess;}
+
+      print <span class="st">&quot;hgoe&quot;</span>
+      vGL <span class="ot">&lt;-</span> GL.get GL.glVersion
+      putStrLn <span class="fu">$</span> <span class="st">&quot;OpenGL version:&quot;</span> <span class="fu">++</span> show vGL
+      vGLFW <span class="ot">&lt;-</span> GL.get GLFW.version
+      putStrLn <span class="fu">$</span> <span class="st">&quot;GLFW version:&quot;</span> <span class="fu">++</span> show vGLFW
+
+
+      GL.shadeModel            <span class="fu">$=</span> <span class="dt">GL.Smooth</span>
+      GL.lineSmooth            <span class="fu">$=</span> <span class="dt">GL.Enabled</span>
+      GL.blend                 <span class="fu">$=</span> <span class="dt">GL.Enabled</span>
+      GL.blendFunc             <span class="fu">$=</span> (<span class="dt">GL.SrcAlpha</span>,<span class="dt">GL.OneMinusSrcAlpha</span>)
+      GL.clearColor            <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.5</span> <span class="fl">0.5</span> <span class="dv">0</span>
+      GLFW.windowSizeCallback  <span class="fu">$=</span> \size<span class="fu">@</span>(<span class="dt">GL.Size</span> w h) <span class="ot">-&gt;</span> <span class="kw">do</span>{
+          putStrLn <span class="st">&quot;callback: windowResizeCallback&quot;</span>;
+          GL.viewport   <span class="fu">$=</span> (<span class="dt">GL.Position</span> <span class="dv">0</span> <span class="dv">0</span>,size);
+          GL.matrixMode <span class="fu">$=</span> <span class="dt">GL.Projection</span>;
+          GL.loadIdentity;
+          GL.ortho2D <span class="dv">0</span> (realToFrac w) (realToFrac h) <span class="dv">0</span>;
+          }
+      GLFW.windowCloseCallback <span class="fu">$=</span> <span class="kw">do</span>{
+          putStrLn <span class="st">&quot;callback: windowCloseCallback&quot;</span>;
+          GLFW.closeWindow;
+          GLFW.terminate;
+          exitSuccess;}
+
+<span class="ot">vertices ::</span> [<span class="dt">GLfloat</span>]
+vertices <span class="fu">=</span> [<span class="fu">-</span><span class="fl">1.0</span>, <span class="fu">-</span><span class="fl">1.0</span>, <span class="fl">0.0</span>
+           ,<span class="fl">1.0</span>, <span class="fu">-</span><span class="fl">1.0</span>, <span class="fl">0.0</span>
+           ,<span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fl">0.0</span>]
+
+
+<span class="ot">createVBO ::</span> [<span class="dt">GLfloat</span>] <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">BufferObject</span>
+createVBO elems <span class="fu">=</span> <span class="kw">do</span>
+  [vertexBuffer] <span class="ot">&lt;-</span> GL.genObjectNames <span class="dv">1</span>
+  GL.bindBuffer <span class="dt">GL.ArrayBuffer</span> <span class="fu">$=</span> <span class="dt">Just</span> vertexBuffer
+  arr <span class="ot">&lt;-</span> newListArray (<span class="dv">0</span>,len<span class="fu">-</span><span class="dv">1</span>)elems
+  <span class="kw">let</span> bufSize <span class="fu">=</span> toEnum <span class="fu">$</span> len <span class="fu">*</span> sizeOf (head elems)
+  withStorableArray arr <span class="fu">$</span> \ptr <span class="ot">-&gt;</span>
+    GL.bufferData <span class="dt">GL.ArrayBuffer</span> <span class="fu">$=</span> (bufSize,ptr,<span class="dt">GL.StaticDraw</span>)
+  putStrLn <span class="st">&quot;array buffered&quot;</span>
+  GL.bindBuffer <span class="dt">GL.ArrayBuffer</span> <span class="fu">$=</span> <span class="dt">Nothing</span> <span class="co">-- なくてもいい？</span>
+  print <span class="st">&quot;buffer binded&quot;</span>
+  return vertexBuffer
+  <span class="kw">where</span>
+    len <span class="fu">=</span> length elems
+
+<span class="ot">mainLoop ::</span> <span class="dt">IO</span> ()
+mainLoop <span class="fu">=</span> <span class="kw">do</span>
+  <span class="co">--GL.arrayPointer GL.</span>
+  <span class="co">--glGenVertexArrays(&amp;vao)</span>
+  [vertexArrayId] <span class="ot">&lt;-</span> GL.genObjectNames <span class="dv">1</span><span class="ot"> ::</span> <span class="dt">IO</span> [<span class="dt">VertexArrayObject</span>]
+  <span class="co">--glBindVertexArray(vao)</span>
+  GL.bindVertexArrayObject <span class="fu">$=</span> <span class="dt">Just</span> vertexArrayId
+
+  vbo <span class="ot">&lt;-</span> createVBO vertices
+
+  program <span class="ot">&lt;-</span> loadShaders <span class="st">&quot;./vertexShader.glsl&quot;</span> <span class="st">&quot;./fragmentShader.glsl&quot;</span>
+  GL.currentProgram <span class="fu">$=</span> <span class="dt">Just</span> program
+
+  pState <span class="ot">&lt;-</span> get <span class="fu">$</span> GL.validateStatus program
+  unless pState <span class="fu">$</span> putStrLn <span class="st">&quot;Shader validate Failed&quot;</span>
+
+  loop vbo vertexArrayId
+  return ()
+  <span class="kw">where</span>
+    loop vertexBuffer vao <span class="fu">=</span> <span class="kw">do</span>
+      draw vertexBuffer vao
+      GLFW.pollEvents
+      GLFW.swapBuffers
+      p <span class="ot">&lt;-</span> GLFW.getKey <span class="dt">GLFW.ESC</span>
+      unless (p <span class="fu">==</span> <span class="dt">GLFW.Press</span>) <span class="fu">$</span> <span class="kw">do</span>
+        GLFW.sleep <span class="fl">0.001</span>
+        loop vertexBuffer vao
+
+
+<span class="ot">draw ::</span> <span class="dt">BufferObject</span> <span class="ot">-&gt;</span> <span class="dt">VertexArrayObject</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+draw vertexBuffer vao <span class="fu">=</span> <span class="kw">do</span>
+  GL.clear [<span class="dt">GL.ColorBuffer</span>,<span class="dt">GL.DepthBuffer</span>]
+
+  <span class="co">--glDrawArraysを書く</span>
+  GL.vertexAttribArray (<span class="dt">GL.AttribLocation</span> <span class="dv">0</span>) <span class="fu">$=</span> <span class="dt">GL.Enabled</span>
+  GL.bindBuffer <span class="dt">GL.ArrayBuffer</span>               <span class="fu">$=</span> <span class="dt">Just</span> vertexBuffer
+  GL.bindVertexArrayObject <span class="fu">$=</span> <span class="dt">Just</span> vao
+  GL.vertexAttribPointer (<span class="dt">GL.AttribLocation</span> <span class="dv">0</span>)<span class="fu">$=</span> (<span class="dt">GL.ToFloat</span>,descriptor)
+  GL.drawArrays <span class="dt">GL.Triangles</span> <span class="dv">0</span> <span class="dv">3</span>
+  GL.bindBuffer <span class="dt">GL.ArrayBuffer</span> <span class="fu">$=</span> <span class="dt">Nothing</span>
+  GL.vertexAttribArray (<span class="dt">GL.AttribLocation</span> <span class="dv">0</span>) <span class="fu">$=</span> <span class="dt">GL.Disabled</span>
+
+  GL.flush
+  <span class="kw">where</span>
+    descriptor<span class="fu">=</span> <span class="dt">GL.VertexArrayDescriptor</span> <span class="dv">3</span> <span class="dt">GL.Float</span> <span class="dv">0</span> nullPtr
+<span class="ot">      ::</span> <span class="dt">GL.VertexArrayDescriptor</span> <span class="dt">GLfloat</span>
+
+<span class="ot">loadShaders ::</span> FilePath <span class="ot">-&gt;</span> FilePath <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">GL.Program</span>
+loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span class="kw">do</span>
+
+  vertexShaderId   <span class="ot">&lt;-</span> GL.createShader <span class="dt">GL.VertexShader</span>
+  vShaderData <span class="ot">&lt;-</span> S8.readFile vertexFilePath
+  putStrLn <span class="fu">$</span> <span class="st">&quot;compilingShader : &quot;</span> <span class="fu">++</span> vertexFilePath
+  GL.shaderSourceBS vertexShaderId <span class="fu">$=</span> vShaderData
+  GL.compileShader vertexShaderId
+
+  vShaderLog <span class="ot">&lt;-</span> get <span class="fu">$</span> GL.shaderInfoLog vertexShaderId
+  putStrLn vShaderLog
+
+  fragmentShaderId <span class="ot">&lt;-</span> GL.createShader <span class="dt">GL.FragmentShader</span>
+  fShaderData <span class="ot">&lt;-</span> S8.readFile fragmentFilePath
+  putStrLn <span class="fu">$</span> <span class="st">&quot;compilingShader : &quot;</span> <span class="fu">++</span> fragmentFilePath
+  GL.shaderSourceBS fragmentShaderId <span class="fu">$=</span> fShaderData
+  GL.compileShader fragmentShaderId
+  fShaderLog <span class="ot">&lt;-</span> get <span class="fu">$</span> GL.shaderInfoLog fragmentShaderId
+  putStrLn <span class="fu">$</span> <span class="st">&quot;shader log :\n&quot;</span> <span class="fu">++</span> fShaderLog
+
+  <span class="co">--link Program</span>
+  putStrLn <span class="st">&quot;Linking Shader Program&quot;</span>
+  programId <span class="ot">&lt;-</span> GL.createProgram
+  GL.attachShader prattachShader programId vertexShaderId
+  GL.ogramId vertexShaderId
+  GL.attachShader programId fragmentShaderId
+  GL.linkProgram programId
+
+  <span class="co">--check program</span>
+  programLog <span class="ot">&lt;-</span> get <span class="fu">$</span> GL.programInfoLog programId
+  putStrLn <span class="fu">$</span> <span class="st">&quot;program link log :\n&quot;</span> <span class="fu">++</span> programLog
+
+  GL.deleteObjectName vertexShaderId
+  GL.deleteObjectName fragmentShaderId
+  return programId</code></pre>
+<p><em>vertexShader.glsl</em></p>
+<pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+
+<span class="fu">layout</span>(location = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
+
+<span class="dt">void</span> <span class="fu">main</span>(){
+  <span class="fu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
+  <span class="fu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
+}</code></pre>
+<p><em>fragmentShader.glsl</em></p>
+<pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<span class="dt">out</span> <span class="dt">vec3</span> color;
+
+<span class="dt">void</span> <span class="fu">main</span>(){
+  color = <span class="dt">vec3</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>);
+}</code></pre>
+
+<br>
+
+<div id="disqus_thread"><div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+  }());
+</script>
+]]></description>
+    <pubDate>Thu, 04 Dec 2014 00:00:00 UT</pubDate>
+    <guid>http://kiripon.github.io/posts/2014-12-04-opengl-in-haskell.html</guid>
+</item>
+<item>
     <title>圏論のノート2:Functor</title>
     <link>http://kiripon.github.io/posts/2014-10-29-Category-Functor.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
