@@ -232,7 +232,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -319,7 +319,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -407,7 +407,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -463,7 +463,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -610,7 +610,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -712,7 +712,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -817,7 +817,7 @@ eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -867,9 +867,9 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 <ol type="1">
 <li>計算があとから追加できるようにする あとから log,rootなどの四則演算以外の項を追加できるようにする</li>
 <li>あとから計算を追加したとしても、evalの(Add,Mod,Mul)の評価部分は変更する必要のないようにする</li>
-<li><p>program1は掛け算、足し算だけだったものに、sqrtを使えるようにしたprogram2をつくった。 このときprogram1が動かなくなることのないようにする</p></li>
-<li><h3>計算をあとから追加できるようにするには</h3></li>
+<li>program1は掛け算、足し算だけだったものに、sqrtを使えるようにしたprogram2をつくった。 このときprogram1が動かなくなることのないようにする</li>
 </ol>
+<h3 id="計算をあとから追加できるようにするには">計算をあとから追加できるようにするには</h3>
 <p>組み立て可能なデータコンストラクタを定義する</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">BasicExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Val</span>)
 <span class="kw">type</span> <span class="dt">NewExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Mul</span> <span class="fu">:+:</span> <span class="dt">Sqrt</span> <span class="fu">:+:</span> <span class="dt">Val</span>)</code></pre>
@@ -878,7 +878,7 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 <li>データコンストラクタを組み合わせられるようにする (<code>a :+: b</code>みたいに書けるようにする)</li>
 </ul>
 <p>DSLに新たにsqrtを追加すると、sqrtを表すデータコンストラクタが必要になる。 計算木に含まれるデータコンストラクタを組み込めるようにする。</p>
-<h3 id="型コンストラクタの組み合わせ">1.1 型コンストラクタの組み合わせ</h3>
+<h3 id="型コンストラクタの組み合わせ">型コンストラクタの組み合わせ</h3>
 <p>型コンストラクタの直和を作る演算子<code>:+:</code>を用意する。 型パラメータeは後で説明するから今は気にしないでほしい</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">A</span> e e
 <span class="kw">data</span> <span class="dt">Mul</span> e <span class="fu">=</span> <span class="dt">M</span> e e
@@ -886,7 +886,7 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 
 <span class="kw">infixl</span> <span class="fu">:&lt;:</span> <span class="dv">7</span>
 <span class="kw">data</span> (f <span class="fu">:+:</span> g) e <span class="fu">=</span> <span class="dt">Inl</span> (f e) <span class="fu">|</span> <span class="dt">Inr</span> (g e)</code></pre>
-<h3 id="再帰型をつくるには">1.2 再帰型をつくるには？</h3>
+<h3 id="再帰型をつくるには">再帰型をつくるには？</h3>
 <p><code>MyExpr = Add MyExpr MyExpr | Val Int</code> と同様の構造を作るとき、Addの子供にはMyExprが来てほしい。</p>
 <p>再帰型を作るために型上の不動点演算子<code>Fix</code>を導入する。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Fix</span> f <span class="fu">=</span> <span class="dt">Fix</span> (f (<span class="dt">Fix</span> f))</code></pre>
@@ -946,7 +946,7 @@ x <span class="fu">&lt;+&gt;</span> y <span class="fu">=</span> inject (<span cl
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
@@ -1036,7 +1036,7 @@ left v <span class="fu">|</span> (l <span class="fu">:&lt;</span> _) <span class
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
+    
 <script type="text/javascript">
   /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
   // required: replace example with your forum shortname
