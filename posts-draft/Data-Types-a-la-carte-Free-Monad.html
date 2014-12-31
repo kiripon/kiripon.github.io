@@ -51,7 +51,7 @@
 <span class="ot">&gt;</span> <span class="kw">import </span><span class="dt">Data.Typeable</span></code></pre>
 <p>Functorの最小不動点をとったものが<code>Fix f</code>であった。</p>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Fix</span> f <span class="fu">=</span> <span class="dt">Fix</span> f (<span class="dt">Fix</span> f) <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre>
-<p>これに加えて,値aを表すラベル　<code>Pure a</code> との直和をとったものについての最小不動点をとったものが<code>Free</code>とよばれる構造になる。</p>
+<p>これに加えて,値aを表す <code>Pure a</code> との直和をとったものについての最小不動点をとったものが<code>Free</code>とよばれる構造になる。</p>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Free</span> f a <span class="fu">=</span> <span class="dt">Pure</span> a
 <span class="ot">&gt;</span>               <span class="fu">|</span> <span class="dt">Free</span> (f (<span class="dt">Free</span> f a))</code></pre>
 <p>この構造は<code>Monad</code>にできる。</p>
@@ -74,7 +74,7 @@
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Union</span> r v <span class="fu">=</span> <span class="ot">∀</span> t<span class="fu">.</span> (<span class="dt">Functor</span> t,<span class="dt">Typeable</span> t) <span class="ot">=&gt;</span> <span class="dt">Union</span> (t v)</code></pre>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">VE</span> r w <span class="fu">=</span> <span class="dt">Val</span> w
 <span class="ot">&gt;</span>             <span class="fu">|</span> <span class="dt">E</span> <span class="fu">!</span>(<span class="dt">Union</span> r (<span class="dt">VE</span> r w))</code></pre>
-<p>さらに、これをCPS(継続渡し)で書きなおしたものがEffモナドになる。</p>
+<p>さらに、これをCPSで書きなおしたものがEffモナドになる。 (ContではなくCodensityに相当)</p>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">newtype</span> <span class="dt">Eff</span> r a <span class="fu">=</span> <span class="dt">Eff</span> {<span class="ot">runEff ::</span> <span class="ot">∀</span> w<span class="fu">.</span> (a <span class="ot">-&gt;</span> <span class="dt">VE</span> r w) <span class="ot">-&gt;</span> <span class="dt">VE</span> r w }</code></pre>
 <p>インスタンス宣言は以下のようになる。</p>
 <pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Eff</span> r) <span class="kw">where</span>
