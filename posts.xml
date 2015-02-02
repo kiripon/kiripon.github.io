@@ -3,8 +3,8 @@
     <channel>
         <title>自由研究帳</title>
         <link>http://kiripon.github.io</link>
-        <description><![CDATA[Haskellや読んだ論文のまとめ、数学など]]></description>
-        <atom:link href="http://kiripon.github.io/posts.rss" rel="self"
+        <description><![CDATA[Haskellや読んだ論文のまとめ]]></description>
+        <atom:link href="http://kiripon.github.io/posts.xml" rel="self"
                    type="application/rss+xml" />
         <lastBuildDate>Thu, 04 Dec 2014 00:00:00 UT</lastBuildDate>
         <item>
