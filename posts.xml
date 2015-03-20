@@ -6,8 +6,82 @@
         <description><![CDATA[Haskellや読んだ論文のまとめ]]></description>
         <atom:link href="http://kiripon.github.io/posts.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Thu, 04 Dec 2014 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Tue, 17 Mar 2015 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Arch Linux を Dell XPS 13(2015)へインストールする</title>
+    <link>http://kiripon.github.io/posts/2015-03-17-install-archlinux-to-xps13.html</link>
+    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+<div class="info">
+    Posted on March 17, 2015
+    
+</div>
+<div class="info">
+  
+  Tags: <a href="/tags/Arch%20Linux.html">Arch Linux</a>, <a href="/tags/XPS%2013.html">XPS 13</a>, <a href="/tags/DELL.html">DELL</a>
+  
+</div>
+
+<h2 id="経緯">経緯</h2>
+<p><a href="http://www.dell.com/jp/p/xps-13-9343-laptop/pd">Dell XPS 13</a>を購入した.(とてもうれしい) 早速Arch Linux をインストールすることにしたが、配布されている ISO イメージでは，無線LANが認識されなかった． そのためドライバがインストール済みのISOイメージを作成することにした．</p>
+<h2 id="必要なドライバの確認">必要なドライバの確認</h2>
+<p><code>lspci</code>コマンドで無線モジュールを確認する。</p>
+<pre><code># lspci
+...
+02:00.0 Network controller: Broadcom Corporation BCM4352 802.11ac Wireless Network Adapter (rev 03)</code></pre>
+<p>調べたところ、<code>BCM4352</code>は <a href="https://aur.archlinux.org/packages/broadcom-wl-dkms/">broadcom-wl-dkms(AUR)</a> を利用することで利用できるらしい。こいつを予め導入したインストールイメージをつくる。</p>
+<h2 id="isoイメージの作成">ISOイメージの作成</h2>
+<p><a href="https://wiki.archlinux.org/index.php/Archiso">Archiso(Arch Wiki)</a>に則って インストールイメージを作成する。 その際に、以下の変更を行った。</p>
+<p><code>yaourt</code>を使うため、<code>pacman.conf</code>の末尾に以下を追加</p>
+<pre><code>[archlinuxfr]
+SigLevel = Never
+Server = http://repo.archlinux.fr/$arch</code></pre>
+<p><code>packages.both</code>の末尾に以下を追加</p>
+<pre><code>linux-headers
+dkms
+fakeroot
+yaourt</code></pre>
+<p><code>airootfs/root/customize_airootfs.sh</code>に以下を追加</p>
+<pre><code># root で yaourt が実行できないのでユーザー権限で実行
+sudo -u arch yaourt --noconfirm -S broadcom-wl-dkms</code></pre>
+<h2 id="install">Install</h2>
+<p>UEFI環境でSecure Bootを有効にしたまま起動するとHash Toolが起動する。 その時はArch Wikiの <a href="https://wiki.archlinux.org/index.php/Unified_Extensible_Firmware_Interface#Secure_Boot">Unified Extensible Firmware Interface</a> の通りの手順を踏むと起動できる。</p>
+<p>これで無線LANが有効になった状態で起動できるので、<code>wifi-menu</code>等で無線LANに繋いで通常のインストール手順をふめばよい。</p>
+
+<br>
+
+<div id="disqus_thread"><div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+  }());
+</script>
+]]></description>
+    <pubDate>Tue, 17 Mar 2015 00:00:00 UT</pubDate>
+    <guid>http://kiripon.github.io/posts/2015-03-17-install-archlinux-to-xps13.html</guid>
+</item>
+<item>
     <title>OpenGL in Haskell</title>
     <link>http://kiripon.github.io/posts/2014-12-04-opengl-in-haskell.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
@@ -351,7 +425,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </div>
 
 <h2 id="定義-圏">定義: 圏</h2>
-<p><span class="math">\(圏C\)</span> は以下の要素からなる</p>
+<p>圏<span class="math">\(C\)</span> は以下の要素からなる</p>
 <ol type="1">
 <li>object(対象) の集まり</li>
 <li>arrow(射) の集まり(morphismとも呼ばれる)</li>
@@ -1073,96 +1147,6 @@ x <span class="fu">&lt;+&gt;</span> y <span class="fu">=</span> inject (<span cl
 ]]></description>
     <pubDate>Sat, 07 Jun 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-06-07-Data-Types-a-la-carte1.html</guid>
-</item>
-<item>
-    <title>Data.Sequence と View Pattern</title>
-    <link>http://kiripon.github.io/posts/2014-01-05-Data-sequence-view-pattern.html</link>
-    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
-<div class="info">
-    Posted on January  5, 2014
-    
-</div>
-<div class="info">
-  
-  Tags: <a href="/tags/Haskell.html">Haskell</a>
-  
-</div>
-
-<p>C++のdequeに対応するモジュールとして、haskellでは純粋な関数の中で使えるData.Sequenceというモジュールがあります。 内部でFinger Treeというデータ構造を使うことで、左右への要素の追加を償却定数時間で行うことができるようです。 要素の追加には (|&gt;) や (&lt;|) といった演算子を使うことになるのですが、この演算子はコンストラクタではないため、これを用いてパターンマッチをすることができません。 しかしghcにはview patternをいう文法拡張があり、これをつかってパターンマッチをさせることができることを知りました。 <a href="http://www.kotha.net/ghcguide_ja/7.6.2/syntax-extns.html" class="uri">http://www.kotha.net/ghcguide_ja/7.6.2/syntax-extns.html</a></p>
-<p>data.sequenceでは予めviewに使える関数が定義されているため自分で定義する必要はありません。</p>
-<p>以下のコードでは left と right の定義に使っています。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE ViewPatterns #-}</span>
-<span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
-<span class="co">--seq.hs</span>
-<span class="kw">import qualified</span> <span class="dt">Data.Sequence</span> <span class="kw">as</span> <span class="dt">Sq</span>
-<span class="kw">import </span><span class="dt">Data.Sequence</span> (<span class="dt">ViewL</span>(..),<span class="dt">ViewR</span>(..),(&gt;&lt;),(&lt;|),<span class="dt">Seq</span>)
-
-<span class="ot">main ::</span> <span class="dt">IO</span> ()
-main <span class="fu">=</span> <span class="kw">do</span>
-  <span class="kw">let</span> x <span class="fu">=</span> Sq.empty<span class="ot"> ::</span> <span class="dt">Sq.Seq</span> <span class="dt">Int</span>
-  print x
-  <span class="kw">let</span> x2 <span class="fu">=</span> <span class="dv">1</span> <span class="fu">&lt;|</span> x
-  print x2
-  <span class="kw">let</span> x3 <span class="fu">=</span> x2 <span class="fu">&gt;&lt;</span> Sq.fromList [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
-  print x3
-  print (right x3)
-  print (left x3)
-
-<span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)) <span class="fu">=</span> l
-
-<span class="ot">right ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-right (Sq.viewr <span class="ot">-&gt;</span> (_ <span class="fu">:&gt;</span> r)) <span class="fu">=</span> r</code></pre>
-<h3 id="実行結果">実行結果</h3>
-<pre class="shell"><code>% runhaskell seq.hs
-fromList []
-fromList [1]
-fromList [1,1,2,3,4,5,6,7,8,9,10]
-10
-1</code></pre>
-<p>今年はせめて人並みにhaskellが使えるようになりたいです。精進します。</p>
-<h3 id="追記">追記</h3>
-<p>パターンガードを使えばガード分の中でパターンマッチが行えます。例えば、</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)) <span class="fu">=</span> l</code></pre>
-<p>は</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-left v <span class="fu">|</span> (l <span class="fu">:&lt;</span> _) <span class="ot">&lt;-</span> Sq.viewl v <span class="fu">=</span> l</code></pre>
-<p>と書けます。</p>
-
-<br>
-
-<div id="disqus_thread"><div>
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function () {
-  var s = document.createElement('script'); s.async = true;
-  s.type = 'text/javascript';
-  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-  }());
-</script>
-]]></description>
-    <pubDate>Sun, 05 Jan 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-01-05-Data-sequence-view-pattern.html</guid>
 </item>
 
     </channel> 
