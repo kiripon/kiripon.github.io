@@ -47,7 +47,13 @@ sudo -u arch yaourt --noconfirm -S broadcom-wl-dkms</code></pre>
 <p>UEFI環境でSecure Bootを有効にしたまま起動するとHash Toolが起動する。 その時はArch Wikiの <a href="https://wiki.archlinux.org/index.php/Unified_Extensible_Firmware_Interface#Secure_Boot">Unified Extensible Firmware Interface</a> の通りの手順を踏むと起動できる。</p>
 <p>これで無線LANが有効になった状態で起動できるので、<code>wifi-menu</code>等で無線LANに繋いで通常のインストール手順をふめばよい。</p>
 <h2 id="問題点">問題点</h2>
-<p>スピーカーから音が出ない。 <a href="https://major.io/2015/02/03/linux-support-dell-xps-13-9343-2015-model/">ここ</a>とかを見る限り、いまのところ根本的な解決はないらしい。続報に期待</p>
+<p><del>スピーカーから音が出ない。 <a href="https://major.io/2015/02/03/linux-support-dell-xps-13-9343-2015-model/">ここ</a>とかを見る限り、いまのところ根本的な解決はないらしい。続報に期待</del></p>
+<p><a href="https://github.com/mpalourdio/xps13" class="uri">https://github.com/mpalourdio/xps13</a> を参考にカーネルのブートオプションに<code>acpi_osi=&quot;Windows 2013&quot;</code>を追加し、数回再起動したところスピーカーから音が出るようになった。</p>
+<p>変更後のgummibootのエントリは以下のようになった。</p>
+<pre><code>title	Arch Linux
+linux	/vmlinuz-linux
+initrd	/initramfs-linux.img
+options	enable_rc6=1 enable_fbc=1 lvds_downclock=1 pcie_aspm=force psmouse.resetafter=0 acpi_osi=&quot;!Windows 2013&quot; root=/dev/sda7 rw</code></pre>
 
 <br>
 
