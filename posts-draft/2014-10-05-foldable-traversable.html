@@ -42,16 +42,16 @@
   
 </div>
 
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
 <span class="ot">&gt;</span> <span class="kw">import </span><span class="dt">Data.Monoid</span>
 <span class="ot">&gt; main ::</span> t
-<span class="ot">&gt;</span> main <span class="fu">=</span> undefined</code></pre>
+<span class="ot">&gt;</span> main <span class="fu">=</span> undefined</code></pre></div>
 <p>ghc 7.10からPreludeに入るという <code>Foldable</code> と <code>Traversable</code>について調べました。 宣言は以下のようになっています</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Foldable</span> t <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Foldable</span> t <span class="kw">where</span>
 <span class="ot">&gt;   fold ::</span> <span class="dt">Monoid</span> m <span class="ot">=&gt;</span> t m <span class="ot">-&gt;</span> m
 <span class="ot">&gt;   foldMap ::</span> <span class="dt">Monoid</span> m <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> m) <span class="ot">-&gt;</span> t a <span class="ot">-&gt;</span> m
 <span class="ot">&gt;   foldr ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> t a <span class="ot">-&gt;</span> b
-<span class="ot">&gt;   foldr' ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> t a <span class="ot">-&gt;</span> b</code></pre>
+<span class="ot">&gt;   foldr' ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> t a <span class="ot">-&gt;</span> b</code></pre></div>
 
 <br>
 

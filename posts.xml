@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
         <title>自由研究帳</title>
         <link>http://kiripon.github.io</link>
@@ -48,12 +49,13 @@ sudo -u arch yaourt --noconfirm -S broadcom-wl-dkms</code></pre>
 <p>これで無線LANが有効になった状態で起動できるので、<code>wifi-menu</code>等で無線LANに繋いで通常のインストール手順をふめばよい。</p>
 <h2 id="問題点">問題点</h2>
 <p><del>スピーカーから音が出ない。 <a href="https://major.io/2015/02/03/linux-support-dell-xps-13-9343-2015-model/">ここ</a>とかを見る限り、いまのところ根本的な解決はないらしい。続報に期待</del></p>
-<p><a href="https://github.com/mpalourdio/xps13" class="uri">https://github.com/mpalourdio/xps13</a> を参考にカーネルのブートオプションに<code>acpi_osi=&quot;Windows 2013&quot;</code>を追加し、数回再起動したところスピーカーから音が出るようになった。</p>
-<p>変更後のgummibootのエントリは以下のようになった。</p>
+<p><del><a href="https://github.com/mpalourdio/xps13" class="uri">https://github.com/mpalourdio/xps13</a> を参考にカーネルのブートオプションに<code>acpi_osi=&quot;Windows 2013&quot;</code>を追加し、数回再起動したところスピーカーから音が出るようになった。</del></p>
+<p><del>変更後のgummibootのエントリは以下のようになった。</del></p>
 <pre><code>title	Arch Linux
 linux	/vmlinuz-linux
 initrd	/initramfs-linux.img
 options	enable_rc6=1 enable_fbc=1 lvds_downclock=1 pcie_aspm=force psmouse.resetafter=0 acpi_osi=&quot;!Windows 2013&quot; root=/dev/sda7 rw</code></pre>
+<p><em>5/24追記</em> BIOS A02 以降からは<code>acpi_osi</code> オプションを指定しなくてもスピーカーが有効になるようになった。</p>
 
 <br>
 
@@ -88,6 +90,7 @@ options	enable_rc6=1 enable_fbc=1 lvds_downclock=1 pcie_aspm=force psmouse.reset
 ]]></description>
     <pubDate>Tue, 17 Mar 2015 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2015-03-17-install-archlinux-to-xps13.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>OpenGL in Haskell</title>
@@ -107,7 +110,7 @@ options	enable_rc6=1 enable_fbc=1 lvds_downclock=1 pcie_aspm=force psmouse.reset
 <p>ともあれ、赤い三角形はようやく表示できたので記念にソースコードを貼り付けておきます。</p>
 <p>使用しているパッケージはGLFW-bではなくGLFWです。GLFW-bのほうはglfw3に対応しているようなので気が向いたら書きなおすことにしよう</p>
 <p><em>Main.hs</em></p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoMonomorphismRestriction #-}</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoMonomorphismRestriction #-}</span>
 <span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
 
 <span class="kw">import           </span><span class="dt">Control.Monad</span>
@@ -279,23 +282,23 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 
   GL.deleteObjectName vertexShaderId
   GL.deleteObjectName fragmentShaderId
-  return programId</code></pre>
+  return programId</code></pre></div>
 <p><em>vertexShader.glsl</em></p>
-<pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
 
 <span class="fu">layout</span>(location = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
   <span class="fu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
   <span class="fu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
-}</code></pre>
+}</code></pre></div>
 <p><em>fragmentShader.glsl</em></p>
-<pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
 <span class="dt">out</span> <span class="dt">vec3</span> color;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
   color = <span class="dt">vec3</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>);
-}</code></pre>
+}</code></pre></div>
 
 <br>
 
@@ -330,6 +333,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 ]]></description>
     <pubDate>Thu, 04 Dec 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-12-04-opengl-in-haskell.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>圏論のノート2:Functor</title>
@@ -369,9 +373,9 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </ol>
 <h3 id="例haskellのfunctor">例:HaskellのFunctor</h3>
 <p>haskellの圏Haskでは、型がobject,関数がarrowである。 Functor型クラスを見てみる。</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span></code></pre></div>
 <p>型<code>a</code>から型<code>f a</code>を構成するので,<code>f</code>がobjectの対応をとるものである。また、</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre></div>
 <p>は、型<code>(a -&gt; b)</code>から型<code>(f a -&gt; f b)</code>を構築する。これがarrowの対応になっている。 結合則は表現できないので、プログラマが保証しなければならない。</p>
 <h3 id="例忘却関手forgetful-functor">例:忘却関手(forgetful functor)</h3>
 <p>モノイド<span class="math">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />モノイド<span class="math">\((M,\bullet ,e)\)</span>に集合<span class="math">\(M\)</span>を対応させ、 モノイド準同型 <span class="math">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
@@ -417,6 +421,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 ]]></description>
     <pubDate>Wed, 29 Oct 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-10-29-Category-Functor.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>圏論のノート1</title>
@@ -505,6 +510,7 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 ]]></description>
     <pubDate>Sun, 19 Oct 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-10-19-Category1.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Type safe Formatting</title>
@@ -525,16 +531,16 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 <h3 id="要約">要約</h3>
 <p>printfやscanfのフォーマット文字列を実装する。OCamlのprintfのような特殊な型付をせず type safe なインターフェースを実装したい。 フォーマット文字列から型付けを行うのは無理なので(Template Haskellで頑張れば話は別)、DSLとして実装して適切な型がつくようにする。</p>
 <p>最終的に次のように書けるようになる.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> hoge <span class="fu">=</span> lit <span class="st">&quot;PiyoPiyo &quot;</span> <span class="fu">^</span> char <span class="fu">^</span> lit <span class="st">&quot; fuga&quot;</span> <span class="fu">^</span> int
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> hoge <span class="fu">=</span> lit <span class="st">&quot;PiyoPiyo &quot;</span> <span class="fu">^</span> char <span class="fu">^</span> lit <span class="st">&quot; fuga&quot;</span> <span class="fu">^</span> int
 result  <span class="fu">=</span> sprintf hoge <span class="ch">'a'</span> <span class="dv">100</span>
 <span class="co">-- result == &quot;PiyoPiyo a 100&quot;</span>
 <span class="co">{-</span>
 <span class="co">bad_result = sprintf hoge 300 'a'</span>
 <span class="co">-- これは型エラー</span>
-<span class="co">-}</span></code></pre>
+<span class="co">-}</span></code></pre></div>
 <h3 id="the-initial-view">the initial view</h3>
 <p>データ型<code>F a b</code>を考える。ここで、<code>F</code>は<code>F :: * -&gt; * -&gt; *</code>、つまり2引数の型コンストラクタ。 ここで型変数<code>b</code>は型変数<code>a</code>の1回以上の出現を含む型だとすると、Fは型レベルのラムダ式とみなせる。 この関数に引数を適用するにはFの第1引数<code>a</code>を適用したい型<code>x</code>でunifyしてやればよい。 すると<code>b</code>の中の<code>a</code>の出現が<code>x</code>で置き換えられ,関数適用の結果になる。 これはPrologでのラムダ式の挙動をエミュレートしているらしい。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- F a b を型での関数抽象,つまり(λa. b)とみなす</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- F a b を型での関数抽象,つまり(λa. b)とみなす</span>
 <span class="co">-- 型レベルid</span>
 x <span class="fu">=</span> lit <span class="st">&quot;hoge&quot;</span><span class="ot"> ::</span> <span class="dt">F</span> a a
 
@@ -549,7 +555,7 @@ z <span class="fu">=</span> char <span class="ch">'c'</span><span class="ot">   
 
 <span class="co">-- このとき、x^yとy^zはそれぞれ次のような型になる。</span>
 x <span class="fu">^</span><span class="ot"> y ::</span> <span class="dt">F</span> a (<span class="dt">Int</span> <span class="ot">-&gt;</span> a)
-y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</span> a (<span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Char</span> <span class="ot">-&gt;</span> a))</code></pre>
+y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</span> a (<span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Char</span> <span class="ot">-&gt;</span> a))</code></pre></div>
 <h3 id="型が決まるまでの流れ記法は適当">型が決まるまでの流れ(記法は適当)</h3>
 <pre><code>x ^ y ::
 (F b c -&gt; F a b -&gt; F a c) (F a a) (F a (Int -&gt; a))
@@ -616,6 +622,7 @@ y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</spa
 ]]></description>
     <pubDate>Sun, 05 Oct 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-10-05-Type-safe-formatting.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Github pages に移動しました</title>
@@ -632,12 +639,12 @@ y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</spa
 </div>
 
 <p>試験的にブログをGithub pagesで管理することにしました。 試行錯誤中です。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- test input</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- test input</span>
 main <span class="fu">=</span> <span class="kw">do</span>
   x <span class="ot">&lt;-</span> getLine
   putStrLn <span class="fu">$</span> x <span class="fu">++</span> <span class="st">&quot;hogehoge&quot;</span>
 
-piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="dv">1</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">20</span>]</code></pre>
+piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="dv">1</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">20</span>]</code></pre></div>
 
 <br>
 
@@ -672,6 +679,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 ]]></description>
     <pubDate>Sat, 27 Sep 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-09-27-Github-pages.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>ICPCの罪状</title>
@@ -690,7 +698,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 <p>今年もicpcに参加しました。 去年よりも解いた問題数は増えたものの、僕が書いたBがバグってて同期にデバッグの手間を取らせたり、Eの解法が思いついたもののコードをバグらせて時間内にACできなかったりと今回も罪人となってしまいました。</p>
 <p>Eはバグらせたくなかったので実装が楽なワーシャルフロイドをつかってグラフの直径を求めたのですがしょうもないミスをしてしまいました。</p>
 <h3 id="eのコード">Eのコード</h3>
-<pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
 <span class="ot">#include&lt;climits&gt;</span>
 <span class="kw">using</span> <span class="kw">namespace</span> std;
 <span class="dt">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
@@ -783,7 +791,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
     cout &lt;&lt; result &lt;&lt; endl;
   }
   <span class="kw">return</span> <span class="dv">0</span>;
-}</code></pre>
+}</code></pre></div>
 <p>Eはワーシャルフロイドのグラフの対角成分の初期化を忘れていたために起こっていたバグです。本当にしょうもないバグでした。</p>
 
 <br>
@@ -819,6 +827,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 ]]></description>
     <pubDate>Mon, 14 Jul 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-07-14-guilt-icpc.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Haskellで最短経路</title>
@@ -837,7 +846,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 <h2 id="haskellでダイクストラ法を書く">Haskellでダイクストラ法を書く</h2>
 <p>最近Dijkstra法を教える機会があったので、せっかくなのでHaskellでも書きました。 containersにPriority-queueが見つからなかったのでSetで代用してます。 ガリガリ副作用を使ってるので関数型っぽくはないです。</p>
 <p>標準ライブラリだけを使ってるからcodeforcesでも使えるはず。 <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A">AOJ:GRL_1_A</a>にあわせて書いてあります。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
 <span class="kw">import </span><span class="dt">Control.Monad.State</span>
 <span class="kw">import </span><span class="dt">Control.Applicative</span>
 <span class="kw">import </span><span class="dt">Data.Array</span>
@@ -886,7 +895,7 @@ dijkstra g s <span class="fu">=</span> runSTArray <span class="fu">$</span> <spa
 main <span class="fu">=</span> <span class="kw">do</span>
   (g,r) <span class="ot">&lt;-</span> getInput
   print g
-  print <span class="fu">$</span> dijkstra g r</code></pre>
+  print <span class="fu">$</span> dijkstra g r</code></pre></div>
 
 <br>
 
@@ -921,6 +930,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 ]]></description>
     <pubDate>Wed, 02 Jul 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-07-02-shortest-path-in-haskell.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Data types a la carteのメモ2</title>
@@ -939,57 +949,57 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>データ型の定義はできるようになったので、このデータ型を<em>評価</em>していく。 数式の評価とはなにか。各項についての<em>畳込み</em>のことである。</p>
 <p>畳み込みというとリストに限定して考えてしまいがちだけど、ここで云う畳み込みは一般のデータ構造に対して言うことのできる畳み込みである。</p>
 <p>どのように畳み込みを定義するか。コンストラクタごとにどのようにして値に落としこむかを記述すればいい。 以下のような2つのコンストラクタがあったとする。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e
            <span class="kw">deriving</span> <span class="dt">Functor</span>
 <span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>
-           <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre>
+           <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre></div>
 <p>このAddとValからなる木を評価する場合、 以下のような関数があれば各コンストラクタについての評価はできる。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
-<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
+<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre></div>
 <p><code>Add</code> と <code>Val</code>　をこのクラスのインスタンスにすると、木の子供が評価されてた時に自身をどう評価すればいいかがわかる。 例えば, <code>evalAlgebra (Add 100 200) === 300</code> , <code>Val 12 === 12</code> と評価することができる。</p>
 <p><code>Fix (Add :+: Val)</code>のo評価の時はこれを再帰的に行わなければならない。 以下の関数を使って再帰的に評価をする。データ型の定義はできるようになったので、このデータ型を<em>評価</em>していく。 数式の評価とはなにか。各項についての<em>畳込み</em>のことである。</p>
 <p>畳み込みというとリストに限定して考えてしまいがちだけど、ここで云う畳み込みは一般のデータ構造に対して言うことのできる畳み込みである。</p>
 <p>どのように畳み込みを定義するか。コンストラクタごとにどのようにして値に落としこむかを記述すればいい。 以下のような2つのコンストラクタがあったとする。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e   <span class="kw">deriving</span> <span class="dt">Functor</span>
-<span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>   <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e   <span class="kw">deriving</span> <span class="dt">Functor</span>
+<span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>   <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre></div>
 <p>このAddとValからなる木を評価する場合、 以下のような関数があれば各コンストラクタについての評価はできる。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
-<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
+<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre></div>
 <p><code>Add</code> と <code>Val</code>　をこのクラスのインスタンスにすると、木の子供が評価されてた時に自身をどう評価すればいいかがわかる。 例えば, <code>evalAlgebra (Add 100 200) === 300</code> , <code>Val 12 === 12</code> と評価することができる。</p>
 <p><code>Fix (Add :+: Val)</code>のo評価の時はこれを再帰的に行わなければならない。 以下の関数を使って再帰的に評価をする。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
-foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
+foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre></div>
 <p>ここでの<code>g::(f a -&gt; a)</code>は<em>Algebra</em>と呼ばれる。</p>
 <p>定義を見ればわかる通り、数式の木<code>t</code>の子孫について畳み込みをして、その結果についてgを適用している。 これで<code>Fix f</code>の<code>f</code>さえfunctorになっていれば再帰的に畳み込みができる。</p>
 <p><code>Fix (Add :+: Val)</code>について畳み込みをするには,<code>Add :+: Val</code>がFunctorでなければならない。 なので <code>f :+: g</code> をFunctorにする。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
   fmap f (<span class="dt">Inl</span> l) <span class="fu">=</span> <span class="dt">Inl</span> <span class="fu">$</span> fmap f l
-  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre>
+  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre></div>
 <p>これで準備は整った。実際に評価部分を定義する。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
   evalAlgebra (<span class="dt">Add</span> v1 v2) <span class="fu">=</span> v1 <span class="fu">+</span> v2
 <span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Val</span> <span class="kw">where</span>
   evalAlgebra (<span class="dt">Val</span> v) <span class="fu">=</span> v
 
 <span class="ot">eval ::</span> <span class="dt">Eval</span> f <span class="ot">=&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> <span class="dt">Int</span>
-eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
+eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre></div>
 <p>これで畳込みが記述できた！</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
-foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
+foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre></div>
 <p>ここでの<code>g::(f a -&gt; a)</code>は<em>Algebra</em>と呼ばれる。</p>
 <p>定義を見ればわかる通り、数式の木<code>t</code>の子孫について畳み込みをして、その結果についてgを適用している。 これで<code>Fix f</code>の<code>f</code>さえfunctorになっていれば再帰的に畳み込みができる。</p>
 <p><code>Fix (Add :+: Val)</code>について畳み込みをするには,<code>Add :+: Val</code>がFunctorでなければならない。 なので <code>f :+: g</code> をFunctorにする。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
   fmap f (<span class="dt">Inl</span> l) <span class="fu">=</span> <span class="dt">Inl</span> <span class="fu">$</span> fmap f l
-  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre>
+  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre></div>
 <p>これで準備は整った。実際に評価部分を定義する。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
   evalAlgebra (<span class="dt">Add</span> v1 v2) <span class="fu">=</span> v1 <span class="fu">+</span> v2
 <span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Val</span> <span class="kw">where</span>
   evalAlgebra (<span class="dt">Val</span> v) <span class="fu">=</span> v
 
 <span class="ot">eval ::</span> <span class="dt">Eval</span> f <span class="ot">=&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> <span class="dt">Int</span>
-eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
+eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre></div>
 <p>これで畳込みが記述できた！</p>
 <p>Free Monadとの関連はまた次回</p>
 
@@ -1026,6 +1036,7 @@ eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
 ]]></description>
     <pubDate>Tue, 24 Jun 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-06-24-Data-types-a-la-carte2.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Data types a la carte のメモ</title>
@@ -1047,15 +1058,15 @@ eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre>
 </ul>
 <h3 id="目標数式の木をつくる">目標：数式の木をつくる。</h3>
 <p>数式の木をつくる。この時に木を直接書くのではなく、中置記法のコンストラクタをサポートしたり、さらに以下で述べるような３つの目標を満たすようなコンストラクタを作る。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- &lt;*&gt;　はapplicative functor の ap ではない</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- &lt;*&gt;　はapplicative functor の ap ではない</span>
 <span class="co">--program1.hs--------</span>
 arithTree1 <span class="fu">=</span> val <span class="dv">100</span> <span class="fu">&lt;*&gt;</span> val <span class="dv">3</span> <span class="fu">&lt;+&gt;</span> val <span class="dv">2</span> <span class="co">--変更前</span>
 evalResult1 <span class="fu">=</span> eval arithTree <span class="co">-- evalResult == 302</span>
-<span class="fu">---------------------</span></code></pre>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">--program2.hs---------</span>
+<span class="fu">---------------------</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">--program2.hs---------</span>
 arithTree2 <span class="fu">=</span> val <span class="dv">100</span> <span class="fu">&lt;*&gt;</span> val <span class="dv">3</span> <span class="fu">&lt;+&gt;</span> sqrt (val <span class="dv">4</span>) <span class="co">-- 変更後</span>
 evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalResult == 302</span>
-<span class="fu">----------------------</span></code></pre>
+<span class="fu">----------------------</span></code></pre></div>
 <p>設計の目標３つ</p>
 <ol type="1">
 <li>計算があとから追加できるようにする あとから log,rootなどの四則演算以外の項を追加できるようにする</li>
@@ -1064,8 +1075,8 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 </ol>
 <h3 id="計算をあとから追加できるようにするには">計算をあとから追加できるようにするには</h3>
 <p>組み立て可能なデータコンストラクタを定義する</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">BasicExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Val</span>)
-<span class="kw">type</span> <span class="dt">NewExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Mul</span> <span class="fu">:+:</span> <span class="dt">Sqrt</span> <span class="fu">:+:</span> <span class="dt">Val</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">BasicExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Val</span>)
+<span class="kw">type</span> <span class="dt">NewExpr</span> <span class="fu">=</span> (<span class="dt">Add</span> <span class="fu">:+:</span> <span class="dt">Mul</span> <span class="fu">:+:</span> <span class="dt">Sqrt</span> <span class="fu">:+:</span> <span class="dt">Val</span>)</code></pre></div>
 <ul>
 <li>データコンストラクタを型のパラメータに取らせる</li>
 <li>データコンストラクタを組み合わせられるようにする (<code>a :+: b</code>みたいに書けるようにする)</li>
@@ -1073,32 +1084,32 @@ evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalRes
 <p>DSLに新たにsqrtを追加すると、sqrtを表すデータコンストラクタが必要になる。 計算木に含まれるデータコンストラクタを組み込めるようにする。</p>
 <h3 id="型コンストラクタの組み合わせ">型コンストラクタの組み合わせ</h3>
 <p>型コンストラクタの直和を作る演算子<code>:+:</code>を用意する。 型パラメータeは後で説明するから今は気にしないでほしい</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">A</span> e e
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">A</span> e e
 <span class="kw">data</span> <span class="dt">Mul</span> e <span class="fu">=</span> <span class="dt">M</span> e e
 <span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">V</span> <span class="dt">Int</span>
 
 <span class="kw">infixl</span> <span class="fu">:&lt;:</span> <span class="dv">7</span>
-<span class="kw">data</span> (f <span class="fu">:+:</span> g) e <span class="fu">=</span> <span class="dt">Inl</span> (f e) <span class="fu">|</span> <span class="dt">Inr</span> (g e)</code></pre>
+<span class="kw">data</span> (f <span class="fu">:+:</span> g) e <span class="fu">=</span> <span class="dt">Inl</span> (f e) <span class="fu">|</span> <span class="dt">Inr</span> (g e)</code></pre></div>
 <h3 id="再帰型をつくるには">再帰型をつくるには？</h3>
 <p><code>MyExpr = Add MyExpr MyExpr | Val Int</code> と同様の構造を作るとき、Addの子供にはMyExprが来てほしい。</p>
 <p>再帰型を作るために型上の不動点演算子<code>Fix</code>を導入する。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Fix</span> f <span class="fu">=</span> <span class="dt">Fix</span> (f (<span class="dt">Fix</span> f))</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Fix</span> f <span class="fu">=</span> <span class="dt">Fix</span> (f (<span class="dt">Fix</span> f))</code></pre></div>
 <p>これを使うと4 * 2を表す構文木は以下のように書ける</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">eight ::</span> <span class="dt">Fix</span> (<span class="dt">Mul</span> <span class="fu">:+:</span> <span class="dt">Val</span>)
-eight <span class="fu">=</span> <span class="dt">Fix</span> (<span class="dt">Inl</span> (<span class="dt">Mul</span> (<span class="dt">Fix</span> (<span class="dt">Inr</span> (<span class="dt">Val</span> <span class="dv">4</span>))) (<span class="dt">Fix</span> (<span class="dt">Inr</span> (<span class="dt">Val</span> <span class="dv">2</span>)))))</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">eight ::</span> <span class="dt">Fix</span> (<span class="dt">Mul</span> <span class="fu">:+:</span> <span class="dt">Val</span>)
+eight <span class="fu">=</span> <span class="dt">Fix</span> (<span class="dt">Inl</span> (<span class="dt">Mul</span> (<span class="dt">Fix</span> (<span class="dt">Inr</span> (<span class="dt">Val</span> <span class="dv">4</span>))) (<span class="dt">Fix</span> (<span class="dt">Inr</span> (<span class="dt">Val</span> <span class="dv">2</span>)))))</code></pre></div>
 <p>Fix,Inl,Inrを(心の中で)消して構造を見てみると、型の上で再帰構造になっているのがわかる。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Mul</span> (<span class="dt">Val</span> <span class="dv">4</span>) (<span class="dt">Val</span> <span class="dv">2</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Mul</span> (<span class="dt">Val</span> <span class="dv">4</span>) (<span class="dt">Val</span> <span class="dv">2</span>)</code></pre></div>
 <p>これで木構造が作れるようになった。</p>
 <h3 id="スマートコンストラクタ1">スマートコンストラクタ(1)</h3>
 <p>Inr とか Inl とか長ったらしくて書いてられない(あとFixも) 型から勝手に構造が決定されるコンストラクタをつくる。 こんな型をもったコンストラクタがあると嬉しい。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">val ::</span> (<span class="dt">Val</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Expr</span> f
-<span class="ot">(&lt;+&gt;) ::</span> (<span class="dt">Add</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">val ::</span> (<span class="dt">Val</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Expr</span> f
+<span class="ot">(&lt;+&gt;) ::</span> (<span class="dt">Add</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f</code></pre></div>
 <p>(ここで<code>Val :&lt;: f</code>は、[fにはValが含まれる]と読む)</p>
 <p>つまり、完成した式の型に応じて自動的に適切な変換をするようなコンストラクタを作りたい。</p>
 <p>型クラスをうまくつかってこれを実現する。</p>
 <h3 id="スマートコンストラクタ2">スマートコンストラクタ(2)</h3>
 <p>制約<code>sub :&lt;: sup</code>が与えられた時,<code>sub a</code>を<code>sup a</code>にキャストすることが可能になる。 キャスト可能なことを型クラスとインスタンスで表現すると以下のようになる</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> (sub <span class="fu">:&lt;:</span> sup) <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> (sub <span class="fu">:&lt;:</span> sup) <span class="kw">where</span>
 <span class="ot">  inj ::</span> sub a <span class="ot">-&gt;</span> sup a
 
 <span class="kw">instance</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="fu">:&lt;:</span> f <span class="kw">where</span>
@@ -1110,16 +1121,16 @@ eight <span class="fu">=</span> <span class="dt">Fix</span> (<span class="dt">In
 
 <span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g,<span class="dt">Functor</span> h,f <span class="fu">:&lt;:</span> h ) 
   <span class="ot">=&gt;</span> f <span class="fu">:&lt;:</span> (g <span class="fu">:+:</span> h) <span class="kw">where</span>
-  inj x <span class="fu">=</span> <span class="dt">Inr</span> (inj x) <span class="co">-- 右への埋め込み</span></code></pre>
+  inj x <span class="fu">=</span> <span class="dt">Inr</span> (inj x) <span class="co">-- 右への埋め込み</span></code></pre></div>
 <p>不動点をとった型に埋め込むには以下の関数<code>inject</code>を定義すればいい</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">inject ::</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g,g <span class="fu">:&lt;:</span> f) <span class="ot">=&gt;</span> g (<span class="dt">Fix</span> f) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f
-inject <span class="fu">=</span> <span class="dt">Fix</span> <span class="fu">.</span> inj</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">inject ::</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g,g <span class="fu">:&lt;:</span> f) <span class="ot">=&gt;</span> g (<span class="dt">Fix</span> f) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f
+inject <span class="fu">=</span> <span class="dt">Fix</span> <span class="fu">.</span> inj</code></pre></div>
 <p>上記の<code>inject</code>を使ってコンストラクタを定義すると以下のようになる。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">val ::</span> (<span class="dt">Val</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Expr</span> f
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">val ::</span> (<span class="dt">Val</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Expr</span> f
 val x <span class="fu">=</span> inject (<span class="dt">Val</span> x)
 
 <span class="ot">(&lt;+&gt;) ::</span> (<span class="dt">Add</span> <span class="fu">:&lt;:</span> f, <span class="dt">Functor</span> f) <span class="ot">=&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f <span class="ot">-&gt;</span> <span class="dt">Expr</span> f
-x <span class="fu">&lt;+&gt;</span> y <span class="fu">=</span> inject (<span class="dt">Add</span> x y)</code></pre>
+x <span class="fu">&lt;+&gt;</span> y <span class="fu">=</span> inject (<span class="dt">Add</span> x y)</code></pre></div>
 <p>スマートコンストラクタはこれで完成。この式を評価する方法はまた次回</p>
 
 <br>
@@ -1155,7 +1166,8 @@ x <span class="fu">&lt;+&gt;</span> y <span class="fu">=</span> inject (<span cl
 ]]></description>
     <pubDate>Sat, 07 Jun 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.github.io/posts/2014-06-07-Data-Types-a-la-carte1.html</guid>
+    <dc:creator>Kiripon</dc:creator>
 </item>
 
-    </channel> 
+    </channel>
 </rss>

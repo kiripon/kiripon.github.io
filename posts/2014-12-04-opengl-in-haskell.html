@@ -47,7 +47,7 @@
 <p>ともあれ、赤い三角形はようやく表示できたので記念にソースコードを貼り付けておきます。</p>
 <p>使用しているパッケージはGLFW-bではなくGLFWです。GLFW-bのほうはglfw3に対応しているようなので気が向いたら書きなおすことにしよう</p>
 <p><em>Main.hs</em></p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoMonomorphismRestriction #-}</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoMonomorphismRestriction #-}</span>
 <span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
 
 <span class="kw">import           </span><span class="dt">Control.Monad</span>
@@ -219,23 +219,23 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 
   GL.deleteObjectName vertexShaderId
   GL.deleteObjectName fragmentShaderId
-  return programId</code></pre>
+  return programId</code></pre></div>
 <p><em>vertexShader.glsl</em></p>
-<pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
 
 <span class="fu">layout</span>(location = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
   <span class="fu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
   <span class="fu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
-}</code></pre>
+}</code></pre></div>
 <p><em>fragmentShader.glsl</em></p>
-<pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
 <span class="dt">out</span> <span class="dt">vec3</span> color;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
   color = <span class="dt">vec3</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>);
-}</code></pre>
+}</code></pre></div>
 
 <br>
 

@@ -42,22 +42,22 @@
   
 </div>
 
-<pre class="sourceCode haskell"><code class="sourceCode haskell">forM [<span class="dv">1</span><span class="fu">..</span>n] <span class="fu">$</span> \i <span class="ot">-&gt;</span> <span class="kw">do</span>
-  <span class="fu">...</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">forM [<span class="dv">1</span><span class="fu">..</span>n] <span class="fu">$</span> \i <span class="ot">-&gt;</span> <span class="kw">do</span>
+  <span class="fu">...</span></code></pre></div>
 <p>と書く際,iが必要ない時がある。そういう時は</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">forM [<span class="dv">1</span><span class="fu">..</span>n] <span class="fu">$</span> const <span class="fu">$</span> <span class="kw">do</span>
-  <span class="fu">...</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">forM [<span class="dv">1</span><span class="fu">..</span>n] <span class="fu">$</span> const <span class="fu">$</span> <span class="kw">do</span>
+  <span class="fu">...</span></code></pre></div>
 <p>と書くこともできる。</p>
 <h2 id="debug.traceを使うときのイディオム">Debug.Traceを使うときのイディオム</h2>
 <p>http://maoe.hatenadiary.jp/entry/2014/10/31/213459 に書いてあった。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f (x<span class="fu">:</span>xs) (<span class="dt">Just</span> x) <span class="fu">=</span> 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f (x<span class="fu">:</span>xs) (<span class="dt">Just</span> x) <span class="fu">=</span> 
 f [] _ <span class="fu">=</span>
-<span class="fu">..</span></code></pre>
+<span class="fu">..</span></code></pre></div>
 <p>のような定義の時に引数を表示したいときは、</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f a b <span class="fu">|</span> traceShow (a,b) <span class="dt">False</span> <span class="fu">=</span> undefined
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f a b <span class="fu">|</span> traceShow (a,b) <span class="dt">False</span> <span class="fu">=</span> undefined
 f (x<span class="fu">:</span>xs) (<span class="dt">Just</span> x) <span class="fu">=</span> 
 f [] _ <span class="fu">=</span>
-<span class="fu">..</span></code></pre>
+<span class="fu">..</span></code></pre></div>
 <p>と書くとあとでデバッグ消すのも楽だしわかりやすい。賢いなぁ。</p>
 
 <br>

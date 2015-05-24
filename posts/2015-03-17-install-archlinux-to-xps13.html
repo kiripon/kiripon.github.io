@@ -70,12 +70,13 @@ sudo -u arch yaourt --noconfirm -S broadcom-wl-dkms</code></pre>
 <p>これで無線LANが有効になった状態で起動できるので、<code>wifi-menu</code>等で無線LANに繋いで通常のインストール手順をふめばよい。</p>
 <h2 id="問題点">問題点</h2>
 <p><del>スピーカーから音が出ない。 <a href="https://major.io/2015/02/03/linux-support-dell-xps-13-9343-2015-model/">ここ</a>とかを見る限り、いまのところ根本的な解決はないらしい。続報に期待</del></p>
-<p><a href="https://github.com/mpalourdio/xps13" class="uri">https://github.com/mpalourdio/xps13</a> を参考にカーネルのブートオプションに<code>acpi_osi=&quot;Windows 2013&quot;</code>を追加し、数回再起動したところスピーカーから音が出るようになった。</p>
-<p>変更後のgummibootのエントリは以下のようになった。</p>
+<p><del><a href="https://github.com/mpalourdio/xps13" class="uri">https://github.com/mpalourdio/xps13</a> を参考にカーネルのブートオプションに<code>acpi_osi=&quot;Windows 2013&quot;</code>を追加し、数回再起動したところスピーカーから音が出るようになった。</del></p>
+<p><del>変更後のgummibootのエントリは以下のようになった。</del></p>
 <pre><code>title	Arch Linux
 linux	/vmlinuz-linux
 initrd	/initramfs-linux.img
 options	enable_rc6=1 enable_fbc=1 lvds_downclock=1 pcie_aspm=force psmouse.resetafter=0 acpi_osi=&quot;!Windows 2013&quot; root=/dev/sda7 rw</code></pre>
+<p><em>5/24追記</em> BIOS A02 以降からは<code>acpi_osi</code> オプションを指定しなくてもスピーカーが有効になるようになった。</p>
 
 <br>
 

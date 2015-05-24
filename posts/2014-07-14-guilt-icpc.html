@@ -46,7 +46,7 @@
 <p>今年もicpcに参加しました。 去年よりも解いた問題数は増えたものの、僕が書いたBがバグってて同期にデバッグの手間を取らせたり、Eの解法が思いついたもののコードをバグらせて時間内にACできなかったりと今回も罪人となってしまいました。</p>
 <p>Eはバグらせたくなかったので実装が楽なワーシャルフロイドをつかってグラフの直径を求めたのですがしょうもないミスをしてしまいました。</p>
 <h3 id="eのコード">Eのコード</h3>
-<pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
 <span class="ot">#include&lt;climits&gt;</span>
 <span class="kw">using</span> <span class="kw">namespace</span> std;
 <span class="dt">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
@@ -139,7 +139,7 @@
     cout &lt;&lt; result &lt;&lt; endl;
   }
   <span class="kw">return</span> <span class="dv">0</span>;
-}</code></pre>
+}</code></pre></div>
 <p>Eはワーシャルフロイドのグラフの対角成分の初期化を忘れていたために起こっていたバグです。本当にしょうもないバグでした。</p>
 
 <br>

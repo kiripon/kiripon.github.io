@@ -42,9 +42,9 @@
   
 </div>
 
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">!--</span></code></pre>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="ot">{-# LANGUAGE TypeFamilies #-}</span>
-<span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">TypeFamilies</span> <span class="kw">where</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">!--</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="ot">{-# LANGUAGE TypeFamilies #-}</span>
+<span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">TypeFamilies</span> <span class="kw">where</span></code></pre></div>
 <p>–&gt;</p>
 <ul>
 <li>foldに使いたいし使えるかもしれないからこれ読んだ。</li>
@@ -55,21 +55,21 @@
 <p>Vanillaなpolymorphic data typeや関数は１つだけ定義を持ち、その型のすべてのインスタンスはその定義を用いる. Type classやtype camilyはそれとは対照的に、インターフェースの定義と任意の個数のインスタンス宣言を持つ。 Type familyのインターフェース定義はkindとarityを規定する。</p>
 <h3 id="パラメータを持つデータ型都の違い">パラメータを持つデータ型都の違い</h3>
 <p>まずCharのリストを実装してみる。</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> family <span class="dt">XList</span> a
-<span class="ot">&gt;</span> <span class="kw">data</span> <span class="kw">instance</span> <span class="dt">XList</span> <span class="dt">Char</span> <span class="fu">=</span> <span class="dt">XCons</span> <span class="fu">!</span><span class="dt">Char</span> <span class="fu">!</span>(<span class="dt">XList</span> <span class="dt">Char</span>) <span class="fu">|</span> <span class="dt">XNil</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> family <span class="dt">XList</span> a
+<span class="ot">&gt;</span> <span class="kw">data</span> <span class="kw">instance</span> <span class="dt">XList</span> <span class="dt">Char</span> <span class="fu">=</span> <span class="dt">XCons</span> <span class="fu">!</span><span class="dt">Char</span> <span class="fu">!</span>(<span class="dt">XList</span> <span class="dt">Char</span>) <span class="fu">|</span> <span class="dt">XNil</span></code></pre></div>
 <p>これは普通のCharのリストの宣言になる。 では、つぎに () のリストを考えてみる。ここで () はなんの情報も持たないので、()のリストは長さの情報だけ持っていればいいことになる。なので、()のリストの時には長さだけを覚える実装にしたい。 普通のデータ型ではこんなことはできないが、type familyのちからを持ってすれば可能になる。</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="kw">instance</span> <span class="dt">XList</span> () <span class="fu">=</span> <span class="dt">XListUnit</span> <span class="fu">!</span><span class="dt">Int</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="kw">instance</span> <span class="dt">XList</span> () <span class="fu">=</span> <span class="dt">XListUnit</span> <span class="fu">!</span><span class="dt">Int</span></code></pre></div>
 <p>ただし、右辺のコンストラクタは別の名前を持たなければならない。 <code>data instance</code>の右辺の宣言は普通のデータ定義と同じ文法だ。 実は、<code>data instance</code>という宣言は<code>data</code>宣言と以下で述べる<code>type instance</code>宣言を略記したものとおなじである。</p>
 <p>GADTsはtype familyと次の意味で類似している,parametricな型のコストラクタが型変数に依存することを許しているのだ。 しかし、すべてのGADTコンストラクタは1つの場所でまとめて定義しなければならない。ところがtype familyは拡張することができる。 functional dependencies はtype familyと類似している,そしてfunctional dependenciesを使う多くのtype classは同じようにtype familyで記述できる。 functional dependencciesが関係を記述するのに対して、type familyはより関数的なスタイルで記述ができる。</p>
 <h3 id="使い方">使い方</h3>
 <p><code>{-# LANGUAGE TypeFamilies #-}</code>をつける</p>
 <h2 id="associated-data-type-example">associated data type example</h2>
 <h3 id="class-declaration">class declaration</h3>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">GMapKey</span> k <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">GMapKey</span> k <span class="kw">where</span>
 <span class="ot">&gt;</span>   <span class="kw">data</span> <span class="dt">GMap</span><span class="ot"> k ::</span> <span class="fu">*</span> <span class="ot">-&gt;</span> <span class="fu">*</span>
 <span class="ot">&gt;   empty ::</span> <span class="dt">GMap</span> k v
 <span class="ot">&gt;   lookup ::</span> k <span class="ot">-&gt;</span> <span class="dt">GMap</span> k v <span class="ot">-&gt;</span> <span class="dt">Maybe</span> v
-<span class="ot">&gt;   insert ::</span> k <span class="ot">-&gt;</span> v <span class="ot">-&gt;</span> <span class="dt">GMap</span> k v <span class="ot">-&gt;</span> <span class="dt">GMap</span> k v</code></pre>
+<span class="ot">&gt;   insert ::</span> k <span class="ot">-&gt;</span> v <span class="ot">-&gt;</span> <span class="dt">GMap</span> k v <span class="ot">-&gt;</span> <span class="dt">GMap</span> k v</code></pre></div>
 <p>クラスに対して_associated data family_の宣言をすることができる。 この宣言では_associated data_であるところの<code>GMap k</code>に_kind signature_を与えている。</p>
 
 <br>

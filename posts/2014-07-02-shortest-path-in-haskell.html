@@ -46,7 +46,7 @@
 <h2 id="haskellでダイクストラ法を書く">Haskellでダイクストラ法を書く</h2>
 <p>最近Dijkstra法を教える機会があったので、せっかくなのでHaskellでも書きました。 containersにPriority-queueが見つからなかったのでSetで代用してます。 ガリガリ副作用を使ってるので関数型っぽくはないです。</p>
 <p>標準ライブラリだけを使ってるからcodeforcesでも使えるはず。 <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A">AOJ:GRL_1_A</a>にあわせて書いてあります。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
 <span class="kw">import </span><span class="dt">Control.Monad.State</span>
 <span class="kw">import </span><span class="dt">Control.Applicative</span>
 <span class="kw">import </span><span class="dt">Data.Array</span>
@@ -95,7 +95,7 @@ dijkstra g s <span class="fu">=</span> runSTArray <span class="fu">$</span> <spa
 main <span class="fu">=</span> <span class="kw">do</span>
   (g,r) <span class="ot">&lt;-</span> getInput
   print g
-  print <span class="fu">$</span> dijkstra g r</code></pre>
+  print <span class="fu">$</span> dijkstra g r</code></pre></div>
 
 <br>
 

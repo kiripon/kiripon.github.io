@@ -46,7 +46,7 @@
 <p>C++のdequeに対応するモジュールとして、haskellでは純粋な関数の中で使えるData.Sequenceというモジュールがあります。 内部でFinger Treeというデータ構造を使うことで、左右への要素の追加を償却定数時間で行うことができるようです。 要素の追加には (|&gt;) や (&lt;|) といった演算子を使うことになるのですが、この演算子はコンストラクタではないため、これを用いてパターンマッチをすることができません。 しかしghcにはview patternをいう文法拡張があり、これをつかってパターンマッチをさせることができることを知りました。 <a href="http://www.kotha.net/ghcguide_ja/7.6.2/syntax-extns.html" class="uri">http://www.kotha.net/ghcguide_ja/7.6.2/syntax-extns.html</a></p>
 <p>data.sequenceでは予めviewに使える関数が定義されているため自分で定義する必要はありません。</p>
 <p>以下のコードでは left と right の定義に使っています。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE ViewPatterns #-}</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE ViewPatterns #-}</span>
 <span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
 <span class="co">--seq.hs</span>
 <span class="kw">import qualified</span> <span class="dt">Data.Sequence</span> <span class="kw">as</span> <span class="dt">Sq</span>
@@ -67,7 +67,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)) <span class="fu">=</span> l
 
 <span class="ot">right ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-right (Sq.viewr <span class="ot">-&gt;</span> (_ <span class="fu">:&gt;</span> r)) <span class="fu">=</span> r</code></pre>
+right (Sq.viewr <span class="ot">-&gt;</span> (_ <span class="fu">:&gt;</span> r)) <span class="fu">=</span> r</code></pre></div>
 <h3 id="実行結果">実行結果</h3>
 <pre class="shell"><code>% runhaskell seq.hs
 fromList []
@@ -78,11 +78,11 @@ fromList [1,1,2,3,4,5,6,7,8,9,10]
 <p>今年はせめて人並みにhaskellが使えるようになりたいです。精進します。</p>
 <h3 id="追記">追記</h3>
 <p>パターンガードを使えばガード分の中でパターンマッチが行えます。例えば、</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)) <span class="fu">=</span> l</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
+left (Sq.viewl <span class="ot">-&gt;</span> (l <span class="fu">:&lt;</span> _)) <span class="fu">=</span> l</code></pre></div>
 <p>は</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
-left v <span class="fu">|</span> (l <span class="fu">:&lt;</span> _) <span class="ot">&lt;-</span> Sq.viewl v <span class="fu">=</span> l</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">left ::</span> <span class="dt">Seq</span> a <span class="ot">-&gt;</span> a
+left v <span class="fu">|</span> (l <span class="fu">:&lt;</span> _) <span class="ot">&lt;-</span> Sq.viewl v <span class="fu">=</span> l</code></pre></div>
 <p>と書けます。</p>
 
 <br>

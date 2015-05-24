@@ -67,9 +67,9 @@
 </ol>
 <h3 id="例haskellのfunctor">例:HaskellのFunctor</h3>
 <p>haskellの圏Haskでは、型がobject,関数がarrowである。 Functor型クラスを見てみる。</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span></code></pre></div>
 <p>型<code>a</code>から型<code>f a</code>を構成するので,<code>f</code>がobjectの対応をとるものである。また、</p>
-<pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre></div>
 <p>は、型<code>(a -&gt; b)</code>から型<code>(f a -&gt; f b)</code>を構築する。これがarrowの対応になっている。 結合則は表現できないので、プログラマが保証しなければならない。</p>
 <h3 id="例忘却関手forgetful-functor">例:忘却関手(forgetful functor)</h3>
 <p>モノイド<span class="math">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />モノイド<span class="math">\((M,\bullet ,e)\)</span>に集合<span class="math">\(M\)</span>を対応させ、 モノイド準同型 <span class="math">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>

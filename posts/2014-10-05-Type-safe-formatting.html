@@ -48,16 +48,16 @@
 <h3 id="要約">要約</h3>
 <p>printfやscanfのフォーマット文字列を実装する。OCamlのprintfのような特殊な型付をせず type safe なインターフェースを実装したい。 フォーマット文字列から型付けを行うのは無理なので(Template Haskellで頑張れば話は別)、DSLとして実装して適切な型がつくようにする。</p>
 <p>最終的に次のように書けるようになる.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> hoge <span class="fu">=</span> lit <span class="st">&quot;PiyoPiyo &quot;</span> <span class="fu">^</span> char <span class="fu">^</span> lit <span class="st">&quot; fuga&quot;</span> <span class="fu">^</span> int
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> hoge <span class="fu">=</span> lit <span class="st">&quot;PiyoPiyo &quot;</span> <span class="fu">^</span> char <span class="fu">^</span> lit <span class="st">&quot; fuga&quot;</span> <span class="fu">^</span> int
 result  <span class="fu">=</span> sprintf hoge <span class="ch">'a'</span> <span class="dv">100</span>
 <span class="co">-- result == &quot;PiyoPiyo a 100&quot;</span>
 <span class="co">{-</span>
 <span class="co">bad_result = sprintf hoge 300 'a'</span>
 <span class="co">-- これは型エラー</span>
-<span class="co">-}</span></code></pre>
+<span class="co">-}</span></code></pre></div>
 <h3 id="the-initial-view">the initial view</h3>
 <p>データ型<code>F a b</code>を考える。ここで、<code>F</code>は<code>F :: * -&gt; * -&gt; *</code>、つまり2引数の型コンストラクタ。 ここで型変数<code>b</code>は型変数<code>a</code>の1回以上の出現を含む型だとすると、Fは型レベルのラムダ式とみなせる。 この関数に引数を適用するにはFの第1引数<code>a</code>を適用したい型<code>x</code>でunifyしてやればよい。 すると<code>b</code>の中の<code>a</code>の出現が<code>x</code>で置き換えられ,関数適用の結果になる。 これはPrologでのラムダ式の挙動をエミュレートしているらしい。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- F a b を型での関数抽象,つまり(λa. b)とみなす</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- F a b を型での関数抽象,つまり(λa. b)とみなす</span>
 <span class="co">-- 型レベルid</span>
 x <span class="fu">=</span> lit <span class="st">&quot;hoge&quot;</span><span class="ot"> ::</span> <span class="dt">F</span> a a
 
@@ -72,7 +72,7 @@ z <span class="fu">=</span> char <span class="ch">'c'</span><span class="ot">   
 
 <span class="co">-- このとき、x^yとy^zはそれぞれ次のような型になる。</span>
 x <span class="fu">^</span><span class="ot"> y ::</span> <span class="dt">F</span> a (<span class="dt">Int</span> <span class="ot">-&gt;</span> a)
-y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</span> a (<span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Char</span> <span class="ot">-&gt;</span> a))</code></pre>
+y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</span> a (<span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Char</span> <span class="ot">-&gt;</span> a))</code></pre></div>
 <h3 id="型が決まるまでの流れ記法は適当">型が決まるまでの流れ(記法は適当)</h3>
 <pre><code>x ^ y ::
 (F b c -&gt; F a b -&gt; F a c) (F a a) (F a (Int -&gt; a))

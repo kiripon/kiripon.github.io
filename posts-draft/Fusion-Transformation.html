@@ -46,15 +46,15 @@
 
 <h2 id="悪いコードと良いコード">悪いコードと良いコード</h2>
 <p>1~nまでの数の和を出力する関数をC,Haskellでそれぞれ定義する。</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> sumSq(<span class="dt">int</span> n){
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> sumSq(<span class="dt">int</span> n){
 <span class="dt">int</span> result = <span class="dv">0</span>;
 	<span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
 		result += i * i;
 	}
 	<span class="kw">return</span> result;
-}</code></pre>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">sumSq n <span class="fu">=</span> sum (map square [<span class="dv">1</span><span class="fu">..</span>n])
-square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre>
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sumSq n <span class="fu">=</span> sum (map square [<span class="dv">1</span><span class="fu">..</span>n])
+square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre></div>
 <p>Haskellのように書いたプログラムは、Cで書いたプログラムに比べて可読性はとてもいい。 一方で、このプログラムは効率は良くない。 * <code>[1..n]</code> で長さnのリストを生成し、生成したリストを<code>map square</code>関数に渡し、 * <code>[1..n^2]</code> というリストを生成し、さらに<code>sum</code>にこのリストを渡して結果を得る。 得たいものは値だけにもかかわらず、２つもリストを生成していることになる。</p>
 <h2 id="変換のステップ">変換のステップ</h2>
 <ol type="1">
@@ -67,7 +67,7 @@ square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre>
 <h2 id="hylomorphism">Hylomorphism</h2>
 <h3 id="hyloの定義">Hyloの定義</h3>
 <p>関数が以下のような再帰的手法で定義される時、これをHyloという。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f <span class="fu">=</span> φ ∘ (η ∘ <span class="dt">F</span> f) ∘ ψ</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f <span class="fu">=</span> φ ∘ (η ∘ <span class="dt">F</span> f) ∘ ψ</code></pre></div>
 <h3 id="endofunctor">Endofunctor</h3>
 <h2 id="変換手法">変換手法</h2>
 <p>参考文献</p>
