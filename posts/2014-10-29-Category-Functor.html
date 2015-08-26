@@ -55,14 +55,14 @@
 -->
 <p>Haskellではもっぱらコンテナを表すのに使われるFunctorについて。</p>
 <h2 id="定義functor">定義:Functor</h2>
-<p><span class="math">\(C\)</span>と<span class="math">\(D\)</span>を圏とする。 <span class="math">\(F:C \rightarrow D\)</span>について,以下を満たす/表す時,Fを<strong>関手(functor)</strong>と呼ぶ.</p>
+<p><span class="math inline">\(C\)</span>と<span class="math inline">\(D\)</span>を圏とする。 <span class="math inline">\(F:C \rightarrow D\)</span>について,以下を満たす/表す時,Fを<strong>関手(functor)</strong>と呼ぶ.</p>
 <ol type="1">
-<li>圏Cのobject <span class="math">\(A\)</span> から圏Dのobject <span class="math">\(B\)</span> への対応 <span class="math">\(F:A \rightarrow F(A)\)</span></li>
-<li>圏Cの射 <span class="math">\(f:A \rightarrow B\)</span> から圏Dの射 <span class="math">\(F(f):F(A) \rightarrow F(B)\)</span>への対応</li>
-<li>任意のCのobject <span class="math">\(A\)</span>とCのarrow <span class="math">\(f\)</span>,<span class="math">\(g\)</span>について
+<li>圏Cのobject <span class="math inline">\(A\)</span> から圏Dのobject <span class="math inline">\(B\)</span> への対応 <span class="math inline">\(F:A \rightarrow F(A)\)</span></li>
+<li>圏Cの射 <span class="math inline">\(f:A \rightarrow B\)</span> から圏Dの射 <span class="math inline">\(F(f):F(A) \rightarrow F(B)\)</span>への対応</li>
+<li>任意のCのobject <span class="math inline">\(A\)</span>とCのarrow <span class="math inline">\(f\)</span>,<span class="math inline">\(g\)</span>について
 <ul>
-<li><span class="math">\(F(id_A) = id_{F(A)}\)</span></li>
-<li><span class="math">\(F(g \circ f) = F(g) \circ F(f)\)</span></li>
+<li><span class="math inline">\(F(id_A) = id_{F(A)}\)</span></li>
+<li><span class="math inline">\(F(g \circ f) = F(g) \circ F(f)\)</span></li>
 </ul></li>
 </ol>
 <h3 id="例haskellのfunctor">例:HaskellのFunctor</h3>
@@ -72,8 +72,12 @@
 <div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre></div>
 <p>は、型<code>(a -&gt; b)</code>から型<code>(f a -&gt; f b)</code>を構築する。これがarrowの対応になっている。 結合則は表現できないので、プログラマが保証しなければならない。</p>
 <h3 id="例忘却関手forgetful-functor">例:忘却関手(forgetful functor)</h3>
-<p>モノイド<span class="math">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />モノイド<span class="math">\((M,\bullet ,e)\)</span>に集合<span class="math">\(M\)</span>を対応させ、 モノイド準同型 <span class="math">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
-<p><strong>疑問</strong><br />Functor型クラスだけではHask上のすべてのFunctorを表現できていないように見えた<br />たとえば,関手Fについて、型の対応を<code>F(a) = a</code>,関数の対応を<code>F(f) -&gt; f</code>とすればこれも関手になる。<br />Functor型クラスは特定の種類の関手についてだけについて言及しているのかもしれない。 誰か詳しい人に教えてもらいたいです。</p>
+<p>モノイド<span class="math inline">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />
+モノイド<span class="math inline">\((M,\bullet ,e)\)</span>に集合<span class="math inline">\(M\)</span>を対応させ、 モノイド準同型 <span class="math inline">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math inline">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math inline">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
+<p><strong>疑問</strong><br />
+Functor型クラスだけではHask上のすべてのFunctorを表現できていないように見えた<br />
+たとえば,関手Fについて、型の対応を<code>F(a) = a</code>,関数の対応を<code>F(f) -&gt; f</code>とすればこれも関手になる。<br />
+Functor型クラスは特定の種類の関手についてだけについて言及しているのかもしれない。 誰か詳しい人に教えてもらいたいです。</p>
 <p>11/29追記 isomorphismを介して一意に定まるから、<code>F = Identity</code>としていい(?)</p>
 <h3 id="参考文献">参考文献</h3>
 <ul>

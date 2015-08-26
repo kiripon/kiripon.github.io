@@ -3,14 +3,362 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
         <title>自由研究帳</title>
-        <link>http://kiripon.github.io</link>
+        <link>http://kiripon.net</link>
         <description><![CDATA[Haskellや読んだ論文のまとめ]]></description>
-        <atom:link href="http://kiripon.github.io/posts.xml" rel="self"
+        <atom:link href="http://kiripon.net/posts.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Sun, 23 Aug 2015 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Wed, 26 Aug 2015 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Segment Tree</title>
+    <link>http://kiripon.net/posts/2015-08-26-Segment-Tree.html</link>
+    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+<div class="info">
+    Posted on August 26, 2015
+    
+</div>
+<div class="info">
+  
+  Tags: 
+  
+</div>
+
+<h2>Segment Tree</h2>
+<ul>
+<li>モノイド <span class="math inline">\((M,\ast,e)\)</span></li>
+<li><span class="math inline">\(a_1,..,a_n \in M\)</span></li>
+</ul>
+に対して,以下のことがそれぞれ <span class="math inline">\(O(log(n))\)</span> で行えるデータ構造
+<ul>
+<li><span class="math inline">\(a_i \ast a_{i+1} \ast \dots \ast a_k\)</span> を求める</li>
+<li><span class="math inline">\(a_i\)</span> の書き換え</li>
+</ul>
+<p>仮定をモノイドから群に強めるとbinary indexed treeを作ることができる</p>
+<h2>verification</h2>
+<p>AOJを用いてverifyした</p>
+<ul>
+<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A">DSL-2-A Range Minimum Query</a></li>
+<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B">DSL-2-B Range Sum Query</a></li>
+</ul>
+<h2>実装</h2>
+<p>Segment Tree は配列を使った破壊的な実装がよく知られている。 せっかくHaskellで書くので永続データとして実装した。</p>
+<h2>コード</h2>
+<p><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B">Range Sum Query</a> でverifyしたときのものを載せる</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# OPTIONS_GHC -O2 -funbox-strict-fields #-}</span>
+<span class="ot">{-# LANGUAGE BangPatterns #-}</span>
+<span class="ot">{-# LANGUAGE ViewPatterns #-}</span>
+<span class="ot">{-# LANGUAGE UnboxedTuples #-}</span>
+<span class="kw">module</span> <span class="dt">Main</span> (main) <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">Data.Int</span> (<span class="dt">Int32</span>)
+<span class="kw">import </span><span class="dt">Control.Monad</span>
+<span class="kw">import </span><span class="dt">Control.Applicative</span>
+<span class="kw">import </span><span class="dt">Data.Monoid</span>
+<span class="kw">import </span><span class="dt">Data.Maybe</span> (fromJust)
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">B8</span>
+<span class="ot">getInts ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
+getInts <span class="fu">=</span>  map (fst <span class="fu">.</span> fromJust <span class="fu">.</span> B8.readInt) <span class="fu">.</span> B8.words <span class="fu">&lt;$&gt;</span> B8.getLine
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  n<span class="fu">:</span>q<span class="fu">:</span>_ <span class="ot">&lt;-</span> getInts
+  <span class="kw">let</span> bst <span class="fu">=</span> fromList <span class="fu">$</span> replicate n<span class="ot"> mempty ::</span> <span class="dt">STree</span> (<span class="dt">Sum</span> <span class="dt">Int</span>)
+  loop bst q
+  return ()
+  <span class="kw">where</span>
+    loop _ <span class="dv">0</span> <span class="fu">=</span> return ()
+    loop <span class="fu">!</span>tree <span class="fu">!</span>cnt <span class="fu">=</span> <span class="kw">do</span>
+      q<span class="fu">:</span>x<span class="fu">:</span>y<span class="fu">:</span>_ <span class="ot">&lt;-</span> getInts
+      <span class="kw">if</span> q <span class="fu">==</span> <span class="dv">0</span>
+        <span class="kw">then</span> <span class="kw">do</span>
+        <span class="kw">let</span> tree' <span class="fu">=</span> update (mappend <span class="fu">$</span> fromIntegral y) x tree
+        loop tree' (cnt<span class="fu">-</span><span class="dv">1</span>)
+        <span class="kw">else</span> <span class="kw">do</span>
+        print <span class="fu">.</span> getSum <span class="fu">$</span> query (x,y) tree
+        loop tree (cnt<span class="fu">-</span><span class="dv">1</span>)
+
+<span class="fu">---------------------------------------------</span>
+<span class="fu">---</span> <span class="dt">Monoid</span> <span class="kw">instance</span> for range minimum<span class="fu">/</span>maximum query
+<span class="kw">newtype</span> <span class="dt">Min</span> <span class="fu">=</span> <span class="dt">Min</span> {<span class="ot">fromMin ::</span> <span class="dt">Int32</span> } <span class="kw">deriving</span> (<span class="dt">Ord</span>,<span class="dt">Show</span>,<span class="dt">Eq</span>,<span class="dt">Read</span>)
+<span class="kw">instance</span> <span class="dt">Monoid</span> <span class="dt">Min</span> <span class="kw">where</span>
+  mempty <span class="fu">=</span> <span class="dt">Min</span> maxBound
+  <span class="ot">{-# INLINE mempty #-}</span>
+  mappend <span class="fu">=</span> min
+  <span class="ot">{-# INLINE mappend #-}</span>
+
+<span class="kw">newtype</span> <span class="dt">Max</span> <span class="fu">=</span> <span class="dt">Max</span> <span class="dt">Int</span> <span class="kw">deriving</span> (<span class="dt">Ord</span>,<span class="dt">Show</span>,<span class="dt">Eq</span>)
+<span class="kw">instance</span> <span class="dt">Monoid</span> <span class="dt">Max</span> <span class="kw">where</span>
+  mempty <span class="fu">=</span> <span class="dt">Max</span> minBound
+  <span class="ot">{-# INLINE mempty #-}</span>
+  mappend <span class="fu">=</span> max
+  <span class="ot">{-# INLINE mappend #-}</span>
+
+<span class="fu">---------------------</span>
+<span class="fu">---</span> <span class="dt">Segment</span> <span class="dt">Tree</span>
+<span class="kw">data</span> <span class="dt">STree</span> v <span class="fu">=</span> <span class="dt">Leaf</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span><span class="dt">Int</span> <span class="fu">!</span>v
+             <span class="fu">|</span> <span class="dt">Branch</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span>(<span class="dt">Int</span>,<span class="dt">Int</span>) <span class="fu">!</span>v <span class="fu">!</span>(<span class="dt">STree</span> v) <span class="fu">!</span>(<span class="dt">STree</span> v)
+             <span class="kw">deriving</span> (<span class="dt">Show</span>)
+<span class="co">-- | make segment tree from [a_1 .. a_n] (1-based indexing)</span>
+<span class="ot">fromList ::</span> <span class="dt">Monoid</span> v <span class="ot">=&gt;</span> [v] <span class="ot">-&gt;</span> <span class="dt">STree</span> v
+fromList <span class="fu">!</span>xs <span class="fu">=</span> makeTree (<span class="dv">1</span>,(length xs)) xs
+<span class="ot">{-# INLINE fromList #-}</span>
+
+<span class="co">-- | make segment tree from [a_k .. a_l]</span>
+<span class="ot">makeTree ::</span> <span class="dt">Monoid</span> v <span class="ot">=&gt;</span> (<span class="dt">Int</span>,<span class="dt">Int</span>) <span class="ot">-&gt;</span> [v] <span class="ot">-&gt;</span> <span class="dt">STree</span> v
+makeTree _ <span class="fu">!</span>[] <span class="fu">=</span> error <span class="st">&quot;empty list&quot;</span>
+makeTree (k,l) <span class="fu">!</span>es <span class="fu">=</span> loop <span class="fu">$</span> map (uncurry f) (zip [k<span class="fu">..</span>l] es)
+  <span class="kw">where</span>
+    loop <span class="fu">!</span>[x] <span class="fu">=</span> x
+    loop <span class="fu">!</span>xs <span class="fu">=</span> loop <span class="fu">$</span> buildTree xs
+<span class="ot">    f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> v <span class="ot">-&gt;</span> <span class="dt">STree</span> v
+    f <span class="fu">!</span>ix <span class="fu">!</span>v <span class="fu">=</span> <span class="dt">Leaf</span> ix v
+    buildTree <span class="fu">!</span>(a<span class="fu">:</span>b<span class="fu">:</span>ys) <span class="fu">=</span> <span class="kw">let</span> v <span class="fu">=</span> val a <span class="ot">`mappend`</span> val b
+                          <span class="kw">in</span> <span class="dt">Branch</span> (left a,right b) v a b <span class="fu">:</span> buildTree ys
+    buildTree <span class="fu">!</span>x <span class="fu">=</span> x
+
+range<span class="ot"> ::</span> <span class="dt">STree</span> v<span class="ot">-&gt;</span> (<span class="dt">Int</span>,<span class="dt">Int</span>)
+range <span class="fu">!</span>(<span class="dt">Leaf</span> r _) <span class="fu">=</span> (r,r)
+range <span class="fu">!</span>(<span class="dt">Branch</span> r _ _ _) <span class="fu">=</span> r
+<span class="ot">{-# INLINE range #-}</span>
+
+<span class="ot">val ::</span> <span class="dt">STree</span> v <span class="ot">-&gt;</span> v
+val <span class="fu">!</span>(<span class="dt">Leaf</span> _ v) <span class="fu">=</span> v
+val <span class="fu">!</span>(<span class="dt">Branch</span> _ v _ _) <span class="fu">=</span> v
+<span class="ot">{-# INLINE val #-}</span>
+
+left,<span class="ot">right ::</span> <span class="dt">STree</span> v <span class="ot">-&gt;</span> <span class="dt">Int</span>
+left (Main.range <span class="ot">-&gt;</span> (l,_))  <span class="fu">=</span> l
+right (Main.range <span class="ot">-&gt;</span> (_,r)) <span class="fu">=</span> r
+<span class="ot">{-#INLINE left  #-}</span>
+<span class="ot">{-#INLINE right #-}</span>
+
+<span class="co">-- | @query (l,r) t@ calculates @a_i &lt;&gt; .. &lt;&gt; a_r@. (@(&lt;&gt;)@ is equal to @mappend@)</span>
+<span class="co">-- O(log(n))</span>
+<span class="ot">query ::</span> <span class="dt">Monoid</span> v <span class="ot">=&gt;</span>  (<span class="dt">Int</span>, <span class="dt">Int</span>) <span class="ot">-&gt;</span> <span class="dt">STree</span> v <span class="ot">-&gt;</span> v
+query (ls,rs) t <span class="fu">=</span> loop t
+  <span class="kw">where</span>
+    loop (<span class="dt">Leaf</span> ix v)
+      <span class="fu">=</span> <span class="kw">if</span> ls <span class="fu">&lt;=</span> ix <span class="fu">&amp;&amp;</span> ix <span class="fu">&lt;=</span> rs <span class="kw">then</span> v <span class="kw">else</span> mempty
+    loop (<span class="dt">Branch</span> (leftist,rightist) v lt rt)
+      <span class="fu">|</span> rightist <span class="fu">&lt;</span> ls <span class="fu">||</span> rs <span class="fu">&lt;</span> leftist <span class="fu">=</span> mempty
+      <span class="fu">|</span> ls <span class="fu">&lt;=</span> leftist <span class="fu">&amp;&amp;</span> rightist <span class="fu">&lt;=</span> rs <span class="fu">=</span> v
+       <span class="fu">|</span> otherwise <span class="fu">=</span> loop lt <span class="ot">`mappend`</span> loop rt
+<span class="ot">{-# SPECIALIZE query :: (Int,Int) -&gt; STree (Sum Int) -&gt; Sum Int #-}</span>
+
+<span class="co">-- | @update f ix tree@ makes tree whose @ix@-th element is updated by @f@.</span>
+<span class="co">-- O(log(n))</span>
+<span class="ot">update ::</span> <span class="dt">Monoid</span> v <span class="ot">=&gt;</span> (v <span class="ot">-&gt;</span> v) <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">STree</span> v <span class="ot">-&gt;</span> <span class="dt">STree</span> v
+update f <span class="fu">!</span>ix <span class="fu">!</span>tree <span class="fu">=</span> loop tree
+  <span class="kw">where</span> loop t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+          <span class="dt">Leaf</span> i v <span class="ot">-&gt;</span> <span class="kw">if</span> ix <span class="fu">==</span> i
+                      <span class="kw">then</span> <span class="dt">Leaf</span> i (f v)
+                      <span class="kw">else</span> tree
+          <span class="dt">Branch</span> rng _ l<span class="fu">@</span>(Main.range <span class="ot">-&gt;</span> (ll,lr)) r
+            <span class="fu">|</span> ll <span class="fu">&lt;=</span> ix <span class="fu">&amp;&amp;</span> ix <span class="fu">&lt;=</span> lr
+              <span class="ot">-&gt;</span> <span class="kw">let</span> l' <span class="fu">=</span> loop l
+                 <span class="kw">in</span> <span class="dt">Branch</span> rng (val l' <span class="ot">`mappend`</span> val r) l' r
+            <span class="fu">|</span> otherwise
+              <span class="ot">-&gt;</span> <span class="kw">let</span> r' <span class="fu">=</span> loop r
+                 <span class="kw">in</span> <span class="dt">Branch</span> rng (val l <span class="ot">`mappend`</span> val r') l r'
+<span class="co">-- | @add v ix tree@ is equal to @update (mappend v) ix tree.@</span>
+<span class="ot">add ::</span> <span class="dt">Monoid</span> v <span class="ot">=&gt;</span> v <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">STree</span> v <span class="ot">-&gt;</span> <span class="dt">STree</span> v
+add <span class="fu">!</span>v <span class="fu">!</span>ix <span class="fu">!</span>tree <span class="fu">=</span> loop tree
+  <span class="kw">where</span> loop t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+          <span class="dt">Leaf</span> i v0 <span class="ot">-&gt;</span> <span class="kw">if</span> ix <span class="fu">==</span> i
+                      <span class="kw">then</span> <span class="dt">Leaf</span> i (v <span class="ot">`mappend`</span> v0)
+                      <span class="kw">else</span> tree
+          <span class="dt">Branch</span> rng _ l<span class="fu">@</span>(Main.range <span class="ot">-&gt;</span> (ll,lr)) r
+            <span class="fu">|</span> ll <span class="fu">&lt;=</span> ix <span class="fu">&amp;&amp;</span> ix <span class="fu">&lt;=</span> lr
+              <span class="ot">-&gt;</span> <span class="kw">let</span> l' <span class="fu">=</span> loop l
+                 <span class="kw">in</span> <span class="dt">Branch</span> rng (val l' <span class="ot">`mappend`</span> val r) l' r
+            <span class="fu">|</span> otherwise
+              <span class="ot">-&gt;</span> <span class="kw">let</span> r' <span class="fu">=</span> loop r
+                 <span class="kw">in</span> <span class="dt">Branch</span> rng (val l <span class="ot">`mappend`</span> val r') l r'
+
+<span class="co">-- | @insert ix v tree@ makes tree whose @ix@-th element is replaced by @v@.</span>
+<span class="co">-- O(log(n))</span>
+<span class="ot">insert ::</span> <span class="dt">Monoid</span> v <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> v <span class="ot">-&gt;</span> <span class="dt">STree</span> v <span class="ot">-&gt;</span> <span class="dt">STree</span> v
+insert <span class="fu">!</span>ix <span class="fu">!</span>v <span class="fu">!</span>tree <span class="fu">=</span> loop tree
+  <span class="kw">where</span> loop t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+          <span class="dt">Leaf</span> i _ <span class="ot">-&gt;</span> <span class="kw">if</span> ix <span class="fu">==</span> i
+                      <span class="kw">then</span> <span class="dt">Leaf</span> i v
+                      <span class="kw">else</span> tree
+          <span class="dt">Branch</span> rng _ l<span class="fu">@</span>(Main.range <span class="ot">-&gt;</span> (ll,lr)) r
+            <span class="fu">|</span> ll <span class="fu">&lt;=</span> ix <span class="fu">&amp;&amp;</span> ix <span class="fu">&lt;=</span> lr
+              <span class="ot">-&gt;</span> <span class="kw">let</span> l' <span class="fu">=</span> loop l
+                 <span class="kw">in</span> <span class="dt">Branch</span> rng (val l' <span class="ot">`mappend`</span> val r) l' r
+            <span class="fu">|</span> otherwise
+              <span class="ot">-&gt;</span> <span class="kw">let</span> r' <span class="fu">=</span> loop r
+                 <span class="kw">in</span> <span class="dt">Branch</span> rng (val l <span class="ot">`mappend`</span> val r') l r'</code></pre></div>
+
+<br>
+
+<div id="disqus_thread"><div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+  }());
+</script>
+]]></description>
+    <pubDate>Wed, 26 Aug 2015 00:00:00 UT</pubDate>
+    <guid>http://kiripon.net/posts/2015-08-26-Segment-Tree.html</guid>
+    <dc:creator>Kiripon</dc:creator>
+</item>
+<item>
+    <title>Chrome を使って Unity 上で音声認識</title>
+    <link>http://kiripon.net/posts/2015-08-23-VoiceRecognitionWithUnity.html</link>
+    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+<div class="info">
+    Posted on August 23, 2015
+    
+</div>
+<div class="info">
+  
+  Tags: <a href="/tags/C%23.html">C#</a>, <a href="/tags/Unity.html">Unity</a>
+  
+</div>
+
+<h2>構成</h2>
+<ul>
+<li>Websocket-sharp</li>
+<li>Unity</li>
+</ul>
+<h2>使い方</h2>
+<ol>
+<li>適当なオブジェクトに以下のスクリプトをあたっちする.</li>
+<li><a href="http://localhost:12002" class="uri">http://localhost:12002</a> をChrome でひらく</li>
+<li>マイクに話しかけるとUnity上のデバッグコンソールに認識したメッセージが表示される</li>
+</ol>
+<pre><code>using UnityEngine;
+using System;
+using System.Collections;
+using System.Configuration;
+using WebSocketSharp;
+using WebSocketSharp.Net;
+using System.Text;
+using WebSocketSharp.Server;
+using System.Security.Cryptography.X509Certificates;
+public class chromeVoiceRecog : MonoBehaviour {
+  private HttpServer httpsv;
+  public class MyService : WebSocketBehavior{
+    public MyService(){
+      base.IgnoreExtensions = true;
+    }
+    protected override void OnMessage (MessageEventArgs e)
+    {
+      // Get
+      Debug.Log (&quot;Get message:&quot; + e.Data);
+    }
+    protected override void OnOpen(){
+      Debug.Log (&quot;Socket Open&quot;);
+    }
+    protected override void OnError(ErrorEventArgs e){
+      Debug.Log (&quot;Error:&quot; + e.Message);
+      Debug.Log (&quot;Exception:&quot; + e.Exception);
+      Debug.Log (&quot;hoge&quot; + e.Exception.StackTrace);
+    }
+  }
+  void Awake()
+  {
+    var port = 12002;
+    var addr = &quot;localhost&quot;;
+    var fullUrl = addr + &quot;:&quot; + port;
+    httpsv = new HttpServer (&quot;http://&quot; + fullUrl);
+    httpsv.RootPath = &quot;./htmlcontents&quot;; // TODO: まともなパスに書き換える
+    string[] fs = System.IO.Directory.GetFiles (@httpsv.RootPath, &quot;*&quot; );
+    Debug.Log (&quot;current path:&quot; + fs[0]);
+    httpsv.Log.Level = LogLevel.Trace;
+    httpsv.OnGet += (sender, e) =&gt; {
+      var req = e.Request;
+      var res = e.Response;
+      var path = req.RawUrl;
+      Debug.Log(&quot;http request:&quot;+req);
+      if(path == &quot;/&quot;) path += &quot;index.html&quot;;
+      var content = httpsv.GetFile(path);
+      if(content == null){
+        res.StatusCode = (int)HttpStatusCode.NotFound;
+        res.WriteContent(
+          System.Text.Encoding.UTF8.GetBytes(
+          &quot;File Not Found&quot;));
+        return;
+      }
+      if(path.EndsWith (&quot;.html&quot;)){
+        res.ContentType = &quot;text/html&quot;;
+        res.ContentEncoding = Encoding.UTF8;
+      }
+      res.WriteContent(content);
+    };
+    httpsv.WaitTime = TimeSpan.FromSeconds (2);
+    httpsv.AddWebSocketService&lt;MyService&gt; (&quot;/MyService&quot;);
+    httpsv.Start ();
+    Debug.Log (&quot;http server started with &quot; + fullUrl);
+  }
+  void OnApplicationQuit()
+  {
+    httpsv.Stop ();
+    Debug.Log (&quot;websocket server exitted&quot;);
+  }
+}
+</code></pre>
+
+<br>
+
+<div id="disqus_thread"><div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+  }());
+</script>
+]]></description>
+    <pubDate>Sun, 23 Aug 2015 00:00:00 UT</pubDate>
+    <guid>http://kiripon.net/posts/2015-08-23-VoiceRecognitionWithUnity.html</guid>
+    <dc:creator>Kiripon</dc:creator>
+</item>
+<item>
     <title>Lambek's theorem</title>
-    <link>http://kiripon.github.io/posts/2015-08-23-Lambek%27s-Theorem.html</link>
+    <link>http://kiripon.net/posts/2015-08-23-Lambek%27s-Theorem.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on August 23, 2015
@@ -96,12 +444,12 @@ i \circ \alpha
 </script>
 ]]></description>
     <pubDate>Sun, 23 Aug 2015 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2015-08-23-Lambek%27s-Theorem.html</guid>
+    <guid>http://kiripon.net/posts/2015-08-23-Lambek%27s-Theorem.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Arch Linux を Dell XPS 13(2015)へインストールする</title>
-    <link>http://kiripon.github.io/posts/2015-03-17-install-archlinux-to-xps13.html</link>
+    <link>http://kiripon.net/posts/2015-03-17-install-archlinux-to-xps13.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on March 17, 2015
@@ -180,12 +528,12 @@ options	enable_rc6=1 enable_fbc=1 lvds_downclock=1 pcie_aspm=force psmouse.reset
 </script>
 ]]></description>
     <pubDate>Tue, 17 Mar 2015 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2015-03-17-install-archlinux-to-xps13.html</guid>
+    <guid>http://kiripon.net/posts/2015-03-17-install-archlinux-to-xps13.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>OpenGL in Haskell</title>
-    <link>http://kiripon.github.io/posts/2014-12-04-opengl-in-haskell.html</link>
+    <link>http://kiripon.net/posts/2014-12-04-opengl-in-haskell.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on December  4, 2014
@@ -423,12 +771,12 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </script>
 ]]></description>
     <pubDate>Thu, 04 Dec 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-12-04-opengl-in-haskell.html</guid>
+    <guid>http://kiripon.net/posts/2014-12-04-opengl-in-haskell.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>圏論のノート2:Functor</title>
-    <link>http://kiripon.github.io/posts/2014-10-29-Category-Functor.html</link>
+    <link>http://kiripon.net/posts/2014-10-29-Category-Functor.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on October 29, 2014
@@ -452,14 +800,14 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 -->
 <p>Haskellではもっぱらコンテナを表すのに使われるFunctorについて。</p>
 <h2 id="定義functor">定義:Functor</h2>
-<p><span class="math">\(C\)</span>と<span class="math">\(D\)</span>を圏とする。 <span class="math">\(F:C \rightarrow D\)</span>について,以下を満たす/表す時,Fを<strong>関手(functor)</strong>と呼ぶ.</p>
+<p><span class="math inline">\(C\)</span>と<span class="math inline">\(D\)</span>を圏とする。 <span class="math inline">\(F:C \rightarrow D\)</span>について,以下を満たす/表す時,Fを<strong>関手(functor)</strong>と呼ぶ.</p>
 <ol type="1">
-<li>圏Cのobject <span class="math">\(A\)</span> から圏Dのobject <span class="math">\(B\)</span> への対応 <span class="math">\(F:A \rightarrow F(A)\)</span></li>
-<li>圏Cの射 <span class="math">\(f:A \rightarrow B\)</span> から圏Dの射 <span class="math">\(F(f):F(A) \rightarrow F(B)\)</span>への対応</li>
-<li>任意のCのobject <span class="math">\(A\)</span>とCのarrow <span class="math">\(f\)</span>,<span class="math">\(g\)</span>について
+<li>圏Cのobject <span class="math inline">\(A\)</span> から圏Dのobject <span class="math inline">\(B\)</span> への対応 <span class="math inline">\(F:A \rightarrow F(A)\)</span></li>
+<li>圏Cの射 <span class="math inline">\(f:A \rightarrow B\)</span> から圏Dの射 <span class="math inline">\(F(f):F(A) \rightarrow F(B)\)</span>への対応</li>
+<li>任意のCのobject <span class="math inline">\(A\)</span>とCのarrow <span class="math inline">\(f\)</span>,<span class="math inline">\(g\)</span>について
 <ul>
-<li><span class="math">\(F(id_A) = id_{F(A)}\)</span></li>
-<li><span class="math">\(F(g \circ f) = F(g) \circ F(f)\)</span></li>
+<li><span class="math inline">\(F(id_A) = id_{F(A)}\)</span></li>
+<li><span class="math inline">\(F(g \circ f) = F(g) \circ F(f)\)</span></li>
 </ul></li>
 </ol>
 <h3 id="例haskellのfunctor">例:HaskellのFunctor</h3>
@@ -469,8 +817,12 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 <div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;   fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre></div>
 <p>は、型<code>(a -&gt; b)</code>から型<code>(f a -&gt; f b)</code>を構築する。これがarrowの対応になっている。 結合則は表現できないので、プログラマが保証しなければならない。</p>
 <h3 id="例忘却関手forgetful-functor">例:忘却関手(forgetful functor)</h3>
-<p>モノイド<span class="math">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />モノイド<span class="math">\((M,\bullet ,e)\)</span>に集合<span class="math">\(M\)</span>を対応させ、 モノイド準同型 <span class="math">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
-<p><strong>疑問</strong><br />Functor型クラスだけではHask上のすべてのFunctorを表現できていないように見えた<br />たとえば,関手Fについて、型の対応を<code>F(a) = a</code>,関数の対応を<code>F(f) -&gt; f</code>とすればこれも関手になる。<br />Functor型クラスは特定の種類の関手についてだけについて言及しているのかもしれない。 誰か詳しい人に教えてもらいたいです。</p>
+<p>モノイド<span class="math inline">\((M,\bullet,e)\)</span>は、Mの要素をarrowとする唯一のobjectを持つ圏になる。 このモノイド圏から集合の圏への対応を考える。<br />
+モノイド<span class="math inline">\((M,\bullet ,e)\)</span>に集合<span class="math inline">\(M\)</span>を対応させ、 モノイド準同型 <span class="math inline">\(h:(M, \bullet ,e) \rightarrow (M', \bullet' ,e')\)</span> を、写像 <span class="math inline">\(h:M \rightarrow M'\)</span> に対応させると,<span class="math inline">\(F:Mon \rightarrow Set\)</span>は関手になる。</p>
+<p><strong>疑問</strong><br />
+Functor型クラスだけではHask上のすべてのFunctorを表現できていないように見えた<br />
+たとえば,関手Fについて、型の対応を<code>F(a) = a</code>,関数の対応を<code>F(f) -&gt; f</code>とすればこれも関手になる。<br />
+Functor型クラスは特定の種類の関手についてだけについて言及しているのかもしれない。 誰か詳しい人に教えてもらいたいです。</p>
 <p>11/29追記 isomorphismを介して一意に定まるから、<code>F = Identity</code>としていい(?)</p>
 <h3 id="参考文献">参考文献</h3>
 <ul>
@@ -511,12 +863,12 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </script>
 ]]></description>
     <pubDate>Wed, 29 Oct 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-10-29-Category-Functor.html</guid>
+    <guid>http://kiripon.net/posts/2014-10-29-Category-Functor.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>圏論のノート1</title>
-    <link>http://kiripon.github.io/posts/2014-10-19-Category1.html</link>
+    <link>http://kiripon.net/posts/2014-10-19-Category1.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on October 19, 2014
@@ -529,40 +881,43 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </div>
 
 <h2 id="定義-圏">定義: 圏</h2>
-<p>圏<span class="math">\(C\)</span> は以下の要素からなる</p>
+<p>圏<span class="math inline">\(C\)</span> は以下の要素からなる</p>
 <ol type="1">
 <li>object(対象) の集まり</li>
 <li>arrow(射) の集まり(morphismとも呼ばれる)</li>
-<li>arrow <span class="math">\(f\)</span> にdomainとcodomainを割り当てる操作.
+<li>arrow <span class="math inline">\(f\)</span> にdomainとcodomainを割り当てる操作.
 <ul>
-<li><span class="math">\(dom\ f = A\)</span>かつ<span class="math">\(cod\ f = B\)</span>のとき、<span class="math">\(f : A \rightarrow B\)</span>と書く。</li>
-<li><span class="math">\(dom\ f = A\)</span>かつ<span class="math">\(cod\ f = B\)</span>なるarrow <span class="math">\(f\)</span> の集まりを <span class="math">\(C(A,B)\)</span>と書く。</li>
+<li><span class="math inline">\(dom\ f = A\)</span>かつ<span class="math inline">\(cod\ f = B\)</span>のとき、<span class="math inline">\(f : A \rightarrow B\)</span>と書く。</li>
+<li><span class="math inline">\(dom\ f = A\)</span>かつ<span class="math inline">\(cod\ f = B\)</span>なるarrow <span class="math inline">\(f\)</span> の集まりを <span class="math inline">\(C(A,B)\)</span>と書く。</li>
 </ul></li>
-<li>合成<span class="math">\((\circ)\)</span>
+<li>合成<span class="math inline">\((\circ)\)</span>
 <ul>
-<li><span class="math">\(dom\ f = cod\ g\)</span>なるf,gについて、合成射(composite arrow) <span class="math">\(f \circ g\)</span>を作る.</li>
+<li><span class="math inline">\(dom\ f = cod\ g\)</span>なるf,gについて、合成射(composite arrow) <span class="math inline">\(f \circ g\)</span>を作る.</li>
 <li>以下の関係則(associative raw)を満たさなければならない
 <ul>
-<li><span class="math">\((f \circ g) \circ h = f \circ (g \circ h)\)</span></li>
+<li><span class="math inline">\((f \circ g) \circ h = f \circ (g \circ h)\)</span></li>
 </ul></li>
 </ul></li>
-<li>すべてのobject Aについて<span class="math">\(id_A : A \rightarrow A\)</span>は以下を満たす
+<li>すべてのobject Aについて<span class="math inline">\(id_A : A \rightarrow A\)</span>は以下を満たす
 <ul>
-<li><span class="math">\(id_B \circ f = f \circ id_B = f \ (where\ f : A \rightarrow B)\)</span></li>
+<li><span class="math inline">\(id_B \circ f = f \circ id_B = f \ (where\ f : A \rightarrow B)\)</span></li>
 </ul></li>
 </ol>
 <h3 id="例-集合">例: 集合</h3>
-<p>集合をObject,集合間の全域関数をarrowとみなせば圏になる.<br />ただし、 <span class="math">\(f : x \mapsto x^2\)</span> のような関数を考えると、fは<br /><span class="math">\(f : \mathbb{R} \rightarrow \mathbb{R}\)</span> とも <span class="math">\(f : \mathbb{R} \rightarrow \mathbb{R}^2\)</span> とも解釈できてしまう</p>
-<p>これを避けるために 射<span class="math">\(f : \mathbb{A} \rightarrow \mathbb{B}\)</span> を<span class="math">\((f,\mathbb{B})\)</span>と書くこともある。</p>
+<p>集合をObject,集合間の全域関数をarrowとみなせば圏になる.<br />
+ただし、 <span class="math inline">\(f : x \mapsto x^2\)</span> のような関数を考えると、fは<br />
+<span class="math inline">\(f : \mathbb{R} \rightarrow \mathbb{R}\)</span> とも <span class="math inline">\(f : \mathbb{R} \rightarrow \mathbb{R}^2\)</span> とも解釈できてしまう</p>
+<p>これを避けるために 射<span class="math inline">\(f : \mathbb{A} \rightarrow \mathbb{B}\)</span> を<span class="math inline">\((f,\mathbb{B})\)</span>と書くこともある。</p>
 <h3 id="例-poset">例: Poset</h3>
 <ul>
-<li>Object… <span class="math">\((P,\le_P)\)</span>の組(集合P:半順序<span class="math">\(\le_P\)</span>を持つ)</li>
-<li>Arrow … <span class="math">\(f:(P,\le_P) \rightarrow (Q,\le_Q)\)</span>. ただし <span class="math">\(p \le_P p'\)</span> のとき<span class="math">\(f(p) \le_P f(p')\)</span></li>
+<li>Object… <span class="math inline">\((P,\le_P)\)</span>の組(集合P:半順序<span class="math inline">\(\le_P\)</span>を持つ)</li>
+<li>Arrow … <span class="math inline">\(f:(P,\le_P) \rightarrow (Q,\le_Q)\)</span>. ただし <span class="math inline">\(p \le_P p'\)</span> のとき<span class="math inline">\(f(p) \le_P f(p')\)</span></li>
 </ul>
 <h2 id="定義-diagram">定義: Diagram</h2>
-<p>圏CのDiagramは、CのObjectとArrowで正しくラベル付けされた辺と頂点の集まりの事を言う。<br />ここでいう“正しく”とは、<span class="math">\(f : A \rightarrow B\)</span>をラベルとして持つ辺があった時、その始点はAであり終点はBである事を言う。</p>
+<p>圏CのDiagramは、CのObjectとArrowで正しくラベル付けされた辺と頂点の集まりの事を言う。<br />
+ここでいう“正しく”とは、<span class="math inline">\(f : A \rightarrow B\)</span>をラベルとして持つ辺があった時、その始点はAであり終点はBである事を言う。</p>
 <h2 id="定義-可換">定義: 可換</h2>
-<p>圏CのDiagragramが可換(commute)とは、任意の頂点のペア<span class="math">\(X,Y\)</span>について,<span class="math">\(X\)</span>から<span class="math">\(Y\)</span>への経路すべてが等しい事を言う。つまり<span class="math">\(X\)</span>から<span class="math">\(Y\)</span>への各経路がarrowを定め、それら圏Cにおいて等しいことをいう。</p>
+<p>圏CのDiagragramが可換(commute)とは、任意の頂点のペア<span class="math inline">\(X,Y\)</span>について,<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への経路すべてが等しい事を言う。つまり<span class="math inline">\(X\)</span>から<span class="math inline">\(Y\)</span>への各経路がarrowを定め、それら圏Cにおいて等しいことをいう。</p>
 <h3 id="参考文献">参考文献</h3>
 <ul>
 <li><a href="http://mitpress.mit.edu/books/basic-category-theory-computer-scientists">Basic Category Theory for Computer Scientists</a></li>
@@ -600,12 +955,12 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
 </script>
 ]]></description>
     <pubDate>Sun, 19 Oct 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-10-19-Category1.html</guid>
+    <guid>http://kiripon.net/posts/2014-10-19-Category1.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Type safe Formatting</title>
-    <link>http://kiripon.github.io/posts/2014-10-05-Type-safe-formatting.html</link>
+    <link>http://kiripon.net/posts/2014-10-05-Type-safe-formatting.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on October  5, 2014
@@ -712,12 +1067,12 @@ y <span class="fu">^</span><span class="ot"> z ::</span> <span class="dt">F</spa
 </script>
 ]]></description>
     <pubDate>Sun, 05 Oct 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-10-05-Type-safe-formatting.html</guid>
+    <guid>http://kiripon.net/posts/2014-10-05-Type-safe-formatting.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>Github pages に移動しました</title>
-    <link>http://kiripon.github.io/posts/2014-09-27-Github-pages.html</link>
+    <link>http://kiripon.net/posts/2014-09-27-Github-pages.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on September 27, 2014
@@ -769,12 +1124,12 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 </script>
 ]]></description>
     <pubDate>Sat, 27 Sep 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-09-27-Github-pages.html</guid>
+    <guid>http://kiripon.net/posts/2014-09-27-Github-pages.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 <item>
     <title>ICPCの罪状</title>
-    <link>http://kiripon.github.io/posts/2014-07-14-guilt-icpc.html</link>
+    <link>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
     Posted on July 14, 2014
@@ -917,216 +1272,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 </script>
 ]]></description>
     <pubDate>Mon, 14 Jul 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-07-14-guilt-icpc.html</guid>
-    <dc:creator>Kiripon</dc:creator>
-</item>
-<item>
-    <title>Haskellで最短経路</title>
-    <link>http://kiripon.github.io/posts/2014-07-02-shortest-path-in-haskell.html</link>
-    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
-<div class="info">
-    Posted on July  2, 2014
-    
-</div>
-<div class="info">
-  
-  Tags: <a href="/tags/Haskell.html">Haskell</a>, <a href="/tags/Algorithm.html">Algorithm</a>
-  
-</div>
-
-<h2 id="haskellでダイクストラ法を書く">Haskellでダイクストラ法を書く</h2>
-<p>最近Dijkstra法を教える機会があったので、せっかくなのでHaskellでも書きました。 containersにPriority-queueが見つからなかったのでSetで代用してます。 ガリガリ副作用を使ってるので関数型っぽくはないです。</p>
-<p>標準ライブラリだけを使ってるからcodeforcesでも使えるはず。 <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A">AOJ:GRL_1_A</a>にあわせて書いてあります。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
-<span class="kw">import </span><span class="dt">Control.Monad.State</span>
-<span class="kw">import </span><span class="dt">Control.Applicative</span>
-<span class="kw">import </span><span class="dt">Data.Array</span>
-<span class="kw">import </span><span class="dt">Data.Array.ST</span>
-<span class="kw">import </span><span class="dt">Data.Array.IO</span>
-<span class="kw">import qualified</span> <span class="dt">Data.Set</span> <span class="kw">as</span> <span class="dt">S</span>
-<span class="kw">import </span><span class="dt">Data.Traversable</span>
-<span class="kw">type</span> <span class="dt">Dist</span> <span class="fu">=</span> <span class="dt">Int</span>
-<span class="kw">type</span> <span class="dt">Node</span> <span class="fu">=</span> <span class="dt">Int</span>
-<span class="kw">type</span> <span class="dt">Graph</span> <span class="fu">=</span> <span class="dt">Array</span> <span class="dt">Node</span> [(<span class="dt">Node</span>,<span class="dt">Dist</span>)]
-
-<span class="ot">getInput ::</span> <span class="dt">IO</span> (<span class="dt">Graph</span>,<span class="dt">Node</span>)
-getInput <span class="fu">=</span> <span class="kw">do</span>
-  v<span class="fu">:</span>e<span class="fu">:</span>r<span class="fu">:</span>_ <span class="ot">&lt;-</span> map read <span class="fu">.</span> words <span class="fu">&lt;$&gt;</span><span class="ot"> getLine ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
-  a <span class="ot">&lt;-</span> newArray (<span class="dv">0</span>,v<span class="fu">-</span><span class="dv">1</span>) []<span class="ot"> ::</span> <span class="dt">IO</span> (<span class="dt">IOArray</span> <span class="dt">Node</span> [(<span class="dt">Node</span>,<span class="dt">Dist</span>)])
-  replicateM_ e <span class="fu">$</span> <span class="kw">do</span>
-    s<span class="fu">:</span>t<span class="fu">:</span>d<span class="fu">:</span>_ <span class="ot">&lt;-</span> map read <span class="fu">.</span> words <span class="fu">&lt;$&gt;</span><span class="ot"> getLine ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
-    es <span class="ot">&lt;-</span> readArray a s
-    writeArray a s ((t,d)<span class="fu">:</span>es)
-  a' <span class="ot">&lt;-</span> freeze a
-  return (a',r)
-
-<span class="ot">dijkstra ::</span> <span class="dt">Graph</span> <span class="ot">-&gt;</span> <span class="dt">Node</span> <span class="ot">-&gt;</span> <span class="dt">Array</span> <span class="dt">Node</span> <span class="dt">Dist</span>
-dijkstra g s <span class="fu">=</span> runSTArray <span class="fu">$</span> <span class="kw">do</span>
-  a <span class="ot">&lt;-</span> newArray bound maxBound
-  evalStateT (loop a) (S.singleton (<span class="dv">0</span>,s))
-  return a
-  <span class="kw">where</span>
-    bound <span class="fu">=</span> bounds g
-    loop a <span class="fu">=</span> <span class="kw">do</span>
-      isEmpty <span class="ot">&lt;-</span> S.null <span class="fu">&lt;$&gt;</span> get
-      unless isEmpty <span class="fu">$</span> <span class="kw">do</span>
-      (d,n) <span class="ot">&lt;-</span> state S.deleteFindMin
-      d' <span class="ot">&lt;-</span> lift <span class="fu">$</span> readArray a n
-      when (d <span class="fu">&lt;</span> d') <span class="fu">$</span> <span class="kw">do</span>
-        lift <span class="fu">$</span> writeArray a n d
-        <span class="kw">let</span> nexts <span class="fu">=</span> g <span class="fu">!</span> n
-        void <span class="fu">$</span> for nexts <span class="fu">$</span> \(ix,w) <span class="ot">-&gt;</span> <span class="kw">do</span>
-          d'' <span class="ot">&lt;-</span> lift <span class="fu">$</span> readArray a ix
-          when (d <span class="fu">+</span> w <span class="fu">&lt;</span> d'')
-            <span class="fu">$</span> modify <span class="fu">$</span> S.insert (d<span class="fu">+</span>w,ix)
-      loop a
-
-    
-<span class="ot">main ::</span> <span class="dt">IO</span> ()
-main <span class="fu">=</span> <span class="kw">do</span>
-  (g,r) <span class="ot">&lt;-</span> getInput
-  print g
-  print <span class="fu">$</span> dijkstra g r</code></pre></div>
-
-<br>
-
-<div id="disqus_thread"><div>
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function () {
-  var s = document.createElement('script'); s.async = true;
-  s.type = 'text/javascript';
-  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-  }());
-</script>
-]]></description>
-    <pubDate>Wed, 02 Jul 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-07-02-shortest-path-in-haskell.html</guid>
-    <dc:creator>Kiripon</dc:creator>
-</item>
-<item>
-    <title>Data types a la carteのメモ2</title>
-    <link>http://kiripon.github.io/posts/2014-06-24-Data-types-a-la-carte2.html</link>
-    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
-<div class="info">
-    Posted on June 24, 2014
-    
-</div>
-<div class="info">
-  
-  Tags: <a href="/tags/Haskell.html">Haskell</a>
-  
-</div>
-
-<p>データ型の定義はできるようになったので、このデータ型を<em>評価</em>していく。 数式の評価とはなにか。各項についての<em>畳込み</em>のことである。</p>
-<p>畳み込みというとリストに限定して考えてしまいがちだけど、ここで云う畳み込みは一般のデータ構造に対して言うことのできる畳み込みである。</p>
-<p>どのように畳み込みを定義するか。コンストラクタごとにどのようにして値に落としこむかを記述すればいい。 以下のような2つのコンストラクタがあったとする。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e
-           <span class="kw">deriving</span> <span class="dt">Functor</span>
-<span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>
-           <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre></div>
-<p>このAddとValからなる木を評価する場合、 以下のような関数があれば各コンストラクタについての評価はできる。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
-<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre></div>
-<p><code>Add</code> と <code>Val</code>　をこのクラスのインスタンスにすると、木の子供が評価されてた時に自身をどう評価すればいいかがわかる。 例えば, <code>evalAlgebra (Add 100 200) === 300</code> , <code>Val 12 === 12</code> と評価することができる。</p>
-<p><code>Fix (Add :+: Val)</code>のo評価の時はこれを再帰的に行わなければならない。 以下の関数を使って再帰的に評価をする。データ型の定義はできるようになったので、このデータ型を<em>評価</em>していく。 数式の評価とはなにか。各項についての<em>畳込み</em>のことである。</p>
-<p>畳み込みというとリストに限定して考えてしまいがちだけど、ここで云う畳み込みは一般のデータ構造に対して言うことのできる畳み込みである。</p>
-<p>どのように畳み込みを定義するか。コンストラクタごとにどのようにして値に落としこむかを記述すればいい。 以下のような2つのコンストラクタがあったとする。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Add</span> e <span class="fu">=</span> <span class="dt">Add</span> e e   <span class="kw">deriving</span> <span class="dt">Functor</span>
-<span class="kw">data</span> <span class="dt">Val</span> e <span class="fu">=</span> <span class="dt">Val</span> <span class="dt">Int</span>   <span class="kw">deriving</span> <span class="dt">Functor</span></code></pre></div>
-<p>このAddとValからなる木を評価する場合、 以下のような関数があれば各コンストラクタについての評価はできる。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Eval</span> f <span class="kw">where</span>
-<span class="ot">  evalAlgebra ::</span> (<span class="dt">Functor</span> f) <span class="ot">=&gt;</span> f <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></code></pre></div>
-<p><code>Add</code> と <code>Val</code>　をこのクラスのインスタンスにすると、木の子供が評価されてた時に自身をどう評価すればいいかがわかる。 例えば, <code>evalAlgebra (Add 100 200) === 300</code> , <code>Val 12 === 12</code> と評価することができる。</p>
-<p><code>Fix (Add :+: Val)</code>のo評価の時はこれを再帰的に行わなければならない。 以下の関数を使って再帰的に評価をする。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
-foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre></div>
-<p>ここでの<code>g::(f a -&gt; a)</code>は<em>Algebra</em>と呼ばれる。</p>
-<p>定義を見ればわかる通り、数式の木<code>t</code>の子孫について畳み込みをして、その結果についてgを適用している。 これで<code>Fix f</code>の<code>f</code>さえfunctorになっていれば再帰的に畳み込みができる。</p>
-<p><code>Fix (Add :+: Val)</code>について畳み込みをするには,<code>Add :+: Val</code>がFunctorでなければならない。 なので <code>f :+: g</code> をFunctorにする。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
-  fmap f (<span class="dt">Inl</span> l) <span class="fu">=</span> <span class="dt">Inl</span> <span class="fu">$</span> fmap f l
-  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre></div>
-<p>これで準備は整った。実際に評価部分を定義する。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
-  evalAlgebra (<span class="dt">Add</span> v1 v2) <span class="fu">=</span> v1 <span class="fu">+</span> v2
-<span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Val</span> <span class="kw">where</span>
-  evalAlgebra (<span class="dt">Val</span> v) <span class="fu">=</span> v
-
-<span class="ot">eval ::</span> <span class="dt">Eval</span> f <span class="ot">=&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> <span class="dt">Int</span>
-eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre></div>
-<p>これで畳込みが記述できた！</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">foldExpr ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> (f a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> a
-foldExpr g (<span class="dt">Fix</span> t) <span class="fu">=</span> g (fmap (foldExpr g) t)</code></pre></div>
-<p>ここでの<code>g::(f a -&gt; a)</code>は<em>Algebra</em>と呼ばれる。</p>
-<p>定義を見ればわかる通り、数式の木<code>t</code>の子孫について畳み込みをして、その結果についてgを適用している。 これで<code>Fix f</code>の<code>f</code>さえfunctorになっていれば再帰的に畳み込みができる。</p>
-<p><code>Fix (Add :+: Val)</code>について畳み込みをするには,<code>Add :+: Val</code>がFunctorでなければならない。 なので <code>f :+: g</code> をFunctorにする。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> (<span class="dt">Functor</span> f,<span class="dt">Functor</span> g) <span class="ot">=&gt;</span> <span class="dt">Functor</span> (f <span class="fu">:+:</span> g) <span class="kw">where</span>
-  fmap f (<span class="dt">Inl</span> l) <span class="fu">=</span> <span class="dt">Inl</span> <span class="fu">$</span> fmap f l
-  fmap f (<span class="dt">Inr</span> r) <span class="fu">=</span> <span class="dt">Inr</span> <span class="fu">$</span> fmap f r</code></pre></div>
-<p>これで準備は整った。実際に評価部分を定義する。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Add</span> <span class="kw">where</span>
-  evalAlgebra (<span class="dt">Add</span> v1 v2) <span class="fu">=</span> v1 <span class="fu">+</span> v2
-<span class="kw">instance</span> <span class="dt">Eval</span> <span class="dt">Val</span> <span class="kw">where</span>
-  evalAlgebra (<span class="dt">Val</span> v) <span class="fu">=</span> v
-
-<span class="ot">eval ::</span> <span class="dt">Eval</span> f <span class="ot">=&gt;</span> <span class="dt">Fix</span> f <span class="ot">-&gt;</span> <span class="dt">Int</span>
-eval t <span class="fu">=</span> foldExpr evalAlgebra t</code></pre></div>
-<p>これで畳込みが記述できた！</p>
-<p>Free Monadとの関連はまた次回</p>
-
-<br>
-
-<div id="disqus_thread"><div>
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function () {
-  var s = document.createElement('script'); s.async = true;
-  s.type = 'text/javascript';
-  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-  }());
-</script>
-]]></description>
-    <pubDate>Tue, 24 Jun 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.github.io/posts/2014-06-24-Data-types-a-la-carte2.html</guid>
+    <guid>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 
