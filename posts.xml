@@ -18,30 +18,30 @@
 </div>
 <div class="info">
   
-  Tags: 
+  Tags: <a href="/tags/haskell.html">haskell</a>, <a href="/tags/Data%20Structures.html">Data Structures</a>
   
 </div>
 
-<h2>Segment Tree</h2>
+<h2 id="segment-tree">Segment Tree</h2>
 <ul>
 <li>モノイド <span class="math inline">\((M,\ast,e)\)</span></li>
 <li><span class="math inline">\(a_1,..,a_n \in M\)</span></li>
 </ul>
-に対して,以下のことがそれぞれ <span class="math inline">\(O(log(n))\)</span> で行えるデータ構造
+<p>に対して,以下のことがそれぞれ <span class="math inline">\(O(log(n))\)</span> で行えるデータ構造</p>
 <ul>
 <li><span class="math inline">\(a_i \ast a_{i+1} \ast \dots \ast a_k\)</span> を求める</li>
 <li><span class="math inline">\(a_i\)</span> の書き換え</li>
 </ul>
 <p>仮定をモノイドから群に強めるとbinary indexed treeを作ることができる</p>
-<h2>verification</h2>
+<h2 id="verification">verification</h2>
 <p>AOJを用いてverifyした</p>
 <ul>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A">DSL-2-A Range Minimum Query</a></li>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B">DSL-2-B Range Sum Query</a></li>
 </ul>
-<h2>実装</h2>
+<h2 id="実装">実装</h2>
 <p>Segment Tree は配列を使った破壊的な実装がよく知られている。 せっかくHaskellで書くので永続データとして実装した。</p>
-<h2>コード</h2>
+<h2 id="コード">コード</h2>
 <p><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B">Range Sum Query</a> でverifyしたときのものを載せる</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# OPTIONS_GHC -O2 -funbox-strict-fields #-}</span>
 <span class="ot">{-# LANGUAGE BangPatterns #-}</span>
@@ -238,12 +238,12 @@ insert <span class="fu">!</span>ix <span class="fu">!</span>v <span class="fu">!
   
 </div>
 
-<h2>構成</h2>
+<h2 id="構成">構成</h2>
 <ul>
 <li>Websocket-sharp</li>
 <li>Unity</li>
 </ul>
-<h2>使い方</h2>
+<h2 id="使い方">使い方</h2>
 <ol>
 <li>適当なオブジェクトに以下のスクリプトをあたっちする.</li>
 <li><a href="http://localhost:12002" class="uri">http://localhost:12002</a> をChrome でひらく</li>
