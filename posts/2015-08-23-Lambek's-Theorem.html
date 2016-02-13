@@ -48,9 +48,10 @@
 <li><span class="math inline">\(F : C \rightarrow C\)</span> (自己函手)</li>
 </ul>
 <h3 id="定理-lambeks-theorem">定理 Lambek’s theorem</h3>
-<p><span class="math inline">\(F\)</span> が initial algebra <span class="math display">\[\alpha : F(X) \rightarrow X\]</span> を持つとき, <span class="math inline">\(\alpha\)</span> を通して <span class="math inline">\(X\)</span> は <span class="math inline">\(F(X)\)</span> と isomorphic である</p>
+<p><span class="math inline">\(F\)</span> が initial algebra <span class="math display">\[\alpha : F(X)
+\rightarrow X\]</span>を持つとき, <span class="math inline">\(\alpha\)</span> は <span class="math inline">\(X\)</span> と <span class="math inline">\(F(X)\)</span> の isomorphism に なる</p>
 <h3 id="証明">証明</h3>
-<p><span class="math inline">\(F(\alpha): F(F(X)) \rightarrow F(X)\)</span> は <span class="math inline">\(F(X)\)</span> を carrier とすると algebra になる. initiality より、以下の図を可換にする <span class="math inline">\(i : X \rightarrow F(X)\)</span> が唯一存在する. この<span class="math inline">\(i\)</span>が<span class="math inline">\(\alpha^{-1}\)</span>であることを示す.</p>
+<p><span class="math inline">\(F(\alpha): F(F(X)) \rightarrow F(X)\)</span> は <span class="math inline">\(F(X)\)</span> を carrier とすると algebra になる. <span class="math inline">\(\alpha\)</span> が initial であることより、以下の図を可換にする <span class="math inline">\(i : X \rightarrow F(X)\)</span> が唯一存在する. (<span class="math inline">\(\alpha\)</span> から <span class="math inline">\(F(\alpha)\)</span> へ algebra を移す射)</p>
 <p><span class="math display">\[
 \require{AMScd}
 \begin{CD}
@@ -59,22 +60,25 @@ F(X)         @&gt;{F(i)}&gt;&gt;     F(F(X))\\
 X            @&gt;{i}&gt;&gt;     F(X)
 \end{CD}
 \]</span></p>
-<p>また、<span class="math inline">\(\alpha \circ i : X \rightarrow X\)</span> について、これは algebra <span class="math inline">\((\alpha,X)\)</span> から <span class="math inline">\((\alpha,X)\)</span> への morphism になる. initiality から <span class="math inline">\(\alpha \circ i = id_X\)</span>となる.</p>
+<p>この<span class="math inline">\(i\)</span>が<span class="math inline">\(\alpha^{-1}\)</span>であることを示す.</p>
+<p>まず <span class="math inline">\(\alpha \circ i : X \rightarrow X\)</span> を考える.</p>
 <p><span class="math display">\[
 \require{AMScd}
 \begin{CD}
-F(X)         @&gt;{F(\alpha \circ i)}&gt;&gt;  F(X)\\
-@V{\alpha}VV             @VV{\alpha}V\\
-X            @&gt;{\alpha \circ i}&gt;&gt;     X
-\end{CD}
-=
-\begin{CD}
-F(X)         @&gt;{F(id_X)}&gt;&gt;  F(X)\\
-@V{\alpha}VV             @VV{\alpha}V\\
-X            @&gt;{id_X}&gt;&gt;     X
+F(X)         @&gt;{F(i)}&gt;&gt;     F(F(X))       @&gt;{F(\alpha)}&gt;&gt; F(X)\\
+@VV{\alpha}V             @VV{F(\alpha)}V       @VVV     \\
+X            @&gt;{i}&gt;&gt;        F(X)          @&gt;{\alpha}&gt;&gt; X
 \end{CD}
 \]</span></p>
-<p>また, <span class="math display">\[
+<p>これは algebra <span class="math inline">\((\alpha,X)\)</span> から <span class="math inline">\((\alpha,X)\)</span> への morphism になる. そのため <span class="math inline">\((\alpha,X)\)</span> が始代数であることから, <span class="math inline">\(\alpha \circ i = id_X\)</span>となる.</p>
+<p>次に <span class="math inline">\(i \circ \alpha\)</span> について考えるため,最初の可換図式にもどる. <span class="math display">\[
+\require{AMScd}
+\begin{CD}
+F(X)         @&gt;{F(i)}&gt;&gt;     F(F(X))\\
+@V{\alpha}VV             @VV{F(\alpha)}V\\
+X            @&gt;{i}&gt;&gt;     F(X)
+\end{CD}
+\]</span> 上の図が可換なため、 <span class="math inline">\(i \circ \alpha = F(\alpha) \circ F(i)\)</span> である. そのため, <span class="math display">\[
 \begin{eqnarray}
 i \circ \alpha
 &amp; = &amp; F(\alpha) \circ F(i) \\
@@ -83,7 +87,12 @@ i \circ \alpha
 &amp; = &amp; id_{F(X)}
 \end{eqnarray}
 \]</span></p>
-<p>であるので, <span class="math inline">\(i = \alpha^{-1}\)</span> となる.</p>
+<p>以上より, <span class="math inline">\(i \circ \alpha = id\)</span>, <span class="math inline">\(\alpha \circ i = id\)</span> なので <span class="math inline">\(i = \alpha^{-1}\)</span> が導けた.</p>
+<h3 id="自分なりの解釈">自分なりの解釈</h3>
+<ul>
+<li><span class="math inline">\(F(X) = X\)</span> の解とみなすと, <span class="math inline">\(X\)</span> は <span class="math inline">\(F\)</span> の最小不動点だと思える</li>
+<li>始代数が存在するとしたらそのキャリアは最小不動点と一致する（?）</li>
+</ul>
 
 <br>
 
