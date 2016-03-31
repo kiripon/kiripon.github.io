@@ -53,15 +53,14 @@
 <li><span class="math inline">\(a_i \ast a_{i+1} \ast \dots \ast a_k\)</span> を求める</li>
 <li><span class="math inline">\(a_i\)</span> の書き換え</li>
 </ul>
-<p>仮定をモノイドから群に強めるとbinary indexed treeを作ることができる</p>
-<h2 id="verification">verification</h2>
-<p>AOJを用いてverifyした</p>
+<h2 id="verification">Verification</h2>
+<p>AOJを用いて実装の正しさを確認した.</p>
 <ul>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A">DSL-2-A Range Minimum Query</a></li>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B">DSL-2-B Range Sum Query</a></li>
 </ul>
 <h2 id="実装">実装</h2>
-<p>Segment Tree は配列を使った破壊的な実装がよく知られている。 せっかくHaskellで書くので永続データとして実装した。</p>
+<p>Segment Tree は配列を使った破壊的な実装がよく知られている。 しかし今回はHaskellで実装をおこなうために、副作用を用いない永続データ 構造として実装した。</p>
 <h2 id="コード">コード</h2>
 <p><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B">Range Sum Query</a> でverifyしたときのものを載せる</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# OPTIONS_GHC -O2 -funbox-strict-fields #-}</span>
@@ -209,6 +208,8 @@ insert <span class="fu">!</span>ix <span class="fu">!</span>v <span class="fu">!
             <span class="fu">|</span> otherwise
               <span class="ot">-&gt;</span> <span class="kw">let</span> r' <span class="fu">=</span> loop r
                  <span class="kw">in</span> <span class="dt">Branch</span> rng (val l <span class="ot">`mappend`</span> val r') l r'</code></pre></div>
+<h2 id="補足">補足</h2>
+<p>仮定をモノイドから群に強めることで, 実装がより単純なデータ構造である Binary indexed tree を作ることができる.</p>
 
 <br>
 
