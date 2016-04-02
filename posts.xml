@@ -7,8 +7,87 @@
         <description><![CDATA[Haskellや読んだ論文のまとめ]]></description>
         <atom:link href="http://kiripon.net/posts.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Wed, 26 Aug 2015 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Tue, 01 Mar 2016 00:00:00 UT</lastBuildDate>
         <item>
+    <title>任天堂でのインターンシップ2016参加記</title>
+    <link>http://kiripon.net/posts/2016-03-01-Impressions-of-the-Internship-at-Nintendo.html</link>
+    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+<div class="info">
+    Posted on March  1, 2016
+    
+</div>
+<div class="info">
+  
+  Tags: 
+  
+</div>
+
+<p><a href="https://www.nintendo.co.jp/jobs/internship/index.html">任天堂インターンシップ2016</a>へ参加してきました.</p>
+<p>2月22日〜2月26日まで「システム開発コース」に参加してきました.</p>
+<h3 id="面接について">面接について</h3>
+<p>人事と一対一で面接を行った． 技術的な内容はほとんど問われなかった．</p>
+<ul>
+<li>余暇は何をしてるか</li>
+<li>趣味について</li>
+</ul>
+<p>など，わりと普通な内容だった． あとは応募フォームに書いた内容について(研究とかアンチ半導体同盟のこと とか)を話した気がする．雑談みたいな雰囲気だった．</p>
+<p>面接が終わって退室した後，受付の人に「賑やかな面接でしたね」と言われて 「ああ，少し調子に乗りすぎたか」と思って若干反省した記憶がある.</p>
+<p>結果は１月下旬までに知らせるとのことだったけど，一週間たたずに連絡が来 た．</p>
+<h3 id="感想">感想</h3>
+<ul>
+<li>インターンの前に開発ボードの仕様書にざっと目を通すように、とのメール が届く. どれどれと思って仕様書を見ると5000ページもある. こいつはやべ え…と思いながらそっと閉じた.</li>
+<li>参加者の個性がすごい. 自己紹介の経歴、専門などが幅広い.</li>
+<li>開発ボードの仕様書を読み解くのがとにかく大変だった.</li>
+<li>仕様を理解してから動かそうと思っていたが、席が隣だった人(Kくん) がガ ンガン手を動かしていて焦る。でもわからないものは仕方がないと思って仕 様書を読む. (後で聞いたところによるとこの段階では仕様はよくわかって いなかったらしい. 手を動かしながら学んでいく姿勢は見習うべきだと思っ た)</li>
+<li>周りの人間が文字の送信に成功するのをみながら、僕はまだ仕様書を読んでいる 段階. Kくんもいつの間にか文字を送ることに成功している.</li>
+<li>翌日になって理解した仕様に沿ってUARTのコントロールレジスタを叩いたら 何も問題なく文字列の送信に成功する. この時点で若干自信がつく.</li>
+<li>受信も割と簡単に行けるやろ〜と思っていたらうまく行かない. なんでや</li>
+</ul>
+<h3 id="やったこと">やったこと</h3>
+<p>UARTとかコントローラのデバイスドライバの実装を行った． <a href="https://www.nintendo.co.jp/jobs/internship/index.html">インターンシップの募集要項</a> に書いてあるとおりのことをやった. どこまで書いていいのかわからないので， 詳細は伏せます．</p>
+<p>C++へのヘイトが積もっていった．暗黙の型変換死すべし．</p>
+<h3 id="全体としての感想">全体としての感想</h3>
+<ul>
+<li>1週間研究から離れてデバイスドライバを書くことに集中できたのは良かっ た.</li>
+<li>社員さんがリラックスして仕事に取り組めていることがわかった.</li>
+</ul>
+
+<br>
+
+<div id="disqus_thread"><div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+  }());
+</script>
+]]></description>
+    <pubDate>Tue, 01 Mar 2016 00:00:00 UT</pubDate>
+    <guid>http://kiripon.net/posts/2016-03-01-Impressions-of-the-Internship-at-Nintendo.html</guid>
+    <dc:creator>Kiripon</dc:creator>
+</item>
+<item>
     <title>Segment Tree</title>
     <link>http://kiripon.net/posts/2015-08-26-Segment-Tree.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
@@ -1135,154 +1214,6 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 ]]></description>
     <pubDate>Sat, 27 Sep 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.net/posts/2014-09-27-Github-pages.html</guid>
-    <dc:creator>Kiripon</dc:creator>
-</item>
-<item>
-    <title>ICPCの罪状</title>
-    <link>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</link>
-    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
-<div class="info">
-    Posted on July 14, 2014
-    
-</div>
-<div class="info">
-  
-  Tags: <a href="/tags/C%2B%2B.html">C++</a>, <a href="/tags/Algorithm.html">Algorithm</a>, <a href="/tags/ICPC.html">ICPC</a>
-  
-</div>
-
-<p>今年もicpcに参加しました。 去年よりも解いた問題数は増えたものの、僕が書いたBがバグってて同期にデバッグの手間を取らせたり、Eの解法が思いついたもののコードをバグらせて時間内にACできなかったりと今回も罪人となってしまいました。</p>
-<p>Eはバグらせたくなかったので実装が楽なワーシャルフロイドをつかってグラフの直径を求めたのですがしょうもないミスをしてしまいました。</p>
-<h3 id="eのコード">Eのコード</h3>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
-<span class="ot">#include&lt;climits&gt;</span>
-<span class="kw">using</span> <span class="kw">namespace</span> std;
-<span class="dt">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
-<span class="dt">int</span> p[maxv];
-<span class="dt">int</span> d[maxv];
-<span class="dt">int</span> deg[maxv];
-<span class="dt">int</span> g[maxv][maxv];
-
-<span class="dt">int</span> n;
-<span class="dt">const</span> <span class="dt">int</span> INF = INT_MAX/<span class="dv">2</span>;
-<span class="dt">void</span> mkGraph(){
-  fill(*g,g[maxv],INF);
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++)g[i][i] = <span class="dv">0</span>; <span class="co">// &lt;- ここを本番で書き忘れてた</span>
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-    <span class="co">//cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; p[i] &lt;&lt; endl;</span>
-    <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
-    <span class="dt">int</span> from = i,to = p[i];
-
-    g[from][to] = g[to][from] = d[i];
-  }
-}
-
-<span class="dt">void</span> outgraph(){
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-      cout &lt;&lt; g[i][j] &lt;&lt; <span class="st">' '</span>;
-    }
-    cout &lt;&lt; endl;
-  }
-}
-
-<span class="dt">int</span> radius(){
-  mkGraph();
-  <span class="co">//outgraph();</span>
-  <span class="kw">for</span>(<span class="dt">int</span> k = <span class="dv">1</span>;k &lt;= n;k++){
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-      <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-	g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
-      }
-    }
-  }
-  
-  <span class="dt">int</span> ret = <span class="dv">-1</span>;
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-      <span class="kw">if</span> (g[i][j] == INF)<span class="kw">continue</span>;
-      ret = max(g[i][j],ret);
-    }
-  }
-  <span class="co">//cout &lt;&lt; &quot;rad:&quot; &lt;&lt; ret &lt;&lt; endl;</span>
-  <span class="kw">return</span> ret;
-}
-
-<span class="dt">int</span> weight(){
-  <span class="dt">int</span> ret = <span class="dv">0</span>;
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-    ret += d[i];
-  }
-  <span class="co">//cout &lt;&lt; &quot;weight:&quot;&lt;&lt;ret &lt;&lt; endl;</span>
-  <span class="kw">return</span> ret;
-}
-
-<span class="dt">int</span> main(){
-  <span class="kw">while</span>(<span class="kw">true</span>){
-    cin &gt;&gt; n;
-    <span class="kw">if</span>(n == <span class="dv">0</span>)<span class="kw">break</span>;
-    
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-      cin &gt;&gt; p[i];
-    }
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-      cin &gt;&gt; d[i];
-    }
-    fill(deg,deg+maxv,<span class="dv">0</span>);
-  
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-      deg[ p[i] ] += <span class="dv">1</span>;
-      deg[ i    ] += <span class="dv">1</span>;
-    }
-  
-    <span class="dt">int</span> result = <span class="dv">0</span>;
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-      <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
-      result += d[i] * <span class="dv">2</span>;
-    }
-    <span class="co">//cout &lt;&lt; &quot;junkai:&quot; &lt;&lt; result &lt;&lt; endl;</span>
-    result -= radius();
-    <span class="co">//outgraph();</span>
-    result += weight();
-    cout &lt;&lt; result &lt;&lt; endl;
-  }
-  <span class="kw">return</span> <span class="dv">0</span>;
-}</code></pre></div>
-<p>Eはワーシャルフロイドのグラフの対角成分の初期化を忘れていたために起こっていたバグです。本当にしょうもないバグでした。</p>
-
-<br>
-
-<div id="disqus_thread"><div>
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function () {
-  var s = document.createElement('script'); s.async = true;
-  s.type = 'text/javascript';
-  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-  }());
-</script>
-]]></description>
-    <pubDate>Mon, 14 Jul 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 
