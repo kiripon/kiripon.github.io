@@ -30,13 +30,13 @@ div#content ul li.post
 }
 
 
-div#content ul li.post:hover:after
+div#content ul li.post:hover::after
 {
   width            : 100%;
   background-color : #a9d053;
 }
 
-div#content ul li.post:after
+div#content ul li.post::after
 {
   -webkit-transition : all 0.25s ease-in-out 0.0s;
   -moz-transition    : all 0.25s ease-in-out 0.0s;
