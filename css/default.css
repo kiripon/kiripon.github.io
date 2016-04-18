@@ -33,7 +33,7 @@ div#content ul li.post
 div#content ul li.post:hover::after
 {
   width            : 100%;
-  background-color : #a9d053;
+  background-color : #515659;
 }
 
 div#content ul li.post::after
