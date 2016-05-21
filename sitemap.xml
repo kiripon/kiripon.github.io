@@ -2,78 +2,128 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://kiripon.net/posts/2016-03-01-Impressions-of-the-Internship-at-Nintendo.html</loc>
-    <lastmod>2016-03-01</lastmod>
+    <loc>http://kiripon.net/profile.html</loc>
+    
   </url>
   
   <url>
-    <loc>http://kiripon.net/posts/2015-08-26-Segment-Tree.html</loc>
-    <lastmod>2015-08-26</lastmod>
+    <loc>http://kiripon.net/archive.html</loc>
+    
   </url>
   
   <url>
-    <loc>http://kiripon.net/posts/2015-08-23-VoiceRecognitionWithUnity.html</loc>
-    <lastmod>2015-08-23</lastmod>
+    <loc>http://kiripon.net/drafts.html</loc>
+    
   </url>
   
   <url>
-    <loc>http://kiripon.net/posts/2015-08-23-Lambek%27s-Theorem.html</loc>
-    <lastmod>2015-08-23</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2015-03-17-install-archlinux-to-xps13.html</loc>
-    <lastmod>2015-03-17</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-12-04-opengl-in-haskell.html</loc>
-    <lastmod>2014-12-04</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-10-29-Category-Functor.html</loc>
-    <lastmod>2014-10-29</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-10-19-Category1.html</loc>
-    <lastmod>2014-10-19</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-10-05-Type-safe-formatting.html</loc>
-    <lastmod>2014-10-05</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-09-27-Github-pages.html</loc>
-    <lastmod>2014-09-27</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</loc>
-    <lastmod>2014-07-14</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-07-02-shortest-path-in-haskell.html</loc>
-    <lastmod>2014-07-02</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-06-24-Data-types-a-la-carte2.html</loc>
-    <lastmod>2014-06-24</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://kiripon.net/posts/2014-06-07-Data-Types-a-la-carte1.html</loc>
-    <lastmod>2014-06-07</lastmod>
+    <loc>http://kiripon.net/index.html</loc>
+    
   </url>
   
   <url>
     <loc>http://kiripon.net/posts/2014-01-05-Data-sequence-view-pattern.html</loc>
+    
     <lastmod>2014-01-05</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-06-07-Data-Types-a-la-carte1.html</loc>
+    
+    <lastmod>2014-06-07</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-06-24-Data-types-a-la-carte2.html</loc>
+    
+    <lastmod>2014-06-24</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-07-02-shortest-path-in-haskell.html</loc>
+    
+    <lastmod>2014-07-02</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</loc>
+    
+    <lastmod>2014-07-14</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-09-27-Github-pages.html</loc>
+    
+    <lastmod>2014-09-27</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-10-05-Type-safe-formatting.html</loc>
+    
+    <lastmod>2014-10-05</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-10-19-Category1.html</loc>
+    
+    <lastmod>2014-10-19</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-10-29-Category-Functor.html</loc>
+    
+    <lastmod>2014-10-29</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2014-12-04-opengl-in-haskell.html</loc>
+    
+    <lastmod>2014-12-04</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2015-03-17-install-archlinux-to-xps13.html</loc>
+    
+    <lastmod>2015-03-17</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2015-08-23-Lambek%27s-Theorem.html</loc>
+    
+    <lastmod>2015-08-23</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2015-08-23-VoiceRecognitionWithUnity.html</loc>
+    
+    <lastmod>2015-08-23</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2015-08-26-Segment-Tree.html</loc>
+    
+    <lastmod>2015-08-26</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kiripon.net/posts/2016-03-01-Impressions-of-the-Internship-at-Nintendo.html</loc>
+    
+    <lastmod>2016-03-01</lastmod>
+    
   </url>
   
 </urlset>
