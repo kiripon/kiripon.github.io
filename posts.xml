@@ -116,11 +116,7 @@
 <li>モノイド <span class="math inline">\((M,\ast,e)\)</span></li>
 <li><span class="math inline">\(a_1,..,a_n \in M\)</span></li>
 </ul>
-<p>に対して,以下のことがそれぞれ <span class="math inline">\(O(log(n))\)</span> で行えるデータ構造</p>
-<ul>
-<li><span class="math inline">\(a_i \ast a_{i+1} \ast \dots \ast a_k\)</span> を求める</li>
-<li><span class="math inline">\(a_i\)</span> の書き換え</li>
-</ul>
+<p>に対して,以下のことがそれぞれ <span class="math inline">\(O(log(n))\)</span> で行えるデータ構造 * <span class="math inline">\(a_i \ast a_{i+1} \ast \dots \ast a_k\)</span> を求める * <span class="math inline">\(a_i\)</span> の書き換え</p>
 <h2 id="verification">Verification</h2>
 <p>AOJを用いて実装の正しさを確認した.</p>
 <ul>
