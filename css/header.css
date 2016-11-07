@@ -1,0 +1,17 @@
+@charset "UTF-8";
+div#header {
+  border-bottom: solid 1px #000000;
+  margin-bottom: 30px;
+  padding: 12px 20px 12px 20px; }
+
+div#header #navigation {
+  text-align: right; }
+
+div#header #navigation a {
+  color: #000000;
+  font-size: 14pt;
+  font-weight: lighter;
+  margin-left: 12px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-family: "a-otf-ryumin-pr6n","游明朝体","YuMincho","Hiragino Mincho ProN","Noto Serif","Takao P明朝","TakaoPMincho","MS P Mincho", serif; }

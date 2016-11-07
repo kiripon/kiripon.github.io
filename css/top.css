@@ -110,3 +110,17 @@ h1 {
 
 h2 {
   font-size: 20pt; }
+
+.circular {
+  transition: all 3.0s ease-out 0.0s;
+  margin: 3em auto 3em auto;
+  width: 30em;
+  height: 30em; }
+
+.circular svg {
+  display: block;
+  overflow: visible; }
+
+.circular:hover {
+  transition: all 3.0s ease-in 0.0s;
+  transform: rotate(3.14159rad); }

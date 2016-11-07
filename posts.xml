@@ -70,8 +70,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
         print <span class="fu">.</span> getSum <span class="fu">$</span> query (x,y) tree
         loop tree (cnt<span class="fu">-</span><span class="dv">1</span>)
 
-<span class="fu">---------------------------------------------</span>
-<span class="fu">---</span> <span class="dt">Monoid</span> <span class="kw">instance</span> for range minimum<span class="fu">/</span>maximum query
+<span class="co">---------------------------------------------</span>
+<span class="co">--- Monoid instance for range minimum/maximum query</span>
 <span class="kw">newtype</span> <span class="dt">Min</span> <span class="fu">=</span> <span class="dt">Min</span> {<span class="ot">fromMin ::</span> <span class="dt">Int32</span> } <span class="kw">deriving</span> (<span class="dt">Ord</span>,<span class="dt">Show</span>,<span class="dt">Eq</span>,<span class="dt">Read</span>)
 <span class="kw">instance</span> <span class="dt">Monoid</span> <span class="dt">Min</span> <span class="kw">where</span>
   mempty <span class="fu">=</span> <span class="dt">Min</span> maxBound
@@ -86,8 +86,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
   mappend <span class="fu">=</span> max
   <span class="ot">{-# INLINE mappend #-}</span>
 
-<span class="fu">---------------------</span>
-<span class="fu">---</span> <span class="dt">Segment</span> <span class="dt">Tree</span>
+<span class="co">---------------------</span>
+<span class="co">--- Segment Tree</span>
 <span class="kw">data</span> <span class="dt">STree</span> v <span class="fu">=</span> <span class="dt">Leaf</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span><span class="dt">Int</span> <span class="fu">!</span>v
              <span class="fu">|</span> <span class="dt">Branch</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span>(<span class="dt">Int</span>,<span class="dt">Int</span>) <span class="fu">!</span>v <span class="fu">!</span>(<span class="dt">STree</span> v) <span class="fu">!</span>(<span class="dt">STree</span> v)
              <span class="kw">deriving</span> (<span class="dt">Show</span>)
@@ -729,16 +729,16 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
   GL.deleteObjectName fragmentShaderId
   return programId</code></pre></div>
 <p><em>vertexShader.glsl</em></p>
-<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="pp">#version 330 core</span>
 
-<span class="fu">layout</span>(location = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
+<span class="kw">layout</span>(<span class="dt">location</span> = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
-  <span class="fu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
-  <span class="fu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
+  <span class="bu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
+  <span class="bu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
 }</code></pre></div>
 <p><em>fragmentShader.glsl</em></p>
-<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="pp">#version 330 core</span>
 <span class="dt">out</span> <span class="dt">vec3</span> color;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
@@ -1150,23 +1150,23 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 <p>今年もicpcに参加しました。 去年よりも解いた問題数は増えたものの、僕が書いたBがバグってて同期にデバッグの手間を取らせたり、Eの解法が思いついたもののコードをバグらせて時間内にACできなかったりと今回も罪人となってしまいました。</p>
 <p>Eはバグらせたくなかったので実装が楽なワーシャルフロイドをつかってグラフの直径を求めたのですがしょうもないミスをしてしまいました。</p>
 <h3 id="eのコード">Eのコード</h3>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
-<span class="ot">#include&lt;climits&gt;</span>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include</span><span class="im">&lt;iostream&gt;</span>
+<span class="pp">#include</span><span class="im">&lt;climits&gt;</span>
 <span class="kw">using</span> <span class="kw">namespace</span> std;
-<span class="dt">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
+<span class="at">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
 <span class="dt">int</span> p[maxv];
 <span class="dt">int</span> d[maxv];
 <span class="dt">int</span> deg[maxv];
 <span class="dt">int</span> g[maxv][maxv];
 
 <span class="dt">int</span> n;
-<span class="dt">const</span> <span class="dt">int</span> INF = INT_MAX/<span class="dv">2</span>;
+<span class="at">const</span> <span class="dt">int</span> INF = INT_MAX/<span class="dv">2</span>;
 <span class="dt">void</span> mkGraph(){
   fill(*g,g[maxv],INF);
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++)g[i][i] = <span class="dv">0</span>; <span class="co">// &lt;- ここを本番で書き忘れてた</span>
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++)g[i][i] = <span class="dv">0</span>; <span class="co">// &lt;- ここを本番で書き忘れてた</span>
+  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
     <span class="co">//cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; p[i] &lt;&lt; endl;</span>
-    <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
+    <span class="cf">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="cf">continue</span>;
     <span class="dt">int</span> from = i,to = p[i];
 
     g[from][to] = g[to][from] = d[i];
@@ -1174,8 +1174,8 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 }
 
 <span class="dt">void</span> outgraph(){
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
+  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
       cout &lt;&lt; g[i][j] &lt;&lt; <span class="st">' '</span>;
     }
     cout &lt;&lt; endl;
@@ -1185,55 +1185,55 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 <span class="dt">int</span> radius(){
   mkGraph();
   <span class="co">//outgraph();</span>
-  <span class="kw">for</span>(<span class="dt">int</span> k = <span class="dv">1</span>;k &lt;= n;k++){
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-      <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
+  <span class="cf">for</span>(<span class="dt">int</span> k = <span class="dv">1</span>;k &lt;= n;k++){
+    <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+      <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
 	g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
       }
     }
   }
   
   <span class="dt">int</span> ret = <span class="dv">-1</span>;
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-      <span class="kw">if</span> (g[i][j] == INF)<span class="kw">continue</span>;
+  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
+      <span class="cf">if</span> (g[i][j] == INF)<span class="cf">continue</span>;
       ret = max(g[i][j],ret);
     }
   }
   <span class="co">//cout &lt;&lt; &quot;rad:&quot; &lt;&lt; ret &lt;&lt; endl;</span>
-  <span class="kw">return</span> ret;
+  <span class="cf">return</span> ret;
 }
 
 <span class="dt">int</span> weight(){
   <span class="dt">int</span> ret = <span class="dv">0</span>;
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
     ret += d[i];
   }
   <span class="co">//cout &lt;&lt; &quot;weight:&quot;&lt;&lt;ret &lt;&lt; endl;</span>
-  <span class="kw">return</span> ret;
+  <span class="cf">return</span> ret;
 }
 
 <span class="dt">int</span> main(){
-  <span class="kw">while</span>(<span class="kw">true</span>){
+  <span class="cf">while</span>(<span class="kw">true</span>){
     cin &gt;&gt; n;
-    <span class="kw">if</span>(n == <span class="dv">0</span>)<span class="kw">break</span>;
+    <span class="cf">if</span>(n == <span class="dv">0</span>)<span class="cf">break</span>;
     
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+    <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
       cin &gt;&gt; p[i];
     }
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+    <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
       cin &gt;&gt; d[i];
     }
     fill(deg,deg+maxv,<span class="dv">0</span>);
   
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
+    <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
       deg[ p[i] ] += <span class="dv">1</span>;
       deg[ i    ] += <span class="dv">1</span>;
     }
   
     <span class="dt">int</span> result = <span class="dv">0</span>;
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-      <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
+    <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
+      <span class="cf">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="cf">continue</span>;
       result += d[i] * <span class="dv">2</span>;
     }
     <span class="co">//cout &lt;&lt; &quot;junkai:&quot; &lt;&lt; result &lt;&lt; endl;</span>
@@ -1242,7 +1242,7 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
     result += weight();
     cout &lt;&lt; result &lt;&lt; endl;
   }
-  <span class="kw">return</span> <span class="dv">0</span>;
+  <span class="cf">return</span> <span class="dv">0</span>;
 }</code></pre></div>
 <p>Eはワーシャルフロイドのグラフの対角成分の初期化を忘れていたために起こっていたバグです。本当にしょうもないバグでした。</p>
 

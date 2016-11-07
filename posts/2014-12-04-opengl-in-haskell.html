@@ -6,6 +6,7 @@
     <title>自由研究帳 - OpenGL in Haskell</title>
     <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	  <script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
+
 	  
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -25,10 +26,10 @@
     <a href="../index.html">自由研究帳</a>
   </div>
   <div id="navigation">
-    <a href="./index.html">HOME</a>
-    <a href="./profile.html">ABOUT</a>
-    <a href="./contact.html">CONTACT</a>
-    <a href="./archive.html">ARCHIVE</a>
+    <a href="../index.html">HOME</a>
+    <a href="../profile.html">ABOUT</a>
+    <a href="../contact.html">CONTACT</a>
+    <a href="../archive.html">ARCHIVE</a>
   </div>
 </div>
 
@@ -223,16 +224,16 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
   GL.deleteObjectName fragmentShaderId
   return programId</code></pre></div>
 <p><em>vertexShader.glsl</em></p>
-<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="pp">#version 330 core</span>
 
-<span class="fu">layout</span>(location = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
+<span class="kw">layout</span>(<span class="dt">location</span> = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
-  <span class="fu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
-  <span class="fu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
+  <span class="bu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
+  <span class="bu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
 }</code></pre></div>
 <p><em>fragmentShader.glsl</em></p>
-<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="pp">#version 330 core</span>
 <span class="dt">out</span> <span class="dt">vec3</span> color;
 
 <span class="dt">void</span> <span class="fu">main</span>(){

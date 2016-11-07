@@ -1,1 +1,50 @@
-@font-face{font-family:"Hasklig";src:url("../fonts/Hasklig-Medium.otf")format("opentype")}pre{margin:0px 10px 0px 10px;padding:9px 9px 9px 9px;background-color:#fdf6e3;border:solid 1px rgba(0,0,0,0.5000);font-size:14px;border-radius:5px 5px 5px 5px;text-rendering:optimizeLegibility;white-space:pre-wrap}pre code{border-style:none;display:block;-webkit-box-shadow:none none none none;-moz-box-shadow:none none none none;-ms-box-shadow:none none none none;-o-box-shadow:none none none none;box-shadow:none none none none;font-family:"Hasklig","Monaco","Menlo","Consolas","Courier New", monospace}.sourceCode .kw{color:#268bd2}.sourceCode .dt{color:#268bd2}.sourceCode .dv,.sourceCode .bn,.sourceCode .fl{color:#d33682}.sourceCode .ch{color:#dc322f}.sourceCode .st{color:#2aa198}.sourceCode .co{color:#93a1a1}.sourceCode .ot{color:#a57800}.sourceCode .al{color:#cb4b16}.sourceCode .fu{color:#268bd2}.sourceCode .er{color:#d30102}
+@font-face {
+  font-family: "Hasklig";
+  src: url("../fonts/Hasklig-Medium.otf") format("opentype"); }
+pre {
+  margin: 0px 10px 0px 10px;
+  padding: 9px 9px 9px 9px;
+  background-color: #fdf6e3;
+  border: solid 1px black;
+  font-size: 14px;
+  border-radius: 5px 5px 5px 5px;
+  text-rendering: optimizeLegibility;
+  white-space: pre-wrap; }
+
+pre code {
+  border-style: none;
+  display: block;
+  box-shadow: none none none none;
+  font-family: "Hasklig","Monaco","Menlo","Consolas","Courier New", monospace; }
+
+.sourceCode .kw {
+  color: #268bd2; }
+
+.sourceCode .dt {
+  color: #268bd2; }
+
+.sourceCode .dv,
+.sourceCode .bn,
+.sourceCode .fl {
+  color: #d33682; }
+
+.sourceCode .ch {
+  color: #dc322f; }
+
+.sourceCode .st {
+  color: #2aa198; }
+
+.sourceCode .co {
+  color: #93a1a1; }
+
+.sourceCode .ot {
+  color: #a57800; }
+
+.sourceCode .al {
+  color: #cb4b16; }
+
+.sourceCode .fu {
+  color: #268bd2; }
+
+.sourceCode .er {
+  color: #d30102; }
