@@ -102,7 +102,7 @@ a:link {
 h1,
 h2,
 h3 {
-  text-shadow: 1px 1px 0.5px black;
+  text-shadow: 1px 1px 0.5px #c8c8c8;
   font-weight: 400; }
 
 h1 {
