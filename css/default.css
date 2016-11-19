@@ -1,6 +1,5 @@
 @charset "UTF-8";
 body {
-  padding: 2mm 5mm 0px 5mm;
   color: #000000;
   font-size: 12pt;
   margin: 0mm auto 0px auto;
@@ -16,6 +15,7 @@ body {
   background-attachment: fixed; }
 
 main {
+  margin: 2mm 5mm 0px 5mm;
   flex: 1;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
@@ -52,7 +52,8 @@ div ul {
 div#header {
   border-bottom: solid 1px #000000;
   margin-bottom: 30px;
-  padding: 12px 20px 12px 20px; }
+  padding: 12px 20px 12px 20px;
+  background-color: white; }
 
 div#header #navigation {
   text-align: right; }
@@ -65,6 +66,13 @@ div#header #navigation a {
   text-decoration: none;
   text-transform: uppercase;
   font-family: "a-otf-ryumin-pr6n","游明朝体","YuMincho","Hiragino Mincho ProN","Noto Serif","Takao P明朝","TakaoPMincho","MS P Mincho", serif; }
+
+div#logo a {
+  color: #000000;
+  float: left;
+  font-size: 14pt;
+  font-weight: lighter;
+  text-decoration: none; }
 
 div#logo a {
   color: #000000;
