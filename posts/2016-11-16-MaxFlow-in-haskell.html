@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>自由研究帳 - hoge</title>
+    <title>自由研究帳 - Haskell による Ford-Fulkerson の実装</title>
     <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	  <script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
 
@@ -35,7 +35,7 @@
 
       <main>
           <div id="content">
-      <h1>hoge</h1>
+      <h1>Haskell による Ford-Fulkerson の実装</h1>
       <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
 <div class="info">
     Posted on November 16, 2016
@@ -43,7 +43,7 @@
 </div>
 <div class="info">
   
-  Tags: <a href="../tags/Haskell.html">Haskell</a>
+  Tags: <a href="../tags/Haskell.html">Haskell</a>, <a href="../tags/Max-Flow.html">Max-Flow</a>, <a href="../tags/Ford-Fulkerson.html">Ford-Fulkerson</a>
   
 </div>
 
@@ -62,8 +62,14 @@
 <span class="kw">import </span><span class="dt">Control.Applicative</span>
 <span class="ot">getInts ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
 getInts <span class="fu">=</span> unfoldr (B8.readInt <span class="fu">.</span> B8.dropWhile (<span class="fu">==</span><span class="ch">' '</span>)) <span class="fu">&lt;$&gt;</span> BS.getLine
-<span class="kw">data</span> <span class="dt">Edge</span> <span class="fu">=</span> <span class="dt">Edge</span> {<span class="ot">to ::</span> <span class="dt">Int</span>,<span class="ot">revIx ::</span> <span class="dt">Int</span>,<span class="ot">capIx ::</span> <span class="dt">Int</span>}
-  <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
+
+<span class="kw">data</span> <span class="dt">Edge</span> <span class="fu">=</span> <span class="dt">Edge</span>
+   {<span class="ot"> to    ::</span> <span class="dt">Int</span> <span class="co">-- 辺の貼られている先の頂点番号</span>
+   ,<span class="ot"> revIx ::</span> <span class="dt">Int</span> <span class="co">-- 辺に流せる最大流量へのインデックス</span>
+   ,<span class="ot"> capIx ::</span> <span class="dt">Int</span> <span class="co">-- 辺に流せる最大流量へのインデックス</span>
+   } <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
+
+
 <span class="kw">type</span> <span class="dt">Graph</span> <span class="fu">=</span> <span class="dt">V.Vector</span> (<span class="dt">V.Vector</span> <span class="dt">Edge</span>)
 
 

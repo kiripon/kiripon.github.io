@@ -9,7 +9,7 @@
                    type="application/rss+xml" />
         <lastBuildDate>Wed, 16 Nov 2016 00:00:00 UT</lastBuildDate>
         <item>
-    <title>hoge</title>
+    <title>Haskell による Ford-Fulkerson の実装</title>
     <link>http://kiripon.net/posts/2016-11-16-MaxFlow-in-haskell.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 <div class="info">
@@ -18,7 +18,7 @@
 </div>
 <div class="info">
   
-  Tags: <a href="/tags/Haskell.html">Haskell</a>
+  Tags: <a href="/tags/Haskell.html">Haskell</a>, <a href="/tags/Max-Flow.html">Max-Flow</a>, <a href="/tags/Ford-Fulkerson.html">Ford-Fulkerson</a>
   
 </div>
 
@@ -37,8 +37,14 @@
 <span class="kw">import </span><span class="dt">Control.Applicative</span>
 <span class="ot">getInts ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
 getInts <span class="fu">=</span> unfoldr (B8.readInt <span class="fu">.</span> B8.dropWhile (<span class="fu">==</span><span class="ch">' '</span>)) <span class="fu">&lt;$&gt;</span> BS.getLine
-<span class="kw">data</span> <span class="dt">Edge</span> <span class="fu">=</span> <span class="dt">Edge</span> {<span class="ot">to ::</span> <span class="dt">Int</span>,<span class="ot">revIx ::</span> <span class="dt">Int</span>,<span class="ot">capIx ::</span> <span class="dt">Int</span>}
-  <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
+
+<span class="kw">data</span> <span class="dt">Edge</span> <span class="fu">=</span> <span class="dt">Edge</span>
+   {<span class="ot"> to    ::</span> <span class="dt">Int</span> <span class="co">-- 辺の貼られている先の頂点番号</span>
+   ,<span class="ot"> revIx ::</span> <span class="dt">Int</span> <span class="co">-- 辺に流せる最大流量へのインデックス</span>
+   ,<span class="ot"> capIx ::</span> <span class="dt">Int</span> <span class="co">-- 辺に流せる最大流量へのインデックス</span>
+   } <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
+
+
 <span class="kw">type</span> <span class="dt">Graph</span> <span class="fu">=</span> <span class="dt">V.Vector</span> (<span class="dt">V.Vector</span> <span class="dt">Edge</span>)
 
 
