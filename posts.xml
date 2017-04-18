@@ -7,8 +7,183 @@
         <description><![CDATA[Haskellや読んだ論文のまとめ]]></description>
         <atom:link href="http://kiripon.net/posts.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Wed, 26 Aug 2015 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Wed, 16 Nov 2016 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Haskell による Ford-Fulkerson の実装</title>
+    <link>http://kiripon.net/posts/2016-11-16-MaxFlow-in-haskell.html</link>
+    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+<div class="info">
+    Posted on November 16, 2016
+    
+</div>
+<div class="info">
+  
+  Tags: <a href="/tags/Haskell.html">Haskell</a>, <a href="/tags/Max-Flow.html">Max-Flow</a>, <a href="/tags/Ford-Fulkerson.html">Ford-Fulkerson</a>
+  
+</div>
+
+<p>Ford-fulkerson 法による最大流問題のソルバを書いた. AOJ の <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_A">Network Flow</a> に投げる形で書いてある.</p>
+<h2 id="書いていて面倒だったところ">書いていて面倒だったところ</h2>
+<ul>
+<li><p>Haskell で <code>for</code> ループを書く時は普段 <code>forM</code> を使うのだけれど、C言語で言うところの <code>break</code> ができない. <a href="https://hackage.haskell.org/package/extra-1.5.1">extra</a> パッケージにはこれに相当するものがあるのだけれど、aojでは使えないので自分で用意した.</p></li>
+<li><p>副作用を使うのが非常にダルい</p></li>
+</ul>
+<h2 id="ソースコード">ソースコード</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE FlexibleContexts #-}</span>
+<span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">Data.List</span>
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString</span> <span class="kw">as</span> <span class="dt">BS</span>
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">B8</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Vector</span> <span class="kw">as</span> <span class="dt">V</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Vector.Mutable</span> <span class="kw">as</span> <span class="dt">MV</span>
+<span class="kw">import </span><span class="dt">Control.Monad</span>
+<span class="kw">import </span><span class="dt">Data.Maybe</span>
+<span class="kw">import </span><span class="dt">Debug.Trace</span>
+<span class="kw">import </span><span class="dt">Data.Vector</span> ((!))
+<span class="kw">import </span><span class="dt">Control.Applicative</span>
+
+<span class="kw">data</span> <span class="dt">Edge</span> <span class="fu">=</span> <span class="dt">Edge</span>
+   {<span class="ot"> to    ::</span> <span class="dt">Int</span> <span class="co">-- 辺の貼られている先の頂点番号</span>
+   ,<span class="ot"> revIx ::</span> <span class="dt">Int</span> <span class="co">-- 辺に流せる最大流量へのインデックス</span>
+   ,<span class="ot"> capIx ::</span> <span class="dt">Int</span> <span class="co">-- 辺に流せる最大流量へのインデックス</span>
+   } <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
+
+
+<span class="kw">type</span> <span class="dt">Graph</span> <span class="fu">=</span> <span class="dt">V.Vector</span> (<span class="dt">V.Vector</span> <span class="dt">Edge</span>)
+
+<span class="co">---------------</span>
+<span class="co">-- get input</span>
+<span class="co">--------------</span>
+<span class="ot">getInts ::</span> <span class="dt">IO</span> [<span class="dt">Int</span>]
+getInts <span class="fu">=</span> unfoldr (B8.readInt <span class="fu">.</span> B8.dropWhile (<span class="fu">==</span><span class="ch">' '</span>)) <span class="fu">&lt;$&gt;</span> BS.getLine
+
+<span class="ot">getGraph ::</span> <span class="dt">IO</span> (<span class="dt">Graph</span>,<span class="dt">MV.IOVector</span> <span class="dt">Int</span>)
+getGraph <span class="fu">=</span> <span class="kw">do</span>
+  v<span class="fu">:</span>e<span class="fu">:</span>_ <span class="ot">&lt;-</span> getInts
+  cap <span class="ot">&lt;-</span> MV.new (e<span class="fu">*</span><span class="dv">2</span>)
+  g <span class="ot">&lt;-</span> MV.replicate v []
+  forM_ [<span class="dv">0</span><span class="fu">..</span>e<span class="fu">-</span><span class="dv">1</span>] <span class="fu">$</span> \i <span class="ot">-&gt;</span> <span class="kw">do</span>
+    u<span class="fu">:</span>v<span class="fu">:</span>c<span class="fu">:</span>_ <span class="ot">&lt;-</span> getInts
+    MV.write cap i c
+    MV.write cap (i <span class="fu">+</span> e) <span class="dv">0</span>
+    us <span class="ot">&lt;-</span> MV.read g u
+    vs <span class="ot">&lt;-</span> MV.read g v
+    MV.write g u <span class="fu">$</span> <span class="dt">Edge</span> v (e<span class="fu">+</span>i) i<span class="fu">:</span> us
+    MV.write g v <span class="fu">$</span> <span class="dt">Edge</span> u i (e<span class="fu">+</span>i)<span class="fu">:</span> vs
+    return ()
+  g' <span class="ot">&lt;-</span> V.map (V.fromList <span class="fu">.</span> reverse) <span class="fu">&lt;$&gt;</span> V.freeze g
+  return (g', cap)
+
+<span class="co">-----------------</span>
+<span class="co">-- graph printing</span>
+<span class="co">-----------------</span>
+<span class="ot">printGraph ::</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> <span class="dt">V.Vector</span> (<span class="dt">V.Vector</span> a) <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+printGraph <span class="fu">=</span> V.mapM_ (\i <span class="ot">-&gt;</span> V.mapM (putStr <span class="fu">.</span> (<span class="ch">' '</span><span class="fu">:</span>) <span class="fu">.</span> show) i <span class="fu">&gt;&gt;</span> putStrLn <span class="st">&quot;&quot;</span>)
+
+<span class="ot">printCap ::</span> <span class="dt">MV.IOVector</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+printCap v <span class="fu">=</span> print <span class="fu">=&lt;&lt;</span> V.freeze v
+
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  (g,cap) <span class="ot">&lt;-</span> getGraph
+  <span class="co">-- printGraph g</span>
+  <span class="co">-- printCap cap</span>
+  r <span class="ot">&lt;-</span> maxFlow <span class="dv">0</span> (V.length g <span class="fu">-</span> <span class="dv">1</span>) g cap
+  print r
+  return ()
+
+
+<span class="ot">untilJustM ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> m (<span class="dt">Maybe</span> b)) <span class="ot">-&gt;</span> <span class="dt">V.Vector</span> a <span class="ot">-&gt;</span> m (<span class="dt">Maybe</span> b)
+untilJustM act xs
+  <span class="fu">|</span> V.null xs <span class="fu">=</span> return <span class="dt">Nothing</span>
+  <span class="fu">|</span> otherwise <span class="fu">=</span> <span class="kw">let</span> v <span class="fu">=</span> V.head xs
+                <span class="kw">in</span> <span class="kw">do</span>
+      x <span class="ot">&lt;-</span> act v
+      <span class="kw">case</span> x <span class="kw">of</span>
+        <span class="dt">Nothing</span> <span class="ot">-&gt;</span> untilJustM act (V.tail xs)
+        <span class="dt">Just</span> _ <span class="ot">-&gt;</span> return x
+
+
+<span class="ot">maxFlow ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Graph</span> <span class="ot">-&gt;</span> <span class="dt">MV.IOVector</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Int</span>
+maxFlow s t g cap <span class="fu">=</span> loop <span class="dv">0</span>
+  <span class="kw">where</span>
+    loop f <span class="fu">=</span> <span class="kw">do</span>
+      used <span class="ot">&lt;-</span> MV.replicate (V.length g) <span class="dt">False</span>
+      df <span class="ot">&lt;-</span> dfs maxBound s t g cap used
+      <span class="kw">if</span> df <span class="fu">==</span> <span class="dv">0</span>
+        <span class="kw">then</span> return f
+        <span class="kw">else</span> loop (f <span class="fu">+</span> df)
+
+<span class="ot">dfs ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Graph</span>
+  <span class="ot">-&gt;</span> <span class="dt">MV.IOVector</span> <span class="dt">Int</span>
+  <span class="ot">-&gt;</span> <span class="dt">MV.IOVector</span> <span class="dt">Bool</span>
+  <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Int</span>
+dfs f v t g cap used
+  <span class="co">-- | traceShow v False = undefined</span>
+  <span class="fu">|</span> v <span class="fu">==</span> t <span class="fu">=</span> return f
+  <span class="fu">|</span> otherwise <span class="fu">=</span> <span class="kw">do</span>
+      MV.write used v <span class="dt">True</span>
+      fromMaybe <span class="dv">0</span> <span class="fu">&lt;$&gt;</span> untilJustM act (g <span class="fu">!</span> v)
+  <span class="kw">where</span>
+<span class="ot">    act ::</span> <span class="dt">Edge</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Maybe</span> <span class="dt">Int</span>)
+    act e<span class="fu">@</span><span class="dt">Edge</span> {to <span class="fu">=</span> to,capIx <span class="fu">=</span> ci, revIx <span class="fu">=</span> ri} <span class="fu">=</span> <span class="kw">do</span>
+      c <span class="ot">&lt;-</span> MV.read cap ci
+      isUsed <span class="ot">&lt;-</span> MV.read used to
+      <span class="kw">if</span> c <span class="fu">&gt;</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> not isUsed
+      <span class="kw">then</span> <span class="kw">do</span>
+        d <span class="ot">&lt;-</span> dfs (min f c) to t g cap used
+        <span class="kw">if</span> d <span class="fu">&gt;</span> <span class="dv">0</span>
+        <span class="kw">then</span> <span class="kw">do</span>
+          modifyCap cap e d
+          return (<span class="dt">Just</span> d)
+        <span class="kw">else</span> return <span class="dt">Nothing</span>
+      <span class="kw">else</span> return <span class="dt">Nothing</span>
+
+<span class="ot">modifyCap ::</span> <span class="dt">MV.IOVector</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Edge</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+modifyCap cap <span class="dt">Edge</span> {capIx <span class="fu">=</span> ci, revIx <span class="fu">=</span> ri} d
+  <span class="fu">=</span> <span class="kw">do</span>
+  cv <span class="ot">&lt;-</span> MV.read cap ci
+  cr <span class="ot">&lt;-</span> MV.read cap ri
+  MV.write cap ci <span class="fu">$</span> cv <span class="fu">-</span> d
+  MV.write cap ri <span class="fu">$</span> cr <span class="fu">+</span> d</code></pre></div>
+
+<br>
+
+<div id="disqus_thread"><div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  // required: replace example with your forum shortname
+  var disqus_shortname = 'kiripon';
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function () {
+  var s = document.createElement('script'); s.async = true;
+  s.type = 'text/javascript';
+  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+  }());
+</script>
+]]></description>
+    <pubDate>Wed, 16 Nov 2016 00:00:00 UT</pubDate>
+    <guid>http://kiripon.net/posts/2016-11-16-MaxFlow-in-haskell.html</guid>
+    <dc:creator>Kiripon</dc:creator>
+</item>
+<item>
     <title>Segment Tree</title>
     <link>http://kiripon.net/posts/2015-08-26-Segment-Tree.html</link>
     <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
@@ -70,8 +245,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
         print <span class="fu">.</span> getSum <span class="fu">$</span> query (x,y) tree
         loop tree (cnt<span class="fu">-</span><span class="dv">1</span>)
 
-<span class="fu">---------------------------------------------</span>
-<span class="fu">---</span> <span class="dt">Monoid</span> <span class="kw">instance</span> for range minimum<span class="fu">/</span>maximum query
+<span class="co">---------------------------------------------</span>
+<span class="co">--- Monoid instance for range minimum/maximum query</span>
 <span class="kw">newtype</span> <span class="dt">Min</span> <span class="fu">=</span> <span class="dt">Min</span> {<span class="ot">fromMin ::</span> <span class="dt">Int32</span> } <span class="kw">deriving</span> (<span class="dt">Ord</span>,<span class="dt">Show</span>,<span class="dt">Eq</span>,<span class="dt">Read</span>)
 <span class="kw">instance</span> <span class="dt">Monoid</span> <span class="dt">Min</span> <span class="kw">where</span>
   mempty <span class="fu">=</span> <span class="dt">Min</span> maxBound
@@ -86,8 +261,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
   mappend <span class="fu">=</span> max
   <span class="ot">{-# INLINE mappend #-}</span>
 
-<span class="fu">---------------------</span>
-<span class="fu">---</span> <span class="dt">Segment</span> <span class="dt">Tree</span>
+<span class="co">---------------------</span>
+<span class="co">--- Segment Tree</span>
 <span class="kw">data</span> <span class="dt">STree</span> v <span class="fu">=</span> <span class="dt">Leaf</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span><span class="dt">Int</span> <span class="fu">!</span>v
              <span class="fu">|</span> <span class="dt">Branch</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span>(<span class="dt">Int</span>,<span class="dt">Int</span>) <span class="fu">!</span>v <span class="fu">!</span>(<span class="dt">STree</span> v) <span class="fu">!</span>(<span class="dt">STree</span> v)
              <span class="kw">deriving</span> (<span class="dt">Show</span>)
@@ -729,16 +904,16 @@ loadShaders vertexFilePath fragmentFilePath <span class="fu">=</span> <span clas
   GL.deleteObjectName fragmentShaderId
   return programId</code></pre></div>
 <p><em>vertexShader.glsl</em></p>
-<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="pp">#version 330 core</span>
 
-<span class="fu">layout</span>(location = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
+<span class="kw">layout</span>(<span class="dt">location</span> = <span class="dv">0</span>) <span class="dt">in</span> <span class="dt">vec3</span> vertexPosition_modelspace;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
-  <span class="fu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
-  <span class="fu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
+  <span class="bu">gl_Position</span>.<span class="fu">xyz</span> = vertexPosition_modelspace;
+  <span class="bu">gl_Position</span>.<span class="fu">w</span>   = <span class="fl">1.0</span>;
 }</code></pre></div>
 <p><em>fragmentShader.glsl</em></p>
-<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="ot">#version 330 core</span>
+<div class="sourceCode"><pre class="sourceCode glsl"><code class="sourceCode glsl"><span class="pp">#version 330 core</span>
 <span class="dt">out</span> <span class="dt">vec3</span> color;
 
 <span class="dt">void</span> <span class="fu">main</span>(){
@@ -1131,154 +1306,6 @@ piyo n <span class="fu">=</span> foldr (<span class="fu">*</span>) <span class="
 ]]></description>
     <pubDate>Sat, 27 Sep 2014 00:00:00 UT</pubDate>
     <guid>http://kiripon.net/posts/2014-09-27-Github-pages.html</guid>
-    <dc:creator>Kiripon</dc:creator>
-</item>
-<item>
-    <title>ICPCの罪状</title>
-    <link>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</link>
-    <description><![CDATA[<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
-<div class="info">
-    Posted on July 14, 2014
-    
-</div>
-<div class="info">
-  
-  Tags: <a href="/tags/C%2B%2B.html">C++</a>, <a href="/tags/Algorithm.html">Algorithm</a>, <a href="/tags/ICPC.html">ICPC</a>
-  
-</div>
-
-<p>今年もicpcに参加しました。 去年よりも解いた問題数は増えたものの、僕が書いたBがバグってて同期にデバッグの手間を取らせたり、Eの解法が思いついたもののコードをバグらせて時間内にACできなかったりと今回も罪人となってしまいました。</p>
-<p>Eはバグらせたくなかったので実装が楽なワーシャルフロイドをつかってグラフの直径を求めたのですがしょうもないミスをしてしまいました。</p>
-<h3 id="eのコード">Eのコード</h3>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#include&lt;iostream&gt;</span>
-<span class="ot">#include&lt;climits&gt;</span>
-<span class="kw">using</span> <span class="kw">namespace</span> std;
-<span class="dt">const</span> <span class="dt">int</span> maxv = <span class="dv">1000</span>;
-<span class="dt">int</span> p[maxv];
-<span class="dt">int</span> d[maxv];
-<span class="dt">int</span> deg[maxv];
-<span class="dt">int</span> g[maxv][maxv];
-
-<span class="dt">int</span> n;
-<span class="dt">const</span> <span class="dt">int</span> INF = INT_MAX/<span class="dv">2</span>;
-<span class="dt">void</span> mkGraph(){
-  fill(*g,g[maxv],INF);
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++)g[i][i] = <span class="dv">0</span>; <span class="co">// &lt;- ここを本番で書き忘れてた</span>
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-    <span class="co">//cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; p[i] &lt;&lt; endl;</span>
-    <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
-    <span class="dt">int</span> from = i,to = p[i];
-
-    g[from][to] = g[to][from] = d[i];
-  }
-}
-
-<span class="dt">void</span> outgraph(){
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-      cout &lt;&lt; g[i][j] &lt;&lt; <span class="st">' '</span>;
-    }
-    cout &lt;&lt; endl;
-  }
-}
-
-<span class="dt">int</span> radius(){
-  mkGraph();
-  <span class="co">//outgraph();</span>
-  <span class="kw">for</span>(<span class="dt">int</span> k = <span class="dv">1</span>;k &lt;= n;k++){
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-      <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-	g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
-      }
-    }
-  }
-  
-  <span class="dt">int</span> ret = <span class="dv">-1</span>;
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-    <span class="kw">for</span>(<span class="dt">int</span> j = <span class="dv">1</span>;j &lt;= n;j++){
-      <span class="kw">if</span> (g[i][j] == INF)<span class="kw">continue</span>;
-      ret = max(g[i][j],ret);
-    }
-  }
-  <span class="co">//cout &lt;&lt; &quot;rad:&quot; &lt;&lt; ret &lt;&lt; endl;</span>
-  <span class="kw">return</span> ret;
-}
-
-<span class="dt">int</span> weight(){
-  <span class="dt">int</span> ret = <span class="dv">0</span>;
-  <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-    ret += d[i];
-  }
-  <span class="co">//cout &lt;&lt; &quot;weight:&quot;&lt;&lt;ret &lt;&lt; endl;</span>
-  <span class="kw">return</span> ret;
-}
-
-<span class="dt">int</span> main(){
-  <span class="kw">while</span>(<span class="kw">true</span>){
-    cin &gt;&gt; n;
-    <span class="kw">if</span>(n == <span class="dv">0</span>)<span class="kw">break</span>;
-    
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-      cin &gt;&gt; p[i];
-    }
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-      cin &gt;&gt; d[i];
-    }
-    fill(deg,deg+maxv,<span class="dv">0</span>);
-  
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">2</span>;i &lt;= n;i++){
-      deg[ p[i] ] += <span class="dv">1</span>;
-      deg[ i    ] += <span class="dv">1</span>;
-    }
-  
-    <span class="dt">int</span> result = <span class="dv">0</span>;
-    <span class="kw">for</span>(<span class="dt">int</span> i = <span class="dv">1</span>;i &lt;= n;i++){
-      <span class="kw">if</span>(deg[i] == <span class="dv">1</span> <span class="kw">or</span> deg[p[i]] == <span class="dv">1</span>)<span class="kw">continue</span>;
-      result += d[i] * <span class="dv">2</span>;
-    }
-    <span class="co">//cout &lt;&lt; &quot;junkai:&quot; &lt;&lt; result &lt;&lt; endl;</span>
-    result -= radius();
-    <span class="co">//outgraph();</span>
-    result += weight();
-    cout &lt;&lt; result &lt;&lt; endl;
-  }
-  <span class="kw">return</span> <span class="dv">0</span>;
-}</code></pre></div>
-<p>Eはワーシャルフロイドのグラフの対角成分の初期化を忘れていたために起こっていたバグです。本当にしょうもないバグでした。</p>
-
-<br>
-
-<div id="disqus_thread"><div>
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function() {
-  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-<script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  // required: replace example with your forum shortname
-  var disqus_shortname = 'kiripon';
-  /* * * DON'T EDIT BELOW THIS LINE * * */
-  (function () {
-  var s = document.createElement('script'); s.async = true;
-  s.type = 'text/javascript';
-  s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-  }());
-</script>
-]]></description>
-    <pubDate>Mon, 14 Jul 2014 00:00:00 UT</pubDate>
-    <guid>http://kiripon.net/posts/2014-07-14-guilt-icpc.html</guid>
     <dc:creator>Kiripon</dc:creator>
 </item>
 

@@ -6,6 +6,7 @@
     <title>自由研究帳 - Data types a la carte のメモ</title>
     <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	  <script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
+
 	  
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -25,14 +26,15 @@
     <a href="../index.html">自由研究帳</a>
   </div>
   <div id="navigation">
-    <a href="./index.html">HOME</a>
-    <a href="./profile.html">ABOUT</a>
-    <a href="./contact.html">CONTACT</a>
-    <a href="./archive.html">ARCHIVE</a>
+    <a href="../index.html">HOME</a>
+    <a href="../profile.html">ABOUT</a>
+    <a href="../contact.html">CONTACT</a>
+    <a href="../archive.html">ARCHIVE</a>
   </div>
 </div>
 
-    <div id="content">
+      <main>
+          <div id="content">
       <h1>Data types a la carte のメモ</h1>
       <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
 <div class="info">
@@ -55,11 +57,11 @@
 <span class="co">--program1.hs--------</span>
 arithTree1 <span class="fu">=</span> val <span class="dv">100</span> <span class="fu">&lt;*&gt;</span> val <span class="dv">3</span> <span class="fu">&lt;+&gt;</span> val <span class="dv">2</span> <span class="co">--変更前</span>
 evalResult1 <span class="fu">=</span> eval arithTree <span class="co">-- evalResult == 302</span>
-<span class="fu">---------------------</span></code></pre></div>
+<span class="co">---------------------</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">--program2.hs---------</span>
 arithTree2 <span class="fu">=</span> val <span class="dv">100</span> <span class="fu">&lt;*&gt;</span> val <span class="dv">3</span> <span class="fu">&lt;+&gt;</span> sqrt (val <span class="dv">4</span>) <span class="co">-- 変更後</span>
 evalResult2 <span class="fu">=</span> eval arithTree <span class="co">-- evalResult == 302</span>
-<span class="fu">----------------------</span></code></pre></div>
+<span class="co">----------------------</span></code></pre></div>
 <p>設計の目標３つ</p>
 <ol type="1">
 <li>計算があとから追加できるようにする あとから log,rootなどの四則演算以外の項を追加できるようにする</li>
@@ -157,7 +159,8 @@ x <span class="fu">&lt;+&gt;</span> y <span class="fu">=</span> inject (<span cl
   }());
 </script>
 
-    </div>
+          </div>
+      </main>
     <div id="footer">
   <p>Copyright(C) 2013-2016, Kiripon</p>
   <p>Source code font is <a href="https://github.com/i-tu/Hasklig">Hasklig</a>,

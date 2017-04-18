@@ -6,6 +6,7 @@
     <title>自由研究帳 - Segment Tree</title>
     <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	  <script type="text/javascript" src="//typesquare.com/accessor/script/typesquare.js?3gh7POzSj-0%3D" charset="utf-8"></script>
+
 	  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -25,14 +26,15 @@
     <a href="../index.html">自由研究帳</a>
   </div>
   <div id="navigation">
-    <a href="./index.html">HOME</a>
-    <a href="./profile.html">ABOUT</a>
-    <a href="./contact.html">CONTACT</a>
-    <a href="./archive.html">ARCHIVE</a>
+    <a href="../index.html">HOME</a>
+    <a href="../profile.html">ABOUT</a>
+    <a href="../contact.html">CONTACT</a>
+    <a href="../archive.html">ARCHIVE</a>
   </div>
 </div>
 
-    <div id="content">
+      <main>
+          <div id="content">
       <h1>Segment Tree</h1>
       <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
 <div class="info">
@@ -93,8 +95,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
         print <span class="fu">.</span> getSum <span class="fu">$</span> query (x,y) tree
         loop tree (cnt<span class="fu">-</span><span class="dv">1</span>)
 
-<span class="fu">---------------------------------------------</span>
-<span class="fu">---</span> <span class="dt">Monoid</span> <span class="kw">instance</span> for range minimum<span class="fu">/</span>maximum query
+<span class="co">---------------------------------------------</span>
+<span class="co">--- Monoid instance for range minimum/maximum query</span>
 <span class="kw">newtype</span> <span class="dt">Min</span> <span class="fu">=</span> <span class="dt">Min</span> {<span class="ot">fromMin ::</span> <span class="dt">Int32</span> } <span class="kw">deriving</span> (<span class="dt">Ord</span>,<span class="dt">Show</span>,<span class="dt">Eq</span>,<span class="dt">Read</span>)
 <span class="kw">instance</span> <span class="dt">Monoid</span> <span class="dt">Min</span> <span class="kw">where</span>
   mempty <span class="fu">=</span> <span class="dt">Min</span> maxBound
@@ -109,8 +111,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
   mappend <span class="fu">=</span> max
   <span class="ot">{-# INLINE mappend #-}</span>
 
-<span class="fu">---------------------</span>
-<span class="fu">---</span> <span class="dt">Segment</span> <span class="dt">Tree</span>
+<span class="co">---------------------</span>
+<span class="co">--- Segment Tree</span>
 <span class="kw">data</span> <span class="dt">STree</span> v <span class="fu">=</span> <span class="dt">Leaf</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span><span class="dt">Int</span> <span class="fu">!</span>v
              <span class="fu">|</span> <span class="dt">Branch</span> <span class="ot">{-# UNPACK #-}</span><span class="fu">!</span>(<span class="dt">Int</span>,<span class="dt">Int</span>) <span class="fu">!</span>v <span class="fu">!</span>(<span class="dt">STree</span> v) <span class="fu">!</span>(<span class="dt">STree</span> v)
              <span class="kw">deriving</span> (<span class="dt">Show</span>)
@@ -240,7 +242,8 @@ insert <span class="fu">!</span>ix <span class="fu">!</span>v <span class="fu">!
   }());
 </script>
 
-    </div>
+          </div>
+      </main>
     <div id="footer">
   <p>Copyright(C) 2013-2016, Kiripon</p>
   <p>Source code font is <a href="https://github.com/i-tu/Hasklig">Hasklig</a>,
