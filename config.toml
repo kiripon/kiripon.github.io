@@ -1,0 +1,4 @@
+baseURL = "https://kiripon.net"
+languageCode = "ja-jp"
+title = "自由研究帳"
+theme = "indigo"
