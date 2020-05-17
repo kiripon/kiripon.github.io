@@ -1,12 +1,13 @@
 ---
 title: Lambek's theorem
 date: 2015-08-23
+tags: ["圏論"]
 ---
 
 * $C :$ 圏
 * $F : C \rightarrow C$ (自己函手)
 
-##定理 Lambek's theorem
+## 定理 Lambek's theorem
 
 $F$ が initial algebra $$\alpha : F(X)
 \rightarrow X$$を持つとき, $\alpha$ は $X$ と $F(X)$ の isomorphism に

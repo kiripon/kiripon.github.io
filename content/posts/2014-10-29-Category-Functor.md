@@ -3,7 +3,7 @@ title: 圏論のノート2:Functor
 date: 2014-10-29
 ---
 
-<div></div><!--
+<!--
 
 > {-# LANGUAGE MultiParamTypeClasses ,TypeFamilies,FlexibleInstances#-}
 > module CategoryFunctor where

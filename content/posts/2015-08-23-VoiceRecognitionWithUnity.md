@@ -2,14 +2,15 @@
 title: Chrome を使って Unity 上で音声認識
 date: 2015-08-23
 ---
-* 構成
+# 構成
   * Websocket-sharp
   * Unity
-* 使い方
+
+# 使い方
   1. 適当なオブジェクトに以下のスクリプトをあたっちする.
   2. http://localhost:12002 をChrome でひらく
   3. マイクに話しかけるとUnity上のデバッグコンソールに認識したメッセージが表示される
-#+BEGIN_SRC C#
+``` C#
 using UnityEngine;
 using System;
 using System.Collections;
@@ -80,4 +81,4 @@ public class chromeVoiceRecog : MonoBehaviour {
     Debug.Log ("websocket server exitted");
   }
 }
-#+END_SRC
+```

@@ -2,27 +2,27 @@
 title: Segment Tree
 date: 2014-08-26
 ---
-* Segment Tree
+# Segment Tree
+
   * モノイド $(M,\ast,e)$
   * $a_1,..,a_n \in M$
- に対して,以下のことがそれぞれ $O(log(n))$ で行えるデータ構造
+
+に対して,以下のことがそれぞれ $O(log(n))$ で行えるデータ構造
   * $a_i \ast a_{i+1} \ast \dots \ast a_k$ を求める
   * $a_i$ の書き換え
-    
-  
 
-* Verification
+# Verification
   AOJを用いて実装の正しさを確認した.
 
-  * [[http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A][DSL-2-A Range Minimum Query]]
-  * [[http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B][DSL-2-B Range Sum Query]]
-* 実装
+  * [DSL-2-A Range Minimum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A)
+  * [DSL-2-B Range Sum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B)
+# 実装
   Segment Tree は配列を使った破壊的な実装がよく知られている。
   しかし今回はHaskellで実装をおこなうために、副作用を用いない永続データ
   構造として実装した。
-* コード
-  [[http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B][Range Sum Query]] でverifyしたときのものを載せる
-#+BEGIN_SRC haskell
+## コード
+  [Range Sum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B) でverifyしたときのものを載せる
+``` haskell
 {-# OPTIONS_GHC -O2 -funbox-strict-fields #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -168,8 +168,9 @@ insert !ix !v !tree = loop tree
             | otherwise
               -> let r' = loop r
                  in Branch rng (val l `mappend` val r') l r'
-#+END_SRC
+```
 
-* 補足
+# 補足
+
   仮定をモノイドから群に強めることで, 実装がより単純なデータ構造である
   Binary indexed tree を作ることができる. 
