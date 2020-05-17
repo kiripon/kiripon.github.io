@@ -1,6 +1,7 @@
 ---
 title: 圏論のノート2:Functor
 date: 2014-10-29
+tags: ["Haskell"]
 ---
 
 <!--

@@ -1,6 +1,7 @@
 ---
 title: "Type safe Formatting"
 date: 2014-10-05
+tags: ["Haskell"]
 ---
 
 めも

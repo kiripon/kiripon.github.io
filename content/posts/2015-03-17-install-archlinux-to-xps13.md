@@ -1,7 +1,7 @@
 ---
 title: Arch Linux を Dell XPS 13(2015)へインストールする
 date: 2015-03-17
-tags: ["Arch Linux"]
+tags: ["Arch Linux", "XPS13"]
 ---
 
 # 経緯

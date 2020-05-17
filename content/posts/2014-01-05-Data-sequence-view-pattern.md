@@ -1,7 +1,7 @@
 ---
 title: "Data.Sequence と View Pattern"
 date: 2014-01-05
-draft: false
+tags: ["Haskell"]
 ---
 
 C++のdequeに対応するモジュールとして、haskellでは純粋な関数の中で使えるData.Sequenceというモジュールがあります。

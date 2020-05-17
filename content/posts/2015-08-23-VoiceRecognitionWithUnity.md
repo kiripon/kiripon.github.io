@@ -1,6 +1,7 @@
 ---
 title: Chrome を使って Unity 上で音声認識
 date: 2015-08-23
+tags: ["C#"]
 ---
 # 概要
 

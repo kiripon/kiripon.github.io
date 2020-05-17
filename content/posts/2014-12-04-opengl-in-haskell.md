@@ -1,6 +1,7 @@
 ---
 title: OpenGL in Haskell
 date: 2014-12-04
+tags: ["Haskell"]
 ---
 
 haskellでOpenGLを使って何かしたい、と思って

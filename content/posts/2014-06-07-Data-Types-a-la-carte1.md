@@ -1,6 +1,7 @@
 ---
 title: "Data types a la carte のメモ"
 date: 2014-06-07
+tags: ["Haskell", "The Expression Problem"]
 ---
 以下の論文を読んだ内容を自分なりにまとめたメモ.
 文章は適当なので後で書き直すかもしれない.

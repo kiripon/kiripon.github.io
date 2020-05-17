@@ -1,6 +1,7 @@
 ---
 title: "Data types a la carteのメモ2"
 date: 2014-06-24
+tags: ["Haskell", "The Expression Problem"]
 ---
 
 データ型の定義はできるようになったので、このデータ型を*評価*していく。

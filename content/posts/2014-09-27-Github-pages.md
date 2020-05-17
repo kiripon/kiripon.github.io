@@ -1,6 +1,7 @@
 ---
 title: Github pages に移動しました
 date: 2014-09-27
+tags: ["Github Pages"]
 ---
 
 試験的にブログをGithub pagesで管理することにしました。

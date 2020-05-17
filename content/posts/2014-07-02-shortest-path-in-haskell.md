@@ -1,6 +1,7 @@
 ---
 title: "Haskellで最短経路"
 date: 2014-07-02
+tags: ["Haskell"]
 ---
 #Haskellでダイクストラ法を書く
 
