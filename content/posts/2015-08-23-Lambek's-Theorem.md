@@ -18,10 +18,10 @@ $F(\alpha): F(F(X)) \rightarrow F(X)$ は $F(X)$ を carrier とすると algebr
 $\alpha$ が initial であることより、以下の図を可換にする $i : X \rightarrow F(X)$ が唯一存在する. ($\alpha$ から $F(\alpha)$ へ algebra を移す射)
 
 $$
-\require{AMScd}
+\require{amscd}
 \begin{CD}
-F(X)         @>{F(i)}>>     F(F(X))\\
-@V{\alpha}VV             @VV{F(\alpha)}V\\
+F(X)         @>{F(i)}>>     F(F(X))\\\\
+@V{\alpha}VV             @VV{F(\alpha)}V\\\\
 X            @>{i}>>     F(X)
 \end{CD}
 $$
@@ -31,10 +31,10 @@ $$
 まず $\alpha \circ i : X \rightarrow X$ を考える.
 
 $$
-\require{AMScd}
+\require{amscd}
 \begin{CD}
-F(X)         @>{F(i)}>>     F(F(X))       @>{F(\alpha)}>> F(X)\\
-@VV{\alpha}V             @VV{F(\alpha)}V       @VVV     \\
+F(X)         @>{F(i)}>>     F(F(X))       @>{F(\alpha)}>> F(X)\\\\
+@VV{\alpha}V             @VV{F(\alpha)}V       @VVV     \\\\
 X            @>{i}>>        F(X)          @>{\alpha}>> X
 \end{CD}
 $$
@@ -46,10 +46,10 @@ $$
 
 次に $i \circ \alpha$ について考えるため,最初の可換図式にもどる.
 $$
-\require{AMScd}
+\require{amscd}
 \begin{CD}
-F(X)         @>{F(i)}>>     F(F(X))\\
-@V{\alpha}VV             @VV{F(\alpha)}V\\
+F(X)         @>{F(i)}>>     F(F(X))\\\\
+@V{\alpha}VV             @VV{F(\alpha)}V\\\\
 X            @>{i}>>     F(X)
 \end{CD}
 $$
@@ -58,9 +58,9 @@ $$
 $$
 \begin{eqnarray}
 i \circ \alpha
-& = & F(\alpha) \circ F(i) \\
-& = & F(\alpha \circ i) \\
-& = & F(id_X) \\
+& = & F(\alpha) \circ F(i) \\\\
+& = & F(\alpha \circ i) \\\\
+& = & F(id_X) \\\\
 & = & id_{F(X)}
 \end{eqnarray}
 $$

@@ -11,11 +11,13 @@ tags: ["Arch Linux"]
 
 #必要なドライバの確認
 `lspci`コマンドで無線モジュールを確認する。
+
 ```
 # lspci
 ...
 02:00.0 Network controller: Broadcom Corporation BCM4352 802.11ac Wireless Network Adapter (rev 03)
 ```
+
 調べたところ、`BCM4352`は
 [broadcom-wl-dkms(AUR)](https://aur.archlinux.org/packages/broadcom-wl-dkms/)
 を利用することで利用できるらしい。こいつを予め導入したインストールイメージをつくる。
@@ -25,6 +27,7 @@ tags: ["Arch Linux"]
 その際に、以下の変更を行った。
 
 `yaourt`を使うため、`pacman.conf`の末尾に以下を追加
+
 ```
 [archlinuxfr]
 SigLevel = Never
