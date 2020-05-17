@@ -1,6 +1,3 @@
-[submodule "themes/indigo"]
-	path = themes/indigo
-	url = https://github.com/AngeloStavrow/indigo.git
-[submodule "themes/ezhil"]
-	path = themes/ezhil
-	url = https://github.com/vividvilla/ezhil.git
+[submodule "themes/hugo-theme-noteworthy"]
+	path = themes/noteworthy
+	url = https://github.com/kimcc/hugo-theme-noteworthy.git
