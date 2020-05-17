@@ -2,13 +2,16 @@
 ## Profile
 
 ### Name
-* Hirotada Kiriyama
-  - A student at Tokyo Institute of Technology.
-  - I study Programming Language and Modularity.
+
+* Hirotada Kiriyama/桐山 裕匡
+
+  A System Software Engineer.
+
+* E-mail: hirotada .a.t. gmail.com
+* Github: [kiripon](https://github.com/kiripon)
 
 # Links
 
-* Github: [kiripon](https://github.com/kiripon)
 * Old blog: http://quadmist.hatenablog.com
 * Air Girlfriend Project (AR platform project)
   - [アンチ２次元同盟](http://antisemiconductor.github.io/)
