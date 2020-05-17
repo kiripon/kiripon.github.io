@@ -2,14 +2,25 @@
 title: Chrome を使って Unity 上で音声認識
 date: 2015-08-23
 ---
+# 概要
+
+Google Voice Recognition API を利用して音声認識を行ったメモ.
+
+
 # 構成
   * Websocket-sharp
   * Unity
 
 # 使い方
-  1. 適当なオブジェクトに以下のスクリプトをあたっちする.
+  1. 適当な Unity オブジェクトに以下のスクリプトをアタッチする.
   2. http://localhost:12002 をChrome でひらく
   3. マイクに話しかけるとUnity上のデバッグコンソールに認識したメッセージが表示される
+
+
+以上です.
+
+# コード
+
 ``` C#
 using UnityEngine;
 using System;

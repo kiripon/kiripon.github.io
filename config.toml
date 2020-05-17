@@ -1,10 +1,42 @@
 baseURL = "https://kiripon.net"
 languageCode = "ja-jp"
 title = "自由研究帳"
-theme = "indigo"
+theme = "noteworthy"
+summaryLength = 80
+hasCJKLanguage = true
+enableEmoji = true
 pygmentsUseClasses = true
 pygmentsCodefences = true
+showReadMore = false
+rssLimit = 20
+github = "#kiripon"
 
+[[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 1
+
+[[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+    weight = 2
+
+[[menu.main]]
+    identifier = "archives"
+    name = "Archives"
+    url = "/archives/"
+    weight = 3
+
+[taxonomies]
+    tag = "tags"
+[author]
+    name = "kiripon"
+
+[params]
+  mainSections = ["posts", "updates"]
+  customCSS = "css/custom.css"
 [markup]
   defaultMarkdownHandler = "goldmark"
   [markup.blackFriday]
