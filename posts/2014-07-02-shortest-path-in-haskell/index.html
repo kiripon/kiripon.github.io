@@ -1,0 +1,57 @@
+<!doctype html><html lang=ja-jp><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=format-detection content="telephone=no"><title>Haskellで最短経路 | 自由研究帳</title><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#ff3db4><meta name=theme-color content="#ffffff"><link rel=stylesheet href=https://kiripon.net/css/main.min.975b1911c008aee6ab5fb42e51274b8268ebcb65dc15bd4a5f69b9eedb485c3e.css><link type=text/css rel=stylesheet href=/css/custom.css><script>MathJax={loader:{load:['[tex]/amscd']},tex:{inlineMath:[['$','$'],['\\(','\\)']],processEscapes:true,tags:'ams',macros:{ssqrt:['\\sqrt{\\smash[b]{\\mathstrut #1}}',1],tcdegree:['\\unicode{xb0}'],tccelsius:['\\unicode{x2103}'],tcperthousand:['\\unicode{x2030}'],tcmu:['\\unicode{x3bc}'],tcohm:['\\unicode{x3a9}']},packages:{'[+]':['amsCd']}},chtml:{matchFontHeight:false,displayAlign:"left",displayIndent:"2em"}};</script><script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js></script></head><body><nav><header><div class=site-title><a href=/>自由研究帳</a></div></header><div class=nav-menu><a class="color-link nav-link" href=/about/>About</a>
+<a class="color-link nav-link" href=/tags/>Tags</a>
+<a class="color-link nav-link" href=/archives/>Archives</a>
+<a class="color-link nav-link" href=https://kiripon.net/index.xml target=_blank rel=noopener type=application/rss+xml>RSS</a></div><footer class=footer><div class=social-icons></div><p><a href=https://github.com/kimcc/hugo-theme-noteworthy target=_blank rel=noopener>Noteworthy theme</a></p><p><a href=https://gohugo.io target=_blank rel=noopener>Built with Hugo</a></p><script src=https://kiripon.net/js/main.min.fa5c2b23e07b5d9bfad267a52b4b24fdb053e6fb7524993383594926a3ac270c.js integrity="sha256-+lwrI+B7XZv60melK0sk/bBT5vt1JJkzg1lJJqOsJww=" crossorigin=anonymous></script></footer></nav><div id=content class=content-container><h1 class=post-title>Haskellで最短経路</h1><time>July 2, 2014</time><div><p><p>#Haskellでダイクストラ法を書く</p><p>最近Dijkstra法を教える機会があったので、せっかくなのでHaskellでも書きました。
+containersにPriority-queueが見つからなかったのでSetで代用してます。
+ガリガリ副作用を使ってるので関数型っぽくはないです。</p><p>標準ライブラリだけを使ってるからcodeforcesでも使えるはず。
+<a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A">AOJ:GRL_1_A</a>にあわせて書いてあります。</p><div class=highlight><pre class=chroma><code class=language-haskell data-lang=haskell><span class=kr>import</span> <span class=nn>Control.Monad</span>
+<span class=kr>import</span> <span class=nn>Control.Monad.State</span>
+<span class=kr>import</span> <span class=nn>Control.Applicative</span>
+<span class=kr>import</span> <span class=nn>Data.Array</span>
+<span class=kr>import</span> <span class=nn>Data.Array.ST</span>
+<span class=kr>import</span> <span class=nn>Data.Array.IO</span>
+<span class=kr>import</span> <span class=k>qualified</span> <span class=nn>Data.Set</span> <span class=k>as</span> <span class=n>S</span>
+<span class=kr>import</span> <span class=nn>Data.Traversable</span>
+<span class=kr>type</span> <span class=kt>Dist</span> <span class=ow>=</span> <span class=kt>Int</span>
+<span class=kr>type</span> <span class=kt>Node</span> <span class=ow>=</span> <span class=kt>Int</span>
+<span class=kr>type</span> <span class=kt>Graph</span> <span class=ow>=</span> <span class=kt>Array</span> <span class=kt>Node</span> <span class=p>[(</span><span class=kt>Node</span><span class=p>,</span><span class=kt>Dist</span><span class=p>)]</span>
+
+<span class=nf>getInput</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=p>(</span><span class=kt>Graph</span><span class=p>,</span><span class=kt>Node</span><span class=p>)</span>
+<span class=nf>getInput</span> <span class=ow>=</span> <span class=kr>do</span>
+  <span class=n>v</span><span class=kt>:</span><span class=n>e</span><span class=kt>:</span><span class=n>r</span><span class=kt>:</span><span class=kr>_</span> <span class=ow>&lt;-</span> <span class=n>map</span> <span class=n>read</span> <span class=o>.</span> <span class=n>words</span> <span class=o>&lt;$&gt;</span> <span class=n>getLine</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=p>[</span><span class=kt>Int</span><span class=p>]</span>
+  <span class=n>a</span> <span class=ow>&lt;-</span> <span class=n>newArray</span> <span class=p>(</span><span class=mi>0</span><span class=p>,</span><span class=n>v</span><span class=o>-</span><span class=mi>1</span><span class=p>)</span> <span class=kt>[]</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=p>(</span><span class=kt>IOArray</span> <span class=kt>Node</span> <span class=p>[(</span><span class=kt>Node</span><span class=p>,</span><span class=kt>Dist</span><span class=p>)])</span>
+  <span class=n>replicateM_</span> <span class=n>e</span> <span class=o>$</span> <span class=kr>do</span>
+    <span class=n>s</span><span class=kt>:</span><span class=n>t</span><span class=kt>:</span><span class=n>d</span><span class=kt>:</span><span class=kr>_</span> <span class=ow>&lt;-</span> <span class=n>map</span> <span class=n>read</span> <span class=o>.</span> <span class=n>words</span> <span class=o>&lt;$&gt;</span> <span class=n>getLine</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=p>[</span><span class=kt>Int</span><span class=p>]</span>
+    <span class=n>es</span> <span class=ow>&lt;-</span> <span class=n>readArray</span> <span class=n>a</span> <span class=n>s</span>
+    <span class=n>writeArray</span> <span class=n>a</span> <span class=n>s</span> <span class=p>((</span><span class=n>t</span><span class=p>,</span><span class=n>d</span><span class=p>)</span><span class=kt>:</span><span class=n>es</span><span class=p>)</span>
+  <span class=n>a&#39;</span> <span class=ow>&lt;-</span> <span class=n>freeze</span> <span class=n>a</span>
+  <span class=n>return</span> <span class=p>(</span><span class=n>a&#39;</span><span class=p>,</span><span class=n>r</span><span class=p>)</span>
+
+<span class=nf>dijkstra</span> <span class=ow>::</span> <span class=kt>Graph</span> <span class=ow>-&gt;</span> <span class=kt>Node</span> <span class=ow>-&gt;</span> <span class=kt>Array</span> <span class=kt>Node</span> <span class=kt>Dist</span>
+<span class=nf>dijkstra</span> <span class=n>g</span> <span class=n>s</span> <span class=ow>=</span> <span class=n>runSTArray</span> <span class=o>$</span> <span class=kr>do</span>
+  <span class=n>a</span> <span class=ow>&lt;-</span> <span class=n>newArray</span> <span class=n>bound</span> <span class=n>maxBound</span>
+  <span class=n>evalStateT</span> <span class=p>(</span><span class=n>loop</span> <span class=n>a</span><span class=p>)</span> <span class=p>(</span><span class=kt>S</span><span class=o>.</span><span class=n>singleton</span> <span class=p>(</span><span class=mi>0</span><span class=p>,</span><span class=n>s</span><span class=p>))</span>
+  <span class=n>return</span> <span class=n>a</span>
+  <span class=kr>where</span>
+    <span class=n>bound</span> <span class=ow>=</span> <span class=n>bounds</span> <span class=n>g</span>
+    <span class=n>loop</span> <span class=n>a</span> <span class=ow>=</span> <span class=kr>do</span>
+      <span class=n>isEmpty</span> <span class=ow>&lt;-</span> <span class=kt>S</span><span class=o>.</span><span class=n>null</span> <span class=o>&lt;$&gt;</span> <span class=n>get</span>
+      <span class=n>unless</span> <span class=n>isEmpty</span> <span class=o>$</span> <span class=kr>do</span>
+      <span class=p>(</span><span class=n>d</span><span class=p>,</span><span class=n>n</span><span class=p>)</span> <span class=ow>&lt;-</span> <span class=n>state</span> <span class=kt>S</span><span class=o>.</span><span class=n>deleteFindMin</span>
+      <span class=n>d&#39;</span> <span class=ow>&lt;-</span> <span class=n>lift</span> <span class=o>$</span> <span class=n>readArray</span> <span class=n>a</span> <span class=n>n</span>
+      <span class=n>when</span> <span class=p>(</span><span class=n>d</span> <span class=o>&lt;</span> <span class=n>d&#39;</span><span class=p>)</span> <span class=o>$</span> <span class=kr>do</span>
+        <span class=n>lift</span> <span class=o>$</span> <span class=n>writeArray</span> <span class=n>a</span> <span class=n>n</span> <span class=n>d</span>
+        <span class=kr>let</span> <span class=n>nexts</span> <span class=ow>=</span> <span class=n>g</span> <span class=o>!</span> <span class=n>n</span>
+        <span class=n>void</span> <span class=o>$</span> <span class=n>for</span> <span class=n>nexts</span> <span class=o>$</span> <span class=nf>\</span><span class=p>(</span><span class=n>ix</span><span class=p>,</span><span class=n>w</span><span class=p>)</span> <span class=ow>-&gt;</span> <span class=kr>do</span>
+          <span class=n>d&#39;&#39;</span> <span class=ow>&lt;-</span> <span class=n>lift</span> <span class=o>$</span> <span class=n>readArray</span> <span class=n>a</span> <span class=n>ix</span>
+          <span class=n>when</span> <span class=p>(</span><span class=n>d</span> <span class=o>+</span> <span class=n>w</span> <span class=o>&lt;</span> <span class=n>d&#39;&#39;</span><span class=p>)</span>
+            <span class=o>$</span> <span class=n>modify</span> <span class=o>$</span> <span class=kt>S</span><span class=o>.</span><span class=n>insert</span> <span class=p>(</span><span class=n>d</span><span class=o>+</span><span class=n>w</span><span class=p>,</span><span class=n>ix</span><span class=p>)</span>
+      <span class=n>loop</span> <span class=n>a</span>
+
+    
+<span class=nf>main</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=nb>()</span>
+<span class=nf>main</span> <span class=ow>=</span> <span class=kr>do</span>
+  <span class=p>(</span><span class=n>g</span><span class=p>,</span><span class=n>r</span><span class=p>)</span> <span class=ow>&lt;-</span> <span class=n>getInput</span>
+  <span class=n>print</span> <span class=n>g</span>
+  <span class=n>print</span> <span class=o>$</span> <span class=n>dijkstra</span> <span class=n>g</span> <span class=n>r</span>
+</code></pre></div></p></div><div class=page-footer></div></div><footer class=footer-mobile><div class=social-icons></div><div class=footer-mobile-links><p><a href=https://github.com/kimcc/hugo-theme-noteworthy target=_blank rel=noopener>Noteworthy theme</a></p><span class=divider-bar>|</span><p><a href=https://gohugo.io target=_blank rel=noopener>Built with Hugo</a></p></div><script src=https://kiripon.net/js/main.min.fa5c2b23e07b5d9bfad267a52b4b24fdb053e6fb7524993383594926a3ac270c.js integrity="sha256-+lwrI+B7XZv60melK0sk/bBT5vt1JJkzg1lJJqOsJww=" crossorigin=anonymous></script></footer></body></html>

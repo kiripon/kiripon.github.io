@@ -1,0 +1,192 @@
+<!doctype html><html lang=ja-jp><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=format-detection content="telephone=no"><title>OpenGL in Haskell | 自由研究帳</title><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#ff3db4><meta name=theme-color content="#ffffff"><link rel=stylesheet href=https://kiripon.net/css/main.min.975b1911c008aee6ab5fb42e51274b8268ebcb65dc15bd4a5f69b9eedb485c3e.css><link type=text/css rel=stylesheet href=/css/custom.css><script>MathJax={loader:{load:['[tex]/amscd']},tex:{inlineMath:[['$','$'],['\\(','\\)']],processEscapes:true,tags:'ams',macros:{ssqrt:['\\sqrt{\\smash[b]{\\mathstrut #1}}',1],tcdegree:['\\unicode{xb0}'],tccelsius:['\\unicode{x2103}'],tcperthousand:['\\unicode{x2030}'],tcmu:['\\unicode{x3bc}'],tcohm:['\\unicode{x3a9}']},packages:{'[+]':['amsCd']}},chtml:{matchFontHeight:false,displayAlign:"left",displayIndent:"2em"}};</script><script id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js></script></head><body><nav><header><div class=site-title><a href=/>自由研究帳</a></div></header><div class=nav-menu><a class="color-link nav-link" href=/about/>About</a>
+<a class="color-link nav-link" href=/tags/>Tags</a>
+<a class="color-link nav-link" href=/archives/>Archives</a>
+<a class="color-link nav-link" href=https://kiripon.net/index.xml target=_blank rel=noopener type=application/rss+xml>RSS</a></div><footer class=footer><div class=social-icons></div><p><a href=https://github.com/kimcc/hugo-theme-noteworthy target=_blank rel=noopener>Noteworthy theme</a></p><p><a href=https://gohugo.io target=_blank rel=noopener>Built with Hugo</a></p><script src=https://kiripon.net/js/main.min.fa5c2b23e07b5d9bfad267a52b4b24fdb053e6fb7524993383594926a3ac270c.js integrity="sha256-+lwrI+B7XZv60melK0sk/bBT5vt1JJkzg1lJJqOsJww=" crossorigin=anonymous></script></footer></nav><div id=content class=content-container><h1 class=post-title>OpenGL in Haskell</h1><time>December 4, 2014</time><div><p><p>haskellでOpenGLを使って何かしたい、と思って
+<a href=http://www.opengl-tutorial.org/>opengl-tutorial.org</a>を参考にhaddockを眺めながら書きました。haskellのOpenGLは、生のOpenGLと微妙に違うAPIを持っているので調べるのはかなりかったるかった。</p><p>ともあれ、赤い三角形はようやく表示できたので記念にソースコードを貼り付けておきます。</p><p>使用しているパッケージはGLFW-bではなくGLFWです。GLFW-bのほうはglfw3に対応しているようなので気が向いたら書きなおすことにしよう</p><p><em>Main.hs</em></p><div class=highlight><pre class=chroma><code class=language-haskell data-lang=haskell><span class=cm>{-# LANGUAGE NoMonomorphismRestriction #-}</span>
+<span class=kr>module</span> <span class=nn>Main</span> <span class=kr>where</span>
+
+<span class=kr>import</span>           <span class=nn>Control.Monad</span>
+<span class=kr>import</span>           <span class=nn>Data.Array.Storable</span>       <span class=p>(</span><span class=nf>newListArray</span><span class=p>,</span> <span class=nf>withStorableArray</span><span class=p>)</span>
+<span class=kr>import</span> <span class=k>qualified</span> <span class=nn>Data.ByteString</span>           <span class=k>as</span> <span class=n>S8</span>
+<span class=kr>import</span>           <span class=nn>Foreign.Ptr</span>               <span class=p>(</span><span class=nf>nullPtr</span><span class=p>)</span>
+<span class=kr>import</span>           <span class=nn>Foreign.Storable</span>          <span class=p>(</span><span class=nf>sizeOf</span><span class=p>)</span>
+<span class=kr>import</span>           <span class=nn>Graphics.Rendering.OpenGL</span> <span class=p>(</span><span class=kt>BufferObject</span><span class=p>,</span> <span class=kt>Color4</span> <span class=p>(</span><span class=o>..</span><span class=p>),</span> <span class=kt>GLfloat</span><span class=p>,</span>
+                                            <span class=kt>VertexArrayObject</span><span class=p>,</span> <span class=nf>get</span><span class=p>,</span> <span class=p>(</span><span class=o>$=</span><span class=p>))</span>
+<span class=kr>import</span> <span class=k>qualified</span> <span class=nn>Graphics.Rendering.OpenGL</span> <span class=k>as</span> <span class=n>GL</span>
+<span class=kr>import</span> <span class=k>qualified</span> <span class=nn>Graphics.UI.GLFW</span>          <span class=k>as</span> <span class=n>GLFW</span>
+<span class=kr>import</span>           <span class=nn>System.Exit</span>               <span class=p>(</span><span class=nf>exitSuccess</span><span class=p>)</span>
+
+<span class=nf>main</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=nb>()</span>
+<span class=nf>main</span> <span class=ow>=</span> <span class=kr>do</span>
+  <span class=n>putStrLn</span> <span class=s>&#34;initialize..&#34;</span>
+  <span class=n>initialize</span>
+  <span class=n>putStrLn</span> <span class=s>&#34; done&#34;</span>
+  <span class=n>print</span> <span class=s>&#34;begin loop&#34;</span>
+  <span class=n>mainLoop</span>
+  <span class=n>print</span> <span class=s>&#34;end loop&#34;</span>
+  <span class=kt>GLFW</span><span class=o>.</span><span class=n>closeWindow</span>
+  <span class=kt>GLFW</span><span class=o>.</span><span class=n>terminate</span>
+  <span class=kr>where</span>
+    <span class=n>initialize</span> <span class=ow>=</span> <span class=kr>do</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>initialize</span> <span class=o>&gt;&gt;=</span> <span class=n>unless</span> <span class=p>`</span><span class=n>flip</span><span class=p>`</span> <span class=kt>GLFW</span><span class=o>.</span><span class=n>terminate</span>
+
+
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>openWindowHint</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>FSAASamples</span> <span class=mi>4</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>openWindowHint</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>OpenGLVersionMajor</span> <span class=mi>3</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>openWindowHint</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>OpenGLVersionMinor</span> <span class=mi>2</span> <span class=c1>-- 3はだめ？</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>openWindowHint</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>OpenGLForwardCompat</span> <span class=kt>True</span>
+
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>openWindowHint</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>OpenGLProfile</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>OpenGLCoreProfile</span>
+
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>windowTitle</span> <span class=o>$=</span> <span class=s>&#34;GLFW Demo&#34;</span>
+      <span class=n>wRes</span> <span class=ow>&lt;-</span> <span class=kt>GLFW</span><span class=o>.</span><span class=n>openWindow</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>Size</span> <span class=mi>400</span> <span class=mi>400</span><span class=p>)</span>
+              <span class=kt>[]</span>
+              <span class=kt>GLFW</span><span class=o>.</span><span class=kt>Window</span>
+      <span class=n>unless</span> <span class=n>wRes</span> <span class=o>$</span> <span class=kr>do</span><span class=p>{</span>
+        <span class=n>putStrLn</span> <span class=s>&#34;failed to open window&#34;</span><span class=p>;</span>
+        <span class=kt>GLFW</span><span class=o>.</span><span class=n>terminate</span><span class=p>;</span>
+        <span class=kt>System</span><span class=o>.</span><span class=kt>Exit</span><span class=o>.</span><span class=n>exitSuccess</span><span class=p>;}</span>
+
+      <span class=n>print</span> <span class=s>&#34;hgoe&#34;</span>
+      <span class=n>vGL</span> <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>get</span> <span class=kt>GL</span><span class=o>.</span><span class=n>glVersion</span>
+      <span class=n>putStrLn</span> <span class=o>$</span> <span class=s>&#34;OpenGL version:&#34;</span> <span class=o>++</span> <span class=n>show</span> <span class=n>vGL</span>
+      <span class=n>vGLFW</span> <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>get</span> <span class=kt>GLFW</span><span class=o>.</span><span class=n>version</span>
+      <span class=n>putStrLn</span> <span class=o>$</span> <span class=s>&#34;GLFW version:&#34;</span> <span class=o>++</span> <span class=n>show</span> <span class=n>vGLFW</span>
+
+
+      <span class=kt>GL</span><span class=o>.</span><span class=n>shadeModel</span>            <span class=o>$=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Smooth</span>
+      <span class=kt>GL</span><span class=o>.</span><span class=n>lineSmooth</span>            <span class=o>$=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Enabled</span>
+      <span class=kt>GL</span><span class=o>.</span><span class=n>blend</span>                 <span class=o>$=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Enabled</span>
+      <span class=kt>GL</span><span class=o>.</span><span class=n>blendFunc</span>             <span class=o>$=</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>SrcAlpha</span><span class=p>,</span><span class=kt>GL</span><span class=o>.</span><span class=kt>OneMinusSrcAlpha</span><span class=p>)</span>
+      <span class=kt>GL</span><span class=o>.</span><span class=n>clearColor</span>            <span class=o>$=</span> <span class=kt>Color4</span> <span class=mi>0</span> <span class=mf>0.5</span> <span class=mf>0.5</span> <span class=mi>0</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>windowSizeCallback</span>  <span class=o>$=</span> <span class=nf>\</span><span class=n>size</span><span class=o>@</span><span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>Size</span> <span class=n>w</span> <span class=n>h</span><span class=p>)</span> <span class=ow>-&gt;</span> <span class=kr>do</span><span class=p>{</span>
+          <span class=n>putStrLn</span> <span class=s>&#34;callback: windowResizeCallback&#34;</span><span class=p>;</span>
+          <span class=kt>GL</span><span class=o>.</span><span class=n>viewport</span>   <span class=o>$=</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>Position</span> <span class=mi>0</span> <span class=mi>0</span><span class=p>,</span><span class=n>size</span><span class=p>);</span>
+          <span class=kt>GL</span><span class=o>.</span><span class=n>matrixMode</span> <span class=o>$=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Projection</span><span class=p>;</span>
+          <span class=kt>GL</span><span class=o>.</span><span class=n>loadIdentity</span><span class=p>;</span>
+          <span class=kt>GL</span><span class=o>.</span><span class=n>ortho2D</span> <span class=mi>0</span> <span class=p>(</span><span class=n>realToFrac</span> <span class=n>w</span><span class=p>)</span> <span class=p>(</span><span class=n>realToFrac</span> <span class=n>h</span><span class=p>)</span> <span class=mi>0</span><span class=p>;</span>
+          <span class=p>}</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>windowCloseCallback</span> <span class=o>$=</span> <span class=kr>do</span><span class=p>{</span>
+          <span class=n>putStrLn</span> <span class=s>&#34;callback: windowCloseCallback&#34;</span><span class=p>;</span>
+          <span class=kt>GLFW</span><span class=o>.</span><span class=n>closeWindow</span><span class=p>;</span>
+          <span class=kt>GLFW</span><span class=o>.</span><span class=n>terminate</span><span class=p>;</span>
+          <span class=n>exitSuccess</span><span class=p>;}</span>
+
+<span class=nf>vertices</span> <span class=ow>::</span> <span class=p>[</span><span class=kt>GLfloat</span><span class=p>]</span>
+<span class=nf>vertices</span> <span class=ow>=</span> <span class=p>[</span><span class=o>-</span><span class=mf>1.0</span><span class=p>,</span> <span class=o>-</span><span class=mf>1.0</span><span class=p>,</span> <span class=mf>0.0</span>
+           <span class=p>,</span><span class=mf>1.0</span><span class=p>,</span> <span class=o>-</span><span class=mf>1.0</span><span class=p>,</span> <span class=mf>0.0</span>
+           <span class=p>,</span><span class=mf>0.0</span><span class=p>,</span> <span class=mf>1.0</span><span class=p>,</span> <span class=mf>0.0</span><span class=p>]</span>
+
+
+<span class=nf>createVBO</span> <span class=ow>::</span> <span class=p>[</span><span class=kt>GLfloat</span><span class=p>]</span> <span class=ow>-&gt;</span> <span class=kt>IO</span> <span class=kt>BufferObject</span>
+<span class=nf>createVBO</span> <span class=n>elems</span> <span class=ow>=</span> <span class=kr>do</span>
+  <span class=p>[</span><span class=n>vertexBuffer</span><span class=p>]</span> <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>genObjectNames</span> <span class=mi>1</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>bindBuffer</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>ArrayBuffer</span> <span class=o>$=</span> <span class=kt>Just</span> <span class=n>vertexBuffer</span>
+  <span class=n>arr</span> <span class=ow>&lt;-</span> <span class=n>newListArray</span> <span class=p>(</span><span class=mi>0</span><span class=p>,</span><span class=n>len</span><span class=o>-</span><span class=mi>1</span><span class=p>)</span><span class=n>elems</span>
+  <span class=kr>let</span> <span class=n>bufSize</span> <span class=ow>=</span> <span class=n>toEnum</span> <span class=o>$</span> <span class=n>len</span> <span class=o>*</span> <span class=n>sizeOf</span> <span class=p>(</span><span class=n>head</span> <span class=n>elems</span><span class=p>)</span>
+  <span class=n>withStorableArray</span> <span class=n>arr</span> <span class=o>$</span> <span class=nf>\</span><span class=n>ptr</span> <span class=ow>-&gt;</span>
+    <span class=kt>GL</span><span class=o>.</span><span class=n>bufferData</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>ArrayBuffer</span> <span class=o>$=</span> <span class=p>(</span><span class=n>bufSize</span><span class=p>,</span><span class=n>ptr</span><span class=p>,</span><span class=kt>GL</span><span class=o>.</span><span class=kt>StaticDraw</span><span class=p>)</span>
+  <span class=n>putStrLn</span> <span class=s>&#34;array buffered&#34;</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>bindBuffer</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>ArrayBuffer</span> <span class=o>$=</span> <span class=kt>Nothing</span> <span class=c1>-- なくてもいい？</span>
+  <span class=n>print</span> <span class=s>&#34;buffer binded&#34;</span>
+  <span class=n>return</span> <span class=n>vertexBuffer</span>
+  <span class=kr>where</span>
+    <span class=n>len</span> <span class=ow>=</span> <span class=n>length</span> <span class=n>elems</span>
+
+<span class=nf>mainLoop</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=nb>()</span>
+<span class=nf>mainLoop</span> <span class=ow>=</span> <span class=kr>do</span>
+  <span class=c1>--GL.arrayPointer GL.</span>
+  <span class=c1>--glGenVertexArrays(&amp;vao)</span>
+  <span class=p>[</span><span class=n>vertexArrayId</span><span class=p>]</span> <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>genObjectNames</span> <span class=mi>1</span> <span class=ow>::</span> <span class=kt>IO</span> <span class=p>[</span><span class=kt>VertexArrayObject</span><span class=p>]</span>
+  <span class=c1>--glBindVertexArray(vao)</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>bindVertexArrayObject</span> <span class=o>$=</span> <span class=kt>Just</span> <span class=n>vertexArrayId</span>
+
+  <span class=n>vbo</span> <span class=ow>&lt;-</span> <span class=n>createVBO</span> <span class=n>vertices</span>
+
+  <span class=n>program</span> <span class=ow>&lt;-</span> <span class=n>loadShaders</span> <span class=s>&#34;./vertexShader.glsl&#34;</span> <span class=s>&#34;./fragmentShader.glsl&#34;</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>currentProgram</span> <span class=o>$=</span> <span class=kt>Just</span> <span class=n>program</span>
+
+  <span class=n>pState</span> <span class=ow>&lt;-</span> <span class=n>get</span> <span class=o>$</span> <span class=kt>GL</span><span class=o>.</span><span class=n>validateStatus</span> <span class=n>program</span>
+  <span class=n>unless</span> <span class=n>pState</span> <span class=o>$</span> <span class=n>putStrLn</span> <span class=s>&#34;Shader validate Failed&#34;</span>
+
+  <span class=n>loop</span> <span class=n>vbo</span> <span class=n>vertexArrayId</span>
+  <span class=n>return</span> <span class=nb>()</span>
+  <span class=kr>where</span>
+    <span class=n>loop</span> <span class=n>vertexBuffer</span> <span class=n>vao</span> <span class=ow>=</span> <span class=kr>do</span>
+      <span class=n>draw</span> <span class=n>vertexBuffer</span> <span class=n>vao</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>pollEvents</span>
+      <span class=kt>GLFW</span><span class=o>.</span><span class=n>swapBuffers</span>
+      <span class=n>p</span> <span class=ow>&lt;-</span> <span class=kt>GLFW</span><span class=o>.</span><span class=n>getKey</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>ESC</span>
+      <span class=n>unless</span> <span class=p>(</span><span class=n>p</span> <span class=o>==</span> <span class=kt>GLFW</span><span class=o>.</span><span class=kt>Press</span><span class=p>)</span> <span class=o>$</span> <span class=kr>do</span>
+        <span class=kt>GLFW</span><span class=o>.</span><span class=n>sleep</span> <span class=mf>0.001</span>
+        <span class=n>loop</span> <span class=n>vertexBuffer</span> <span class=n>vao</span>
+
+
+<span class=nf>draw</span> <span class=ow>::</span> <span class=kt>BufferObject</span> <span class=ow>-&gt;</span> <span class=kt>VertexArrayObject</span> <span class=ow>-&gt;</span> <span class=kt>IO</span> <span class=nb>()</span>
+<span class=nf>draw</span> <span class=n>vertexBuffer</span> <span class=n>vao</span> <span class=ow>=</span> <span class=kr>do</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>clear</span> <span class=p>[</span><span class=kt>GL</span><span class=o>.</span><span class=kt>ColorBuffer</span><span class=p>,</span><span class=kt>GL</span><span class=o>.</span><span class=kt>DepthBuffer</span><span class=p>]</span>
+
+  <span class=c1>--glDrawArraysを書く</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>vertexAttribArray</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>AttribLocation</span> <span class=mi>0</span><span class=p>)</span> <span class=o>$=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Enabled</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>bindBuffer</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>ArrayBuffer</span>               <span class=o>$=</span> <span class=kt>Just</span> <span class=n>vertexBuffer</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>bindVertexArrayObject</span> <span class=o>$=</span> <span class=kt>Just</span> <span class=n>vao</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>vertexAttribPointer</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>AttribLocation</span> <span class=mi>0</span><span class=p>)</span><span class=o>$=</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>ToFloat</span><span class=p>,</span><span class=n>descriptor</span><span class=p>)</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>drawArrays</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Triangles</span> <span class=mi>0</span> <span class=mi>3</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>bindBuffer</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>ArrayBuffer</span> <span class=o>$=</span> <span class=kt>Nothing</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>vertexAttribArray</span> <span class=p>(</span><span class=kt>GL</span><span class=o>.</span><span class=kt>AttribLocation</span> <span class=mi>0</span><span class=p>)</span> <span class=o>$=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Disabled</span>
+
+  <span class=kt>GL</span><span class=o>.</span><span class=n>flush</span>
+  <span class=kr>where</span>
+    <span class=n>descriptor</span><span class=ow>=</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>VertexArrayDescriptor</span> <span class=mi>3</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Float</span> <span class=mi>0</span> <span class=n>nullPtr</span>
+      <span class=ow>::</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>VertexArrayDescriptor</span> <span class=kt>GLfloat</span>
+
+<span class=nf>loadShaders</span> <span class=ow>::</span> <span class=kt>FilePath</span> <span class=ow>-&gt;</span> <span class=kt>FilePath</span> <span class=ow>-&gt;</span> <span class=kt>IO</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>Program</span>
+<span class=nf>loadShaders</span> <span class=n>vertexFilePath</span> <span class=n>fragmentFilePath</span> <span class=ow>=</span> <span class=kr>do</span>
+
+  <span class=n>vertexShaderId</span>   <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>createShader</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>VertexShader</span>
+  <span class=n>vShaderData</span> <span class=ow>&lt;-</span> <span class=kt>S8</span><span class=o>.</span><span class=n>readFile</span> <span class=n>vertexFilePath</span>
+  <span class=n>putStrLn</span> <span class=o>$</span> <span class=s>&#34;compilingShader : &#34;</span> <span class=o>++</span> <span class=n>vertexFilePath</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>shaderSourceBS</span> <span class=n>vertexShaderId</span> <span class=o>$=</span> <span class=n>vShaderData</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>compileShader</span> <span class=n>vertexShaderId</span>
+
+  <span class=n>vShaderLog</span> <span class=ow>&lt;-</span> <span class=n>get</span> <span class=o>$</span> <span class=kt>GL</span><span class=o>.</span><span class=n>shaderInfoLog</span> <span class=n>vertexShaderId</span>
+  <span class=n>putStrLn</span> <span class=n>vShaderLog</span>
+
+  <span class=n>fragmentShaderId</span> <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>createShader</span> <span class=kt>GL</span><span class=o>.</span><span class=kt>FragmentShader</span>
+  <span class=n>fShaderData</span> <span class=ow>&lt;-</span> <span class=kt>S8</span><span class=o>.</span><span class=n>readFile</span> <span class=n>fragmentFilePath</span>
+  <span class=n>putStrLn</span> <span class=o>$</span> <span class=s>&#34;compilingShader : &#34;</span> <span class=o>++</span> <span class=n>fragmentFilePath</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>shaderSourceBS</span> <span class=n>fragmentShaderId</span> <span class=o>$=</span> <span class=n>fShaderData</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>compileShader</span> <span class=n>fragmentShaderId</span>
+  <span class=n>fShaderLog</span> <span class=ow>&lt;-</span> <span class=n>get</span> <span class=o>$</span> <span class=kt>GL</span><span class=o>.</span><span class=n>shaderInfoLog</span> <span class=n>fragmentShaderId</span>
+  <span class=n>putStrLn</span> <span class=o>$</span> <span class=s>&#34;shader log :</span><span class=se>\n</span><span class=s>&#34;</span> <span class=o>++</span> <span class=n>fShaderLog</span>
+
+  <span class=c1>--link Program</span>
+  <span class=n>putStrLn</span> <span class=s>&#34;Linking Shader Program&#34;</span>
+  <span class=n>programId</span> <span class=ow>&lt;-</span> <span class=kt>GL</span><span class=o>.</span><span class=n>createProgram</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>attachShader</span> <span class=n>prattachShader</span> <span class=n>programId</span> <span class=n>vertexShaderId</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>ogramId</span> <span class=n>vertexShaderId</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>attachShader</span> <span class=n>programId</span> <span class=n>fragmentShaderId</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>linkProgram</span> <span class=n>programId</span>
+
+  <span class=c1>--check program</span>
+  <span class=n>programLog</span> <span class=ow>&lt;-</span> <span class=n>get</span> <span class=o>$</span> <span class=kt>GL</span><span class=o>.</span><span class=n>programInfoLog</span> <span class=n>programId</span>
+  <span class=n>putStrLn</span> <span class=o>$</span> <span class=s>&#34;program link log :</span><span class=se>\n</span><span class=s>&#34;</span> <span class=o>++</span> <span class=n>programLog</span>
+
+  <span class=kt>GL</span><span class=o>.</span><span class=n>deleteObjectName</span> <span class=n>vertexShaderId</span>
+  <span class=kt>GL</span><span class=o>.</span><span class=n>deleteObjectName</span> <span class=n>fragmentShaderId</span>
+  <span class=n>return</span> <span class=n>programId</span>
+</code></pre></div><p><em>vertexShader.glsl</em></p><div class=highlight><pre class=chroma><code class=language-glsl data-lang=glsl><span class=cp>#version 330 core</span>
+
+<span class=n>layout</span><span class=p>(</span><span class=n>location</span> <span class=o>=</span> <span class=mo>0</span><span class=p>)</span> <span class=k>in</span> <span class=k>vec3</span> <span class=n>vertexPosition_modelspace</span><span class=p>;</span>
+
+<span class=k>void</span> <span class=n>main</span><span class=p>(){</span>
+  <span class=n>gl_Position</span><span class=p>.</span><span class=n>xyz</span> <span class=o>=</span> <span class=n>vertexPosition_modelspace</span><span class=p>;</span>
+  <span class=n>gl_Position</span><span class=p>.</span><span class=n>w</span>   <span class=o>=</span> <span class=mf>1.0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></div><p><em>fragmentShader.glsl</em></p><div class=highlight><pre class=chroma><code class=language-glsl data-lang=glsl><span class=cp>#version 330 core</span>
+<span class=k>out</span> <span class=k>vec3</span> <span class=n>color</span><span class=p>;</span>
+
+<span class=k>void</span> <span class=n>main</span><span class=p>(){</span>
+  <span class=n>color</span> <span class=o>=</span> <span class=k>vec3</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span><span class=mo>0</span><span class=p>,</span><span class=mo>0</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></div></p></div><div class=page-footer></div></div><footer class=footer-mobile><div class=social-icons></div><div class=footer-mobile-links><p><a href=https://github.com/kimcc/hugo-theme-noteworthy target=_blank rel=noopener>Noteworthy theme</a></p><span class=divider-bar>|</span><p><a href=https://gohugo.io target=_blank rel=noopener>Built with Hugo</a></p></div><script src=https://kiripon.net/js/main.min.fa5c2b23e07b5d9bfad267a52b4b24fdb053e6fb7524993383594926a3ac270c.js integrity="sha256-+lwrI+B7XZv60melK0sk/bBT5vt1JJkzg1lJJqOsJww=" crossorigin=anonymous></script></footer></body></html>
