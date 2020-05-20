@@ -47,7 +47,7 @@ main = do
   where
     loop _ 0 = return ()
     loop !tree !cnt = do
-      q:x:y:_ <- getInts
+      q : x : y :_ <- getInts
       if q == 0
         then do
         let tree' = update (mappend $ fromIntegral y) x tree
@@ -91,7 +91,7 @@ makeTree (k,l) !es = loop $ map (uncurry f) (zip [k..l] es)
     loop !xs = loop $ buildTree xs
     f :: Int -> v -> STree v
     f !ix !v = Leaf ix v
-    buildTree !(a:b:ys) = let v = val a `mappend` val b
+    buildTree !(a : b : ys) = let v = val a `mappend` val b
                           in Branch (left a,right b) v a b : buildTree ys
     buildTree !x = x
 
