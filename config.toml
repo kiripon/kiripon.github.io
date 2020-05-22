@@ -11,6 +11,8 @@ showReadMore = false
 rssLimit = 20
 github = "#kiripon"
 
+googleAnalytics = "UA-56315243-1"
+
 [[menu.main]]
     identifier = "about"
     name = "About"
