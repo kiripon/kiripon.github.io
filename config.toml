@@ -1,7 +1,7 @@
-baseURL = "https://kiripon.net"
-languageCode = "ja-jp"
-title = "自由研究帳"
-theme = "noteworthy"
+baseURL = 'https://kiripon.net'
+languageCode = 'ja-jp'
+title = '自由研究帳'
+theme = 'noteworthy'
 summaryLength = 80
 hasCJKLanguage = true
 enableEmoji = true
@@ -9,81 +9,90 @@ pygmentsUseClasses = true
 pygmentsCodefences = true
 showReadMore = false
 rssLimit = 20
-github = "#kiripon"
-
-googleAnalytics = "UA-56315243-1"
-
-[[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/about/"
-    weight = 1
-
-[[menu.main]]
-    identifier = "tags"
-    name = "Tags"
-    url = "/tags/"
-    weight = 2
-
-[[menu.main]]
-    identifier = "archives"
-    name = "Archives"
-    url = "/archives/"
-    weight = 3
+github = '#kiripon'
+googleAnalytics = 'UA-56315243-1'
 
 [taxonomies]
-    tag = "tags"
+tag = 'tags'
+
 [author]
-    name = "kiripon"
+name = 'Hirotada Kiriyama'
 
 [params]
-  mainSections = ["posts", "updates"]
-  customCSS = "css/custom.css"
+mainSections = [
+    'posts',
+    'updates',
+]
+showReadMore = true
+
+customCSS = 'css/custom.css'
+[[menu.main]]
+identifier = 'about'
+name = 'About'
+url = '/about/'
+weight = 1
+
+[[menu.main]]
+identifier = 'tags'
+name = 'Tags'
+url = '/tags/'
+weight = 2
+
+[[menu.main]]
+identifier = 'archives'
+name = 'Archives'
+url = '/archives/'
+weight = 3
+
 [markup]
-  defaultMarkdownHandler = "goldmark"
-  [markup.blackFriday]
-    angledQuotes = false
-    footnoteAnchorPrefix = ""
-    footnoteReturnLinkContents = ""
-    fractions = true
-    hrefTargetBlank = false
-    latexDashes = true
-    nofollowLinks = false
-    noreferrerLinks = false
-    plainIDAnchors = true
-    skipHTML = false
-    smartDashes = true
-    smartypants = true
-    smartypantsQuotesNBSP = false
-    taskLists = true
-  [markup.goldmark]
-    [markup.goldmark.extensions]
-      definitionList = true
-      footnote = true
-      linkify = true
-      strikethrough = true
-      table = true
-      taskList = true
-      typographer = false
-    [markup.goldmark.parser]
-      attribute = true
-      autoHeadingID = true
-      autoHeadingIDType = "github"
-    [markup.goldmark.renderer]
-      hardWraps = false
-      unsafe = false
-      xhtml = false
-  [markup.highlight]
-    codeFences = true
-    guessSyntax = false
-    hl_Lines = ""
-    lineNoStart = 1
-    lineNos = false
-    lineNumbersInTable = true
-    noClasses = true
-    style = "monokai"
-    tabWidth = 4
-  [markup.tableOfContents]
-    endLevel = 3
-    ordered = false
-    startLevel = 2
+defaultMarkdownHandler = 'goldmark'
+
+[markup.blackFriday]
+angledQuotes = false
+footnoteAnchorPrefix = ''
+footnoteReturnLinkContents = ''
+fractions = true
+hrefTargetBlank = false
+latexDashes = true
+nofollowLinks = false
+noreferrerLinks = false
+plainIDAnchors = true
+skipHTML = false
+smartDashes = true
+smartypants = true
+smartypantsQuotesNBSP = false
+taskLists = true
+[markup.goldmark.extensions]
+definitionList = true
+footnote = true
+linkify = true
+strikethrough = true
+table = true
+taskList = true
+typographer = false
+
+[markup.goldmark.parser]
+attribute = true
+autoHeadingID = true
+autoHeadingIDType = 'github'
+
+[markup.goldmark.renderer]
+hardWraps = false
+unsafe = true
+xhtml = false
+
+[markup.highlight]
+codeFences = true
+guessSyntax = false
+hl_Lines = ''
+lineNoStart = 1
+lineNos = false
+lineNumbersInTable = true
+noClasses = true
+style = 'monokai'
+tabWidth = 4
+
+[markup.tableOfContents]
+endLevel = 3
+ordered = false
+startLevel = 2
