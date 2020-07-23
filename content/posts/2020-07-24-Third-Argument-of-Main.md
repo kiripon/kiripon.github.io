@@ -1,7 +1,8 @@
 ---
-title: "main 関数の第三引数"
-date: 2020-07-24
-tags: ["libc", "C"]
+title: main 関数の第三引数
+date: 2020-07-24T01:12:17+09:00
+draft: false
+tags: ["C", "libc"]
 ---
 
 # 要約
