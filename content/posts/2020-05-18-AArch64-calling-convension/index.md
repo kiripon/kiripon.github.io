@@ -1,7 +1,7 @@
 ---
 title: "AArch64 の呼び出し規約についてのメモ(WIP)"
 date: 2020-05-18T01:12:17+09:00
-draft: false
+draft: true
 ---
 
 https://developer.arm.com/docs/ihi0055/d/procedure-call-standard-for-the-arm-64-bit-architecture
