@@ -21,7 +21,6 @@ name = 'Hirotada Kiriyama'
 [params]
 mainSections = [
     'posts',
-    'updates',
 ]
 showReadMore = true
 
@@ -47,21 +46,6 @@ weight = 3
 [markup]
 defaultMarkdownHandler = 'goldmark'
 
-[markup.blackFriday]
-angledQuotes = false
-footnoteAnchorPrefix = ''
-footnoteReturnLinkContents = ''
-fractions = true
-hrefTargetBlank = false
-latexDashes = true
-nofollowLinks = false
-noreferrerLinks = false
-plainIDAnchors = true
-skipHTML = false
-smartDashes = true
-smartypants = true
-smartypantsQuotesNBSP = false
-taskLists = true
 [markup.goldmark.extensions]
 definitionList = true
 footnote = true
