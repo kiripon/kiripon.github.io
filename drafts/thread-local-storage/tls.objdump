@@ -1,0 +1,24 @@
+
+tls.o:	file format ELF64-aarch64-little
+
+
+Disassembly of section .text:
+
+0000000000000000 tls_func():
+       0: 48 d0 3b d5                  	mrs	x8, TPIDR_EL0
+       4: 08 01 40 91                  	add	x8, x8, #0, lsl #12
+		0000000000000004:  R_AARCH64_TLSLE_ADD_TPREL_HI12	tls_value
+       8: 08 01 00 91                  	add	x8, x8, #0
+		0000000000000008:  R_AARCH64_TLSLE_ADD_TPREL_LO12_NC	tls_value
+       c: 00 01 40 f9                  	ldr	x0, [x8]
+      10: c0 03 5f d6                  	ret
+
+Disassembly of section .text._ZTW9tls_value:
+
+0000000000000000 thread-local wrapper routine for tls_value:
+       0: 48 d0 3b d5                  	mrs	x8, TPIDR_EL0
+       4: 08 01 40 91                  	add	x8, x8, #0, lsl #12
+		0000000000000004:  R_AARCH64_TLSLE_ADD_TPREL_HI12	tls_value
+       8: 00 01 00 91                  	add	x0, x8, #0
+		0000000000000008:  R_AARCH64_TLSLE_ADD_TPREL_LO12_NC	tls_value
+       c: c0 03 5f d6                  	ret
